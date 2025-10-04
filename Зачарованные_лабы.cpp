@@ -15,7 +15,7 @@
 #include <windows.h>	// For operationts with console
 #include <conio.h>		// For _getch
 using namespace std;
-//ss
+
 
 // Input checkers
 
