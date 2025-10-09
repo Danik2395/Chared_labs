@@ -19,7 +19,7 @@ else {\
 }\
 
 
-// Rerurns true if input "q" or "Q"
+// Returns true if input "q" or "Q"
 bool quit(const char*);
 
 // "Eats" buffer and, if it's overfilled, returns true

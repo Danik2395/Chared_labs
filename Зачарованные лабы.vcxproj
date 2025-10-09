@@ -124,12 +124,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="my_lib.cpp" />
-    <ClCompile Include="side_func.cpp" />
+    <ClCompile Include="operating_functions.cpp" />
+    <ClCompile Include="side_functions.cpp" />
     <ClCompile Include="Зачарованные_лабы.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="my_lib.h" />
-    <ClInclude Include="side_func.h" />
+    <ClInclude Include="operating_functions.h" />
+    <ClInclude Include="side_functions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

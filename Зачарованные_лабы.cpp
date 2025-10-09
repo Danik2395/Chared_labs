@@ -8,172 +8,29 @@
 
 
 #include "my_lib.h"
-#include "side_func.h"
-#include <cstdio> 
+#include "side_functions.h"
+#include "operating_functions.h"
+#include <cstdio>       // For _getchar()
 #include <cmath>
 #include <cstdlib>		// For atoi(), atof()
 #include <windows.h>	// For operationts with console
-#include <conio.h>		// For _getch
+#include <conio.h>		// For _getch()
 #include <limits>
 using namespace std;
-
-
-// Input checkers
-
-bool correct_input_double(const char* ch_dirt_inp) {
-	int len = my_strlen(ch_dirt_inp);
-	short i_dot_count = 0;
-
-	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number.");
-		return false;
-	}
-
-	if (buffer_clean()) { // Cleans buffer, if there was more than 16 bytes, and giving exception
-		printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-		return false;
-	}
-
-	if (ch_dirt_inp[0] == '-' && len == 1 || ch_dirt_inp[0] == '-' && (ch_dirt_inp[1] < '0' || ch_dirt_inp[1] > '9')) {
-		printf("\nNot valid input. Enter valid number.");                       // Checks if it is not only minus in input
-		return false;
-	}
-
-	// Is digit is slower because firstly it needs to find given symbol in table and only then it sees prewritten "isdigit" instruction to this symbol
-
-	if (ch_dirt_inp[0] == '-' || ch_dirt_inp[0] >= '0' && ch_dirt_inp[0] <= '9') { // Checks if first item in usr_inpt[] is '-' and digit after it
-		for (int i = 1; i < len; ++i) {                                            // Iterating from 1 (second of usr_inpt) to length of ch_dirt_inp
-
-			if (ch_dirt_inp[i] >= '0' && ch_dirt_inp[i] <= '9') continue;          // If item is number continues iterating
-
-			else if (ch_dirt_inp[i] == '.') {                                      // If item is dot adding it to i_dot_count
-				++i_dot_count;
-				if (i_dot_count > 1) {                                             // And if there is more then one dot throws "Not valid input" code
-					printf("\nNot valid input. Enter valid number.");
-					return false;
-				}
-			}
-			else if (ch_dirt_inp[i] == ',') {                                      // If item is coma throws "not valid coma" code
-				printf("\nChar ',' not for float. Use '.' instead.");
-				return false;
-			}
-			//else if (ch_dirt_inp[i] == ' ') {
-			//	for (int j = i; ch_dirt_inp[j] != '\0'; ++j) {
-			//		if (ch_dirt_inp[j] != ' ') return false;
-
-			//		else {
-			//			ch_dirt_inp[i] = '';
-			//		}
-			//	}
-			//}
-			else {                                                                 // If item is not number or dot throws "Not valid input" code
-				printf("\nNot valid input. Enter valid number.");
-				return false;
-			}
-		}
-	}
-	else {
-		printf("\nNot valid input. Enter valid number.");
-		return false;
-	}
-	return true;
-}
-
-
-bool correct_input_int(const char* ch_dirt_inp) {
-	int len = my_strlen(ch_dirt_inp);
-
-
-	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number.");
-		return false;
-	}
-
-	if (buffer_clean()) { // Cleans buffer, if there was more than 16 bytes, and giving exception
-		printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-		return false;
-	}
-
-	if (ch_dirt_inp[0] == '-' && len == 1 || ch_dirt_inp[0] == '-' && (ch_dirt_inp[1] < '0' || ch_dirt_inp[1] > '9')) {
-		printf("\nNot valid input. Enter valid number.");                       // Checks if it is not only minus in input
-		return false;
-	}
-
-	// Is digit is slower because firstly it needs to find given symbol in table and only then it sees prewritten "isdigit" instruction to this symbol
-
-	if (ch_dirt_inp[0] == '-' || ch_dirt_inp[0] >= '0' && ch_dirt_inp[0] <= '9') { // Checks if first item in usr_inpt[] is '-' or number
-		for (int i = 1; i < len; ++i) {                                            // Iterating from 1 (second of usr_inpt) to length of ch_dirt_inp
-
-			if (ch_dirt_inp[i] >= '0' && ch_dirt_inp[i] <= '9') continue;          // If item is number continues iterating
-
-			else {                                                                 // If item is not number throws "Not valid input" code
-				printf("\nNot valid input. Enter whole number. 3");
-				return false;
-			}
-		}
-	}
-	else {
-		printf("\nNot valid input. Enter whole number.");
-		return false;
-	}
-	return true;
-}
-// END
-
-
-
-// Input handlers
-
-bool input_handler(const char *ch_text, double& d_outside_var) { // For doubles
-	char ch_input[17];
-
-	
-	while (1) {
-		printf("%s", ch_text);              // Displays text from another function
-		scanf_s("%16s", ch_input, 17);
-
-		if (quit(ch_input)) return false;
-
-		else if (correct_input_double(ch_input)) {
-			d_outside_var = atof(ch_input); // If input is valid converts ch_inpt to double parametr
-			return true;
-		}
-	}
-}
-
-
-bool input_handler(const char *ch_text, int& d_outside_var) { // For ints
-	char ch_input[17];
-
-
-	while (1) {
-		printf("%s", ch_text);              // Displays text from another function
-		scanf_s("%16s", ch_input, 17);
-
-		if (quit(ch_input)) return false;
-
-		else if (correct_input_int(ch_input)) {
-			d_outside_var = atoi(ch_input); // If input is valid converts ch_inpt to int parametr
-			return true;
-		}
-	}
-}
-// END
-
 
 
 // Laboratory work 1, variant 3
 static void lab_1() {
 	while (1) {
 		double d_x{};
-		if (!input_handler("\nInput X (or quit [q]):\n", d_x)) {
+		if (!input_handler("\nInput X (or quit [q]):\n", d_x, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_y{};
-		if (!input_handler("\nInput Y (or quit [q]):\n", d_y)) {
+		if (!input_handler("\nInput Y (or quit [q]):\n", d_y, 1)) {
 			system("cls");
 			break;
 		}
@@ -205,7 +62,7 @@ static void lab_1() {
 
 		double d_z{};
 		while (2) {
-			if (!input_handler("\nInput Z (or quit [q]):\n", d_z)) {
+			if (!input_handler("\nInput Z (or quit [q]):\n", d_z, 1)) {
 				system("cls");
 				return;
 			}
@@ -291,7 +148,7 @@ static void lab_2() {
 	while (1) {
 		double d_z{}, d_x{};
 		const char* ch_x_shw = "";
-		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\nInput Z (or quit [q]):\n", d_z)) {
+		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\nInput Z (or quit [q]):\n", d_z, 1)) {
 			system("cls");
 			break;
 		}
@@ -395,14 +252,14 @@ static void lab_2() {
 		system("cls");*/
 
 		double d_a{};
-		if (!input_handler("\nInput A (or quit [q]):\n", d_a)) {
+		if (!input_handler("\nInput A (or quit [q]):\n", d_a, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_c{};
-		if (!input_handler("\nInput C (or quit [q]):\n", d_c)) {
+		if (!input_handler("\nInput C (or quit [q]):\n", d_c, 1)) {
 			system("cls");
 			break;
 		}
@@ -483,14 +340,14 @@ static void Out_Rez_lab_3(double d_x, double d_b, double d_h, int i_n) {
 static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (!input_handler("\nInput A (or quit[q]) :\n", d_a)) {
+		if (!input_handler("\nInput A (or quit[q]) :\n", d_a, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 		
 		double d_b{};
-		if (!input_handler("\nInput B (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
+		if (!input_handler("\nInput B (or quit[q]) :\n", d_b, 1)) { // Very cross variable!!!  d_b
 			system("cls");
 			break;
 		}
@@ -508,7 +365,7 @@ static void lab_3() {
 		}
 
 		double d_h{};
-		if (!input_handler("\nInput H (or quit[q]) :\n", d_h)) {
+		if (!input_handler("\nInput H (or quit[q]) :\n", d_h, 1)) {
 			system("cls");
 			break;
 		}
@@ -533,7 +390,7 @@ static void lab_3() {
 
 		int i_n{};
 		while (2) {
-			if (!input_handler("\nInput N (or quit[q]) :\n", i_n)) {
+			if (!input_handler("\nInput N (or quit[q]) :\n", i_n, 1)) {
 				system("cls");
 				return;
 			}

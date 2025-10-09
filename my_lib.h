@@ -7,7 +7,8 @@
 //
 #pragma once
 
-constexpr double EPSILON = 1e-12; // Equivalent of zero
+// Equivalent of zero
+constexpr double EPSILON = 1e-12; // constexpr for defining on compilation stage
 #define my_NaN (double)INT_MAX
 
 // Checks if double is near zero
@@ -16,7 +17,7 @@ inline bool is_near_zero(double);
 // Gives fractional part of devision two doubles
 double my_fmod(double var1, double var2);
 
-// Reverces negative double
+// Reverses negative double
 double my_fabs(double var);
 
 // Returns string length
