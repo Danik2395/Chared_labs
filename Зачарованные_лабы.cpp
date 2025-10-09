@@ -14,6 +14,7 @@
 #include <cstdlib>		// For atoi(), atof()
 #include <windows.h>	// For operationts with console
 #include <conio.h>		// For _getch
+#include <limits>
 using namespace std;
 
 
@@ -24,7 +25,7 @@ bool correct_input_double(const char* ch_dirt_inp) {
 	short i_dot_count = 0;
 
 	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number. 6");
+		printf("\nNo input. Input number.");
 		return false;
 	}
 
@@ -34,7 +35,7 @@ bool correct_input_double(const char* ch_dirt_inp) {
 	}
 
 	if (ch_dirt_inp[0] == '-' && len == 1 || ch_dirt_inp[0] == '-' && (ch_dirt_inp[1] < '0' || ch_dirt_inp[1] > '9')) {
-		printf("\nNot valid input. Enter valid number. 47");                       // Checks if it is not only minus in input
+		printf("\nNot valid input. Enter valid number.");                       // Checks if it is not only minus in input
 		return false;
 	}
 
@@ -47,13 +48,13 @@ bool correct_input_double(const char* ch_dirt_inp) {
 
 			else if (ch_dirt_inp[i] == '.') {                                      // If item is dot adding it to i_dot_count
 				++i_dot_count;
-				if (i_dot_count > 1) {                                             // And if there is nome then one dot throws "Not valid input" code
-					printf("\nNot valid input. Enter valid number. 1");
+				if (i_dot_count > 1) {                                             // And if there is more then one dot throws "Not valid input" code
+					printf("\nNot valid input. Enter valid number.");
 					return false;
 				}
 			}
 			else if (ch_dirt_inp[i] == ',') {                                      // If item is coma throws "not valid coma" code
-				printf("\nChar ',' not for float. Use '.' instead. 2");
+				printf("\nChar ',' not for float. Use '.' instead.");
 				return false;
 			}
 			//else if (ch_dirt_inp[i] == ' ') {
@@ -66,13 +67,13 @@ bool correct_input_double(const char* ch_dirt_inp) {
 			//	}
 			//}
 			else {                                                                 // If item is not number or dot throws "Not valid input" code
-				printf("\nNot valid input. Enter valid number. 3");
+				printf("\nNot valid input. Enter valid number.");
 				return false;
 			}
 		}
 	}
 	else {
-		printf("\nNot valid input. Enter valid number. 4");
+		printf("\nNot valid input. Enter valid number.");
 		return false;
 	}
 	return true;
@@ -84,7 +85,7 @@ bool correct_input_int(const char* ch_dirt_inp) {
 
 
 	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number. 6");
+		printf("\nNo input. Input number.");
 		return false;
 	}
 
@@ -94,7 +95,7 @@ bool correct_input_int(const char* ch_dirt_inp) {
 	}
 
 	if (ch_dirt_inp[0] == '-' && len == 1 || ch_dirt_inp[0] == '-' && (ch_dirt_inp[1] < '0' || ch_dirt_inp[1] > '9')) {
-		printf("\nNot valid input. Enter valid number. 47");                       // Checks if it is not only minus in input
+		printf("\nNot valid input. Enter valid number.");                       // Checks if it is not only minus in input
 		return false;
 	}
 
@@ -112,7 +113,7 @@ bool correct_input_int(const char* ch_dirt_inp) {
 		}
 	}
 	else {
-		printf("\nNot valid input. Enter whole number. 4");
+		printf("\nNot valid input. Enter whole number.");
 		return false;
 	}
 	return true;
@@ -128,7 +129,7 @@ bool input_handler(const char *ch_text, double& d_outside_var) { // For doubles
 
 	
 	while (1) {
-		printf("%s", ch_text);            // Displays text from another function
+		printf("%s", ch_text);              // Displays text from another function
 		scanf_s("%16s", ch_input, 17);
 
 		if (quit(ch_input)) return false;
@@ -146,7 +147,7 @@ bool input_handler(const char *ch_text, int& d_outside_var) { // For ints
 
 
 	while (1) {
-		printf("%s", ch_text);            // Displays text from another function
+		printf("%s", ch_text);              // Displays text from another function
 		scanf_s("%16s", ch_input, 17);
 
 		if (quit(ch_input)) return false;
@@ -178,6 +179,30 @@ static void lab_1() {
 		}
 		system("cls");
 
+		if (is_near_zero(d_x) && d_y < 0) {           // We cannot power zero in negative number
+			system("cls");
+			printf("\nZero can not be in negative power.");
+			continue;
+		}
+
+		double d_fraction_of_Y = my_fmod(d_y, 1);     // We cannot take root of negative number
+		if (d_x < 0 && my_fabs(d_fraction_of_Y) > 0 && d_fraction_of_Y != my_NaN) {
+			system("cls");
+			printf("\nCan not take root of negative number.\nTry again with another values.");
+			continue;
+		}
+		else if (d_fraction_of_Y == my_NaN) {
+			system("cls");
+			printf("\nInternal error occurred.\nTry again with another values.");
+		}
+
+		double d_power_X_in_Y = pow(d_x, fabs(d_y));  // If powering is too large, error
+		if (d_power_X_in_Y > DBL_MAX) {
+			system("cls");
+			printf("\nX^Y is too large.\nTry again with another values.");
+			continue;
+		}
+
 		double d_z{};
 		while (2) {
 			if (!input_handler("\nInput Z (or quit [q]):\n", d_z)) {
@@ -193,8 +218,7 @@ static void lab_1() {
 				break;
 			}
 		}
-		
-		
+				
 		double d_dwn1{};
 		if (is_near_zero(d_dwn1 = 1 + d_x * d_x * d_y * d_y)) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
 			printf("\nDenominator equals zero when X and Y is %.5f and %.5f.", d_x, d_y);
@@ -233,7 +257,7 @@ static void lab_1() {
 
 		if (YN()) {
 			// V = [1 + sin(X + Y)^2] * X^|Y|  /  |X - 2Y / 1 + X^2 * Y^2|  +  cos[arctg(1 / Z)]^2
-			double d_v = (1 + pow(sin(d_x + d_y), 2)) * pow(d_x, fabs(d_y)) / d_dwn2 + pow(cos(atan(1 / d_z)), 2);
+			double d_v = (1 + pow(sin(d_x + d_y), 2)) * d_power_X_in_Y / d_dwn2 + pow(cos(atan(1 / d_z)), 2);
 
 			system("cls");
 			Sleep(700);
@@ -244,7 +268,7 @@ static void lab_1() {
 			printf(".");
 			system("cls");
 
-			printf("\nV = [1 + sin(X + Y) ^ 2] * X ^ | Y|  /  |X - 2Y / 1 + X ^ 2 * Y ^ 2 | + cos[arctg(1 / Z)] ^ 2\n\n"
+			printf("\nV = [1 + sin(X + Y) ^ 2] * X ^ |Y|  /  |X - 2Y / 1 + X ^ 2 * Y ^ 2 | + cos[arctg(1 / Z)] ^ 2\n\n"
 				   "X = %10.5f\n"
 				   "Y = %10.5f\n"
 				   "Z = %10.5f\n", d_x, d_y, d_z);
@@ -278,6 +302,11 @@ static void lab_2() {
 				ch_x_shw = "X = 1 / sqrt(Z - 1)";
 			}			
 			else {
+				if (d_z < -25) {
+					system("cls");
+					printf("\nUndefined calculations. Z could be approximately -25.\nInput again for better results.");
+					continue;
+				}
 				d_x = d_z * d_z + 1;
 				ch_x_shw = "X = Z^2 + 1";
 			}
@@ -379,7 +408,7 @@ static void lab_2() {
 		}
 		system("cls");
 
-		printf("\nCalculate A * sin(%s^2 - 1)^3 + c * ln(|X|) + e^X ? [Y/N]\n\n"
+		printf("\nCalculate A * sin(%s^2 - 1)^3 + C * ln(|X|) + e^X ? [Y/N]\n\n"
 			"Your A = %10.5f\n"
 			"Your C = %10.5f\n"
 			"Your Z = %10.5f\n\n"
@@ -400,7 +429,7 @@ static void lab_2() {
 			Sleep(200);
 			system("cls");
 
-			printf("\nY = A * sin(%s^2 - 1)^3 + c * ln(|X|) + e^X\n\n"
+			printf("\nY = A * sin(%s^2 - 1)^3 + C * ln(|X|) + e^X\n\n"
 				   "A = %10.5f\n"
 				   "C = %10.5f\n"
 				   "Z = %10.5f\n\n"
@@ -467,6 +496,11 @@ static void lab_3() {
 		}
 		system("cls");
 
+		if (d_a > 1000 || d_a < -1000 || d_b > 1000 || d_b < -1000) {
+			printf("For better results A and B range is +-1000\nTry again with valid range.");
+			continue;
+		}
+
 		if (is_near_zero(my_fabs(d_b - d_a))) {             // If a = b, error
 			system("cls");
 			printf("\nNot valid range. There must be a gap between A and B.");
@@ -489,12 +523,12 @@ static void lab_3() {
 		double d_fraction = my_fmod(d_b - d_a, d_h);        // If steps is mot whole number, error
 		if (d_fraction != my_NaN && my_fabs(d_fraction) > 0) {
 			system("cls");
-			printf("\nNot valid input. Uncorrect steps set.\nTry again with another values.");
+			printf("\nNot valid input. Incorrect steps set.\nTry again with another values.");
 			continue;
 		}
 		else if (d_fraction == my_NaN) {
 			system("cls");
-			printf("\nInternal error occured. Uncorrect steps set.\nTry again with another values.");
+			printf("\nInternal error occurred.\nTry again with another values.");
 		}
 
 		int i_n{};
@@ -504,7 +538,7 @@ static void lab_3() {
 				return;
 			}
 			else if (i_n < 3 || i_n > 9) {
-				printf("\nNotnvalid range. For better results 3 <= N <= 9 ");
+				printf("\nNot valid range. For better results 3 <= N <= 9 ");
 			}
 			else break;
 		}

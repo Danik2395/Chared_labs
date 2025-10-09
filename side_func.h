@@ -9,7 +9,6 @@
 
 #define user_continue_usage()\
 puts("\n\n\nWant to continue? [Y/N]");\
-do {\
 if (YN()) {\
 	system("cls");\
 	continue;\
@@ -18,8 +17,7 @@ else {\
 	system("cls");\
 	break;\
 }\
-}\
-while (0);
+
 
 // Rerurns true if input "q" or "Q"
 bool quit(const char*);

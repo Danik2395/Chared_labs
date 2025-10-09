@@ -13,7 +13,7 @@ constexpr double EPSILON = 1e-12; // Equivalent of zero
 // Checks if double is near zero
 inline bool is_near_zero(double);
 
-// Gives fractional part of double
+// Gives fractional part of devision two doubles
 double my_fmod(double var1, double var2);
 
 // Reverces negative double
