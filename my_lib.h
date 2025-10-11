@@ -9,7 +9,7 @@
 
 // Equivalent of zero
 constexpr double EPSILON = 1e-12; // constexpr for defining on compilation stage
-#define my_NaN (double)INT_MAX
+#define my_NaN 128101010.010101821
 
 // Checks if double is near zero
 inline bool is_near_zero(double);

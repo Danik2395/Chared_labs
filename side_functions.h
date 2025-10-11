@@ -7,7 +7,7 @@
 //
 #pragma once
 
-#define user_continue_usage()\
+#define USER_CONTINUE_USAGE()\
 puts("\n\n\nWant to continue? [Y/N]");\
 if (YN()) {\
 	system("cls");\

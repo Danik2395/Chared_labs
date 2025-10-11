@@ -12,7 +12,7 @@
 #include <type_traits> // For is_same
 
 // For displaying error messages 
-inline void DISPLAY_ERROR_MESSAGE(const char* message, bool error_message_true) {
+inline void display_error_message(const char* message, bool error_message_true) {
 	if (error_message_true) printf("%s", message);
 }
 
