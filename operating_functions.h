@@ -11,17 +11,12 @@
 #include <cstdio>
 #include <type_traits> // For is_same
 
-// For displaying error messages 
-inline void display_error_message(const char* message, bool error_message_true) {
-	if (error_message_true) printf("%s", message);
-}
+bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
 
-bool is_correct_input(const char*, bool, bool);
-
-// Input handler
-// If you need to display error message, error_message_true = true
+// Numeric input handler
+// Writes user input into variable
 template <class T>
-bool input_handler(const char* ch_text_to_display, T& d_input_variable, bool error_message_true) {
+bool input_handler(const char* ch_text_to_display, T& T_input_variable) {
 	char ch_input[17];
 
 
@@ -29,17 +24,26 @@ bool input_handler(const char* ch_text_to_display, T& d_input_variable, bool err
 		printf("%s", ch_text_to_display);                          // Displays call to input
 		scanf_s("%16s", ch_input, 17);
 
+		if (buffer_clean()) {                                      // Cleans buffer, if there was more than 16 bytes, and giving exception
+			printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
+			continue;
+		}
+
 		bool allow_fraction = std::is_same<T, double>::value;      // Checks whether it's double
 
 		if (quit(ch_input)) return false;
 
-		else if (is_correct_input(ch_input, allow_fraction, error_message_true)) {
-			if (allow_fraction) d_input_variable = atof(ch_input); // double - atof
+		else if (is_correct_input(ch_input, allow_fraction)) {
+			if (allow_fraction) T_input_variable = atof(ch_input); // double - atof
 
-			else				d_input_variable = atoi(ch_input); // int - atoi
+			else				T_input_variable = atoi(ch_input); // int - atoi
 
 			return true;
 		}
 	}
 }
 // END
+
+// Array input handler
+// Writes user input into array
+bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int max_element_size);
