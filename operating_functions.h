@@ -46,4 +46,8 @@ bool input_handler(const char* ch_text_to_display, T& T_input_variable) {
 
 // Array input handler
 // Writes user input into array
-bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int max_element_size);
+// 0 - number is good
+// 1 - quit
+// 2 - not valid size
+// 3 - not valid number
+int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int max_element_size);

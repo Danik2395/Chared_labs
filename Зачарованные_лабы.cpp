@@ -519,11 +519,11 @@ static void lab_5() {
 		system("cls");
 
 		if (i_array_size > 10000 || i_array_size <= 0) {
-			puts("\nInvalid size. Supported size is from 1 to 10000");
+			printf("\nInvalid size. Supported size is from 1 to 10000");
 			continue;
 		}
 	
-		puts("How you want to create array? (or quit [q])\n\n"
+		puts("How do you want to create array? (or quit [q])\n\n"
 			"Manually [1]\n"
 			"Randomly [2]");
 
@@ -587,12 +587,56 @@ static void lab_5() {
 			Sleep(1000);
 		}
 		else {
-			if (!array_input_handler("\nPrefer Enter after every member."
-									 "\nWill clear all input after mistaken number, if input with Space."
-									 "\n\nInput array. (or quit [q])\n\n", p_i_array, i_array_size, 200000)) {
+			int iter{0};
+			int operation_code{-1};
+			while (iter < i_array_size) {
 				system("cls");
-				free(p_i_array);
-				break;
+
+				printf("\nPrefer Enter after every member."
+					   "\nWill clear all input after mistaken number, if input with Space."
+					   "\n\nInput array. (or quit [q])\n\n");
+
+				if (operation_code != -1) {
+					for (int j = 0; j < iter; ++j) {
+						printf("%d ", p_i_array[j]);
+					}
+				}
+
+				operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
+
+				if (operation_code == 1) {
+					system("cls");
+					return;
+				}
+
+				else if (operation_code == 1 || operation_code == 3) {
+					(void)buffer_clean();
+
+					if (operation_code == 1) {
+						printf("\nNot valid element size. Valid size is +-200000");
+					}
+
+					while (1) {
+						char ch_input[17];
+
+						printf("\nInput from %d element again:\n", iter + 1);
+							
+						scanf_s("%16s", ch_input, 17);
+			
+						if (quit(ch_input)) return;
+			
+						if (is_correct_input(ch_input, 0) && my_abs(atoi(ch_input)) <= 200000) {
+							p_i_array[iter] = atoi(ch_input);
+							system("cls");
+							break;
+						}
+						else {
+							(void)buffer_clean();
+							continue;
+						}
+					}
+				}
+				else ++iter;
 			}
 		}
 		system("cls");
@@ -657,11 +701,278 @@ static void lab_5() {
 			printf("\nHere is your answer: %d", i_sum_from_positive);
 		}
 
+		free(p_i_array);
+
 		USER_CONTINUE_USAGE();
 	}
 }
 // END
 
+
+
+// Laboratory work 6, variant 12
+static void put_element_into_container(char* ch_matrix_container, int i_matrix_element, int i_matrix_size, int container_index) {
+	if (i_matrix_element >= 10) {
+		ch_matrix_container[container_index] = ' ';
+		ch_matrix_container[container_index + 1] = i_matrix_element / 10 + '0';
+		ch_matrix_container[container_index + 2] = i_matrix_element % 10 + '0';
+	}
+	else if (i_matrix_element >= 0 && i_matrix_element < 10) {
+		ch_matrix_container[container_index] = ' ';
+		ch_matrix_container[container_index + 1] = ' ';
+		ch_matrix_container[container_index + 2] = i_matrix_element + '0';
+	}
+	else if (i_matrix_element <= -10) {
+		i_matrix_element = -i_matrix_element;
+		ch_matrix_container[container_index] = '-';
+		ch_matrix_container[container_index + 1] = i_matrix_element / 10 + '0';
+		ch_matrix_container[container_index + 2] = i_matrix_element % 10 + '0';
+	}
+	else if (i_matrix_element < 0 && i_matrix_element > -10) {
+		i_matrix_element = -i_matrix_element;
+		ch_matrix_container[container_index] = ' ';
+		ch_matrix_container[container_index + 1] = '-';
+		ch_matrix_container[container_index + 2] = i_matrix_element + '0';
+	}
+}
+
+static void lab_6() {
+	while (1) {
+		int i_matrix_size{};
+		if (!input_handler("\nInput size of square matrix (or quit[q]) :\n", i_matrix_size)) {
+			system("cls");
+			break;
+		}
+		system("cls");
+
+		if (i_matrix_size > 10 || i_matrix_size < 2) {
+			printf("\nInvalid size. Supported size is from 2 to 10");
+			continue;
+		}
+
+		puts("How do you want to create matrix? (or quit [q])\n\n"
+			"Manually               [1]\n"
+			"Randomly               [2]\n"
+			"Randomly without zeros [3]");
+
+		bool manual_input = false;
+		bool zero_in_random = true;
+		while (2) {
+			switch (_getch()) {
+			case '1':
+				manual_input = true;
+				break;
+
+			case '2':
+				break;
+
+			case '3':
+				zero_in_random = false;
+				break;
+
+			case 'q':
+			case 'Q':
+				system("cls");
+				return;
+
+			default:
+				printf("\nNot valid input.");
+				continue;
+			}
+			break;
+		}
+		system("cls");
+
+		if (manual_input && i_matrix_size > 4) {
+			printf("\nYou want to enter %d rows and cols manually? [Y/N]\n", i_matrix_size);
+
+			if (!YN()) manual_input = false;
+		}
+		system("cls");
+
+		bool memory_inicialize_fail = false;
+
+		int** p_i_matrix = (int**)calloc(i_matrix_size, sizeof(int*)); // Creating pointer to array of pointers
+		
+		if (p_i_matrix == NULL) memory_inicialize_fail = true;
+
+		int i_bad_row{};
+		if (!memory_inicialize_fail) {
+			for (int i = 0; i < i_matrix_size; ++i) {
+				p_i_matrix[i] = (int*)calloc(i_matrix_size, sizeof(int));  // Giving every pointer in array of pointers it's own pointer on start of array
+				if (p_i_matrix[i] == NULL) {
+					i_bad_row = i;
+					memory_inicialize_fail = true;
+					break;
+				}
+			}
+		}
+
+		char* ch_matrix_container{};
+		if (!memory_inicialize_fail) {
+			ch_matrix_container = (char*)calloc(4 * i_matrix_size * i_matrix_size + i_matrix_size * 2 - 1, sizeof(char));
+			// Four bytes for every number, two new lines on after every line, except last, one \0
+
+			if (ch_matrix_container == NULL) memory_inicialize_fail = true;
+		}
+
+		if (memory_inicialize_fail) {
+			if (p_i_matrix != NULL) {
+				for (int i = 0; i < i_bad_row; ++i) {
+					free(p_i_matrix[i]);
+				}
+			}
+			
+			free(p_i_matrix);
+
+			system("cls");
+
+			printf("Internal error occurred. Try again.\n");
+
+			Sleep(1000);
+
+			continue;
+		}
+
+		int container_index{ 0 };
+		if (!manual_input) {
+			generate_seed();
+
+			puts("\nGenerating...");
+
+			Sleep(1000);
+
+			system("cls");
+
+			puts("");
+
+			for (int i = 0; i < i_matrix_size; ++i) {
+				for (int j = 0; j < i_matrix_size; ++j) {
+					do {
+						p_i_matrix[i][j] = my_random(20, 48);
+					} while (!zero_in_random && p_i_matrix[i][j] == 0);
+
+					put_element_into_container(ch_matrix_container, p_i_matrix[i][j], i_matrix_size, container_index);
+					container_index += 3;
+					ch_matrix_container[container_index] = ' ';
+					++container_index;
+					printf("%3d ", p_i_matrix[i][j]);
+				}
+				if (i != i_matrix_size - 1) {
+					ch_matrix_container[container_index] = '\n';
+					ch_matrix_container[container_index + 1] = '\n';
+					container_index += 2;
+				}
+				puts("\n");
+			}
+			ch_matrix_container[container_index] = '\0';
+			Sleep(1000);
+		}
+		else {
+			int operation_code{ -1 };
+			for (int row = 0; row < i_matrix_size; ++row) {
+				for (int col = 0; col < i_matrix_size; ++col) {
+					system("cls");
+
+					if (operation_code == 1) {
+						for (int i = 0; i < i_matrix_size; ++i) {
+							free(p_i_matrix[i]);
+						}
+						free(p_i_matrix);
+						free(ch_matrix_container);
+						system("cls");
+						return;
+					}
+
+					printf("\nPrefer Enter after every member."
+						   "\nWill clear all input after mistaken number, if input with Space."
+						   "\n\nInput array. (or quit [q])\n\n");
+
+					if (operation_code != -1) {
+						for (int i = 0; i <= row; ++i) {
+							int col_limit = (i == row) ? col : i_matrix_size; // For all i, that are not current row, printing all elements.
+							for (int j = 0; j < col_limit; ++j) {             // Else printing elements till current column 
+								printf("%3d ", p_i_matrix[i][j]);
+								if (j == i_matrix_size -1) printf("\n\n");
+							}
+						}
+					}
+
+					operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_size, 20);
+
+
+					if (operation_code == 2 || operation_code == 3) {
+						(void)buffer_clean();
+
+						if (operation_code == 2) {
+							printf("\nNot valid element size. Valid size is +-20");
+						}
+
+						while (operation_code == 2 || operation_code == 3) {
+							printf("\nInput from %d row and %d column again:\n", row + 1, col + 1);
+
+							operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_size, 20);
+
+							(void)buffer_clean();
+						}
+					}
+					put_element_into_container(ch_matrix_container, p_i_matrix[row][col], i_matrix_size, container_index);
+					container_index += 3;
+					ch_matrix_container[container_index] = ' ';
+					++container_index;
+				}
+				if (row != i_matrix_size - 1) {
+					ch_matrix_container[container_index] = '\n';
+					ch_matrix_container[container_index + 1] = '\n';
+					container_index += 2;
+				}
+				puts("\n");
+			}
+			ch_matrix_container[container_index] = '\0';
+		}
+		system("cls");
+
+		printf("Multiply elements above side diagonal? [Y/N]\n\n\n%s", ch_matrix_container);
+
+		if (!YN()) {
+			for (int i = 0; i < i_matrix_size; ++i) {
+				free(p_i_matrix[i]);
+			}
+			free(p_i_matrix);
+			free(ch_matrix_container);
+			system("cls");
+			break;
+		}
+
+		long long int sum_above_dioganal{1};
+		int column_for_diagonal = i_matrix_size - 1;
+		for (int i = 0; i < i_matrix_size; ++i, --column_for_diagonal) {
+			for (int j = 0; j < column_for_diagonal; ++j) {
+				sum_above_dioganal *= p_i_matrix[i][j];
+			}
+		}
+
+		system("cls");
+		Sleep(300);
+		printf(".");
+		Sleep(200);
+		printf(".");
+		Sleep(350);
+		printf(".");
+		system("cls");
+
+		printf("Multiplied elements above side diagonal.\n\n\n%s\n\n\nHere is your answer: %lld", ch_matrix_container, sum_above_dioganal);
+
+		for (int i = 0; i < i_matrix_size; ++i) {
+			free(p_i_matrix[i]);
+		}
+		free(p_i_matrix);
+		free(ch_matrix_container);
+
+		USER_CONTINUE_USAGE()
+	}
+}
+// END
 
 
 // Main -- menu
@@ -671,6 +982,7 @@ int main() {
 			   "lab 2(12) [2]\n"
 			   "lab 3(12) [3]\n"
 			   "lab 5(12) [5]\n"
+			   "lab 6(12) [6]\n"
 			   "exit      [esc]\n");
 
 		switch (_getch()) {
@@ -693,6 +1005,12 @@ int main() {
 			system("cls");
 			lab_5();
 			break;
+
+		case '6':
+			system("cls");
+			lab_6();
+			break;
+
 		case 27:
 			system("cls");
 			puts("\nDo you want to exit? [Y/N]");
