@@ -19,7 +19,7 @@
 // Input checker
 bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 	int len = my_strlen(ch_dirt_input);
-	short i_dot_count = 0;
+	int i_dot_count = 0;
 
 	if (len == 0) {       // Checking if there is something to check
 		printf("\nNo input. Input number.");
@@ -97,61 +97,34 @@ int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i
 	}
 	return 0;
 }
+// END
 
 
 
+// String input handler
+int string_input_handler(char** p_ch_destination, size_t& string_size, size_t type_size) { // Pointer on pointer to not to loze array start, when reallocating it
+	bool b_memory_inicialize_fail = false;
 
+	char buffer[129];    // Chunk of user input
+	char* copy_string{}; // To catch realloc fail
 
+	while (fgets(buffer, 129, stdin)) {
+		size_t buffer_size = strlen(buffer);
 
+		string_size += buffer_size;
 
-//bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int i_max_element_size) {
-//	char ch_input[17];
-//
-//	printf("%s", ch_text_to_display);
-//
-//	for (int i = 0; i < i_array_size; ++i) {
-//		scanf_s("%16s", ch_input, 17);
-//
-//		if (quit(ch_input)) return false;
-//
-//
-//		bool valid_element_size = true;
-//		if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-//			p_i_input_array[i] = atoi(ch_input);
-//		}
-//		else {
-//			(void)buffer_clean();
-//
-//			if (!valid_element_size) {
-//				printf("\nNot valid element size. Valid size is +-%d", i_max_element_size);
-//			}
-//
-//			while (1) {
-//				printf("\nInput from %d element again:\n", i + 1);
-//				
-//				scanf_s("%16s", ch_input, 17);
-//
-//				if (quit(ch_input)) return false;
-//
-//				if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-//					p_i_input_array[i] = atoi(ch_input);
-//					system("cls");
-//					break;
-//				}
-//			}
-//		}
-//
-//		system("cls");
-//
-//		printf("%s", ch_text_to_display);
-//
-//		for (int j = 0; j <= i; ++j) {
-//			printf("%3d ", p_i_input_array[j]);
-//		}
-//	}
-//
-//	(void)buffer_clean();
-//
-//	return true;
-//}
+		copy_string = (char*)realloc(*p_ch_destination, string_size * type_size); // Resizing string container
+
+		if (copy_string == NULL) {
+			b_memory_inicialize_fail = true;
+			break;
+		}
+
+		*p_ch_destination = copy_string;
+
+		strcat_s(*p_ch_destination, string_size, buffer); // Safely putting chunk after last element in it
+	}
+
+	return b_memory_inicialize_fail ? 1 : 0;
+}
 // END

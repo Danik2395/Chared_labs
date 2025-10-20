@@ -16,6 +16,7 @@
 #include <windows.h>	// For operationts with console
 #include <conio.h>		// For _getch()
 #include <limits>
+#include <string.h>
 using namespace std;
 
 
@@ -38,25 +39,33 @@ static void lab_1() {
 
 		if (is_near_zero(d_x) && d_y < 0) {           // We cannot power zero in negative number
 			system("cls");
-			printf("\nZero can not be in negative power.");
+			Sleep(400);
+			printf("\nZero can not be in negative power.\n\n");
+			Sleep(1500);
 			continue;
 		}
 
 		double d_fraction_of_Y = my_fmod(d_y, 1);     // We cannot take root of negative number
 		if (d_x < 0 && my_fabs(d_fraction_of_Y) > 0 && d_fraction_of_Y != my_NaN) {
 			system("cls");
-			printf("\nCan not take root of negative number.\nTry again with another values.");
+			Sleep(400);
+			printf("\nCan not take root of negative number.\nTry again with another values.\n\n");
+			Sleep(1000);
 			continue;
 		}
 		else if (d_fraction_of_Y == my_NaN) {
 			system("cls");
-			printf("\nInternal error occurred.\nTry again with another values.");
+			Sleep(400);
+			printf("\nInternal error occurred.\nTry again with another values.\n\n");
+			Sleep(1000);
 		}
 
 		double d_power_X_in_Y = pow(d_x, fabs(d_y));  // If powering is too large, error
 		if (d_power_X_in_Y > DBL_MAX) {
 			system("cls");
-			printf("\nX^Y is too large.\nTry again with another values.");
+			Sleep(400);
+			printf("\nX^Y is too large.\nTry again with another values.\n\n");
+			Sleep(1000);
 			continue;
 		}
 
@@ -68,44 +77,27 @@ static void lab_1() {
 			}
 			
 			if (is_near_zero(d_z)) {
-				puts("\nDeterminator can not be zero. Input non zero number.");
+				printf("\nDeterminator can not be zero. Input non zero number.\n\n");
 			}
 			else {
 				system("cls");
 				break;
 			}
 		}
-				
+		
+		bool b_denominator_is_zero = false;
 		double d_dwn1{};
-		if (is_near_zero(d_dwn1 = 1 + d_x * d_x * d_y * d_y)) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
-			printf("\nDenominator equals zero when X and Y is %.5f and %.5f.", d_x, d_y);
-
-			puts("\n\n\nWant to continue? [Y/N]");
-			if (YN()) {
-				system("cls");
-				continue;
-			}
-			else {
-				system("cls");
-				break;
-			} 
-		}
+		if (is_near_zero(d_dwn1 = 1 + d_x * d_x * d_y * d_y)) b_denominator_is_zero = true; // Calculates determinator to check if it's not zero and gives it to d_dwn1
 
 		double d_dwn2{};
-		if (is_near_zero(d_dwn2 = fabs(d_x - 2 * d_y / d_dwn1))) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
+		if (is_near_zero(d_dwn2 = fabs(d_x - 2 * d_y / d_dwn1))) b_denominator_is_zero = true; // Calculates determinator to check if it's not zero and gives it to d_dwn2
+
+		if (b_denominator_is_zero) {
 			printf("\nDenominator equals zero when X and Y is %.5f and %.5f.", d_x, d_y);
+			Sleep(1000);
 
-			puts("\n\n\nWant to continue? [Y/N]");
-			if (YN()) {
-				system("cls");
-				continue;
-			}
-			else {
-				system("cls");
-				break;
-			}
+			USER_CONTINUE_USAGE()
 		}
-
 
 		printf("\nCalculate [1 + sin(X + Y)^2] * X^|Y|  /  |X - 2Y / 1 + X^2 * Y^2|  +  cos[arctg(1 / Z)]^2? [Y/N]\n\n"
 				 "Your X = %10.5f\n"
@@ -147,7 +139,7 @@ static void lab_2() {
 	while (1) {
 		double d_z{}, d_x{};
 		const char* ch_x_shw = "";
-		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\nInput Z (or quit [q]):\n", d_z)) {
+		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\n\nInput Z (or quit [q]):\n", d_z)) {
 			system("cls");
 			break;
 		}
@@ -160,7 +152,7 @@ static void lab_2() {
 			else {
 				if (d_z < -25) {
 					system("cls");
-					printf("\nUndefined calculations. Z could be approximately -25.\nInput again for better results.");
+					printf("\nUndefined calculations. Z could be approximately -25.\nInput again for better results.\n\n");
 					continue;
 				}
 				d_x = d_z * d_z + 1;
@@ -171,9 +163,8 @@ static void lab_2() {
 
 		double d_fx{};
 		const char* ch_fx_shw = "";
-		while (2) {
-			puts("\nChoose function for X (or quit [q])\n\nf(2X)  [1]\nf(X^2) [2]\nf(X/3) [3]\n\nFunction:");
-			
+		puts("\nChoose function for X (or quit [q])\n\nf(2X)  [1]\nf(X^2) [2]\nf(X/3) [3]\n\nFunction:");
+		while (2) {		
 			switch (_getch()) {
 			case '1':
 				d_fx = d_x * 2;
@@ -196,7 +187,6 @@ static void lab_2() {
 				return;
 
 			default:
-				printf("\nNot valid input.");
 				continue;
 			}
 			break;
@@ -305,8 +295,8 @@ static void lab_2() {
 
 // Laboratory work 3, variant 12 (and fourth also)
 
-static void Out_Rez_lab_3(double d_x, double d_y, double d_s, double d_fabs, int view_answer) {
-	switch (view_answer) {
+static void Out_Rez_lab_3(double d_x, double d_y, double d_s, double d_fabs, int i_view_answer) {
+	switch (i_view_answer) {
 	case 1: // All
 		printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_s, d_fabs);
 		break;
@@ -329,26 +319,27 @@ static void Out_Rez_lab_3(double d_x, double d_y, double d_s, double d_fabs, int
 static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (!input_handler("\nInput A (or quit[q]) :\n", d_a)) {
+		if (!input_handler("\nInput A (in range +-1000) (or quit[q]) :\n", d_a)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		if (d_a > 1000 || d_a < -1000) {
-			printf("For better results A and B range is +-1000\nTry again with valid range.");
+			printf("For better results A and B are limited\nTry again with valid range.\n\n");
 			continue;
 		}
 		
 		double d_b{};
 		while (2) {
-			if (!input_handler("\nInput B (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
+			system("cls");
+			if (!input_handler("\nInput B (in range +-1000) (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
 				system("cls");
 				return;
 			}
 
 			if (d_b > 1000 || d_b < -1000) {
-				printf("For better results A and B range is +-1000\nTry again with valid range.");
+				printf("For better results A and B are limited\nTry again with valid range.\n\n");
 				continue;
 			}
 			break;
@@ -357,7 +348,9 @@ static void lab_3() {
 
 		if (is_near_zero(my_fabs(d_b - d_a))) {             // If a = b, error
 			system("cls");
+			Sleep(400);
 			printf("\nNot valid range. There must be a gap between A and B.");
+			Sleep(1500);
 			continue;
 		}
 
@@ -370,7 +363,7 @@ static void lab_3() {
 
 			if (d_b > d_a && d_h < 0 || d_b < d_a && d_h > 0) { // If a <-h- b, error
 				system("cls");
-				printf("\nNot valid input. Steps moving backwards. Need to move from A to B");
+				printf("\nNot valid input. Steps moving backwards. Need to move from A to B\n\n");
 				continue;
 			}
 			break;
@@ -380,12 +373,16 @@ static void lab_3() {
 		double d_fraction = my_fmod(d_b - d_a, d_h);        // If steps is mot whole number, error
 		if (d_fraction != my_NaN && my_fabs(d_fraction) > 0) {
 			system("cls");
-			printf("\nNot valid input. Incorrect steps set.\nTry again with another values.");
+			Sleep(400);
+			printf("\nNot valid input. Incorrect steps set.\nTry again with another values.\n\n");
+			Sleep(1500);
 			continue;
 		}
 		else if (d_fraction == my_NaN) {
 			system("cls");
-			printf("\nInternal error occurred.\nTry again with another values.");
+			Sleep(400);
+			printf("\nInternal error occurred.\nTry again with another values.\n\n");
+			Sleep(1500);
 			continue;
 		}
 
@@ -401,7 +398,7 @@ static void lab_3() {
 			}
 			else if (i_n <= 0) {
 				system("cls");
-				printf("\nNot valid number of members. N can not be zero or below it.");
+				printf("\nNot valid number of members. N can not be zero or below it.\n\n");
 				continue;
 			}
 			break;
@@ -419,31 +416,31 @@ static void lab_3() {
 			   "Y(X)          [3]\n"
 			   "|Y(X) - S(X)| [4]\n", d_a, d_b, d_h, i_n);
 
-		int view_answer{};
+		int i_view_answer{};
 		const char* text_for_answer = "";
 		const char* text_for_table = "";
 		while(2) {
 			switch (_getch()) {
 			case '1': // All
-				view_answer = 1;
+				i_view_answer = 1;
 				text_for_answer = "S(X), Y(X) and |Y(X) - S(X)|";
 				text_for_table = "   X           Y(X)          S(X)          |Y(X) - S(X)|";
 				break;
 
 			case '2': // S(X)
-				view_answer = 2;
+				i_view_answer = 2;
 				text_for_answer = "S(X)";
 				text_for_table = "   X           S(X)";
 				break;
 
 			case '3': // Y(X)
-				view_answer = 3;
+				i_view_answer = 3;
 				text_for_answer = "Y(X)";
 				text_for_table = "   X           Y(X)";
 				break;
 
 			case '4':  // |Y(X) - S(X)|
-				view_answer = 4;
+				i_view_answer = 4;
 				text_for_answer = "|Y(X) - S(X)|";
 				text_for_table = "   X           |Y(X) - S(X)|";
 				break;
@@ -454,7 +451,6 @@ static void lab_3() {
 				return;
 
 			default:
-				printf("\nNot valid input.");
 				continue;
 			}
 			break;
@@ -481,11 +477,11 @@ static void lab_3() {
 		for (int i = 1; i <= steps; ++i, d_a += d_h) {
 			double d_m{ 1 }, d_s{}, d_y{}, d_fabs{}; // d_fabs{} for |Y(X) - S(x)|
 
-			if (view_answer == 1 || view_answer == 3 || view_answer == 4) {
+			if (i_view_answer == 1 || i_view_answer == 3 || i_view_answer == 4) {
 				d_y = (1 - d_a * d_a / 2) * cos(d_a) - d_a * sin(d_a) / 2;
 			}
 
-			if (view_answer == 1 || view_answer == 2 || view_answer == 4) {
+			if (i_view_answer == 1 || i_view_answer == 2 || i_view_answer == 4) {
 				for (int k = 1; k <= i_n; ++k) {         // Internal 'for' for sigma Σ. k = 1, because, when k = 0 first member d_m = 1
 					d_s += d_m;
 
@@ -494,11 +490,11 @@ static void lab_3() {
 				}
 			}
 		
-			if (view_answer == 1 || view_answer == 4) {
+			if (i_view_answer == 1 || i_view_answer == 4) {
 				d_fabs = fabs(d_y - d_s);
 			}
 
-			Out_Rez_lab_3(d_a, d_y, d_s, d_fabs, view_answer);
+			Out_Rez_lab_3(d_a, d_y, d_s, d_fabs, i_view_answer);
 		}
 
 		USER_CONTINUE_USAGE()
@@ -512,14 +508,14 @@ static void lab_3() {
 static void lab_5() {
 	while (1) {
 		int i_array_size{};
-		if (!input_handler("\nInput size of array (or quit[q]) :\n", i_array_size)) {
+		if (!input_handler("\nInput size of array (from 1 to 10000) (or quit[q]) :\n", i_array_size)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		if (i_array_size > 10000 || i_array_size <= 0) {
-			printf("\nInvalid size. Supported size is from 1 to 10000");
+			printf("\nInvalid size. Input with supported size.\n\n");
 			continue;
 		}
 	
@@ -527,11 +523,11 @@ static void lab_5() {
 			"Manually [1]\n"
 			"Randomly [2]");
 
-		bool manual_input = false;
+		bool b_manual_input = false;
 		while (2) {
 			switch (_getch()) {
 			case '1':
-				manual_input = true;
+				b_manual_input = true;
 				break;
 
 			case '2':
@@ -543,17 +539,16 @@ static void lab_5() {
 				return;
 
 			default:
-				printf("\nNot valid input.");
 				continue;
 			}
 			break;
 		}
 		system("cls");
 
-		if (manual_input && i_array_size > 12) {
+		if (b_manual_input && i_array_size > 12) {
 			printf("\nYou want to enter %d element(s) manually? [Y/N]\n", i_array_size);
 
-			if (!YN()) manual_input = false;
+			if (!YN()) b_manual_input = false;
 		}
 		system("cls");
 				
@@ -561,14 +556,16 @@ static void lab_5() {
 		if (p_i_array == NULL) {
 			system("cls");
 
-			printf("Internal error occurred. Try again.\n");
+			Sleep(400);
+
+			printf("\nInternal error occurred. Try again.\n\n");
 
 			Sleep(1000);
 
 			continue;
 		}
 
-		if (!manual_input) {
+		if (!b_manual_input) {
 			generate_seed();
 
 			puts("\nGenerating...");
@@ -592,9 +589,10 @@ static void lab_5() {
 			while (iter < i_array_size) {
 				system("cls");
 
-				printf("\nPrefer Enter after every member."
-					   "\nWill clear all input after mistaken number, if input with Space."
-					   "\n\nInput array. (or quit [q])\n\n");
+				printf("\nPrefer [Enter] after every member."
+					   "\nWill clear all input after mistaken number, if input with [Space]."
+					   "\nRange is +-200000"
+					   "\n\n\nInput array. (or quit [q])\n\n");
 
 				if (operation_code != -1) {
 					for (int j = 0; j < iter; ++j) {
@@ -613,7 +611,7 @@ static void lab_5() {
 					(void)buffer_clean();
 
 					if (operation_code == 1) {
-						printf("\nNot valid element size. Valid size is +-200000");
+						printf("\nNot valid element size. Input with valid size.");
 					}
 
 					while (1) {
@@ -665,15 +663,15 @@ static void lab_5() {
 		printf(".");
 		system("cls");
 		
-		bool has_positive = false;
-		bool has_afters = false;
+		bool b_has_positive = false;
+		bool b_has_afters = false;
 		int i_sum_from_positive{};
 		for (int i = 0; i < i_array_size; ++i) {
 			if (p_i_array[i] > 0) {
-				has_positive = true;
+				b_has_positive = true;
 
 				if (i + 1 < i_array_size) {
-					has_afters = true;
+					b_has_afters = true;
 
 					for (++i; i < i_array_size; ++i) {
 						i_sum_from_positive += p_i_array[i];
@@ -682,10 +680,10 @@ static void lab_5() {
 			}
 		}
 
-		if (!has_positive) {
+		if (!b_has_positive) {
 			puts("\nArray has not got positive numbers.\n");
 		}
-		else if (!has_afters && has_positive) {
+		else if (!b_has_afters && b_has_positive) {
 			puts("\nPositive number is the last element in the array\n");
 		}
 		else {
@@ -790,33 +788,33 @@ static void lab_6() {
 		}
 		system("cls");
 
-		bool memory_inicialize_fail = false;
+		bool b_memory_inicialize_fail = false;
 
-		int** p_i_matrix = (int**)calloc(i_matrix_size, sizeof(int*)); // Creating pointer to array of pointers
+		int** p_i_matrix = (int**)calloc(i_matrix_size, sizeof(int*));     // Creating pointer to array of pointers
 		
-		if (p_i_matrix == NULL) memory_inicialize_fail = true;
+		if (p_i_matrix == NULL) b_memory_inicialize_fail = true;
 
 		int i_bad_row{};
-		if (!memory_inicialize_fail) {
+		if (!b_memory_inicialize_fail) {
 			for (int i = 0; i < i_matrix_size; ++i) {
 				p_i_matrix[i] = (int*)calloc(i_matrix_size, sizeof(int));  // Giving every pointer in array of pointers it's own pointer on start of array
 				if (p_i_matrix[i] == NULL) {
 					i_bad_row = i;
-					memory_inicialize_fail = true;
+					b_memory_inicialize_fail = true;
 					break;
 				}
 			}
 		}
 
 		char* ch_matrix_container{};
-		if (!memory_inicialize_fail) {
+		if (!b_memory_inicialize_fail) {
 			ch_matrix_container = (char*)calloc(4 * i_matrix_size * i_matrix_size + i_matrix_size * 2 - 1, sizeof(char));
 			// Four bytes for every number, two new lines on after every line, except last, one \0
 
-			if (ch_matrix_container == NULL) memory_inicialize_fail = true;
+			if (ch_matrix_container == NULL) b_memory_inicialize_fail = true;
 		}
 
-		if (memory_inicialize_fail) {
+		if (b_memory_inicialize_fail) {
 			if (p_i_matrix != NULL) {
 				for (int i = 0; i < i_bad_row; ++i) {
 					free(p_i_matrix[i]);
@@ -827,7 +825,7 @@ static void lab_6() {
 
 			system("cls");
 
-			printf("Internal error occurred. Try again.\n");
+			printf("\nInternal error occurred. Try again.\n");
 
 			Sleep(1000);
 
@@ -853,12 +851,12 @@ static void lab_6() {
 					} while (!zero_in_random && p_i_matrix[i][j] == 0);
 
 					put_element_into_container(ch_matrix_container, p_i_matrix[i][j], i_matrix_size, container_index);
-					container_index += 3;
-					ch_matrix_container[container_index] = ' ';
+					container_index += 3;                       // Every element width is four positions
+					ch_matrix_container[container_index] = ' '; // This is fourth
 					++container_index;
 					printf("%3d ", p_i_matrix[i][j]);
 				}
-				if (i != i_matrix_size - 1) {
+				if (i != i_matrix_size - 1) {                   // For the last row
 					ch_matrix_container[container_index] = '\n';
 					ch_matrix_container[container_index + 1] = '\n';
 					container_index += 2;
@@ -884,9 +882,9 @@ static void lab_6() {
 						return;
 					}
 
-					printf("\nPrefer Enter after every member."
-						   "\nWill clear all input after mistaken number, if input with Space."
-						   "\n\nInput array. (or quit [q])\n\n");
+					printf("\nPrefer [Enter] after every member."
+						   "\nWill clear all input after mistaken number, if input with [Space]."
+						   "\n\nInput matrix. (or quit [q])\n\n");
 
 					if (operation_code != -1) {
 						for (int i = 0; i <= row; ++i) {
@@ -975,56 +973,290 @@ static void lab_6() {
 // END
 
 
-// Main -- menu
-int main() {
+// Laboratory work 7, variant 2 and 12
+
+#define IS_CHAR_BINARY(ch_s) (ch_s == '0' || ch_s == '1')
+#define IS_CHAR_SPLITTER(ch_s) (ch_s == '\n' || ch_s == ' ')
+#define IS_CHAR_PUNCTUATION(ch_s) (ch_s == '.' || ch_s == ',' || ch_s == ';' || ch_s == ':' || ch_s == '-' || ch_s == '—' || ch_s == '?' || ch_s == '!' || ch_s == '	')
+
+static void lab_7() {
 	while (1) {
-		puts("\nlab 1(3)  [1]\n"
-			   "lab 2(12) [2]\n"
-			   "lab 3(12) [3]\n"
-			   "lab 5(12) [5]\n"
-			   "lab 6(12) [6]\n"
-			   "exit      [esc]\n");
+		puts("What do you want to check? (or quit [q])\n\n"
+			"Shortest binary code group   [1]\n"
+			"Word information by position [2]");
 
-		switch (_getch()) {
-		case '1':
-			system("cls");
-			lab_1();
-			break;
-
-		case '2':
-			system("cls");
-			lab_2();
-			break;
-
-		case '3':
-			system("cls");
-			lab_3();
-			break;
-
-		case '5':
-			system("cls");
-			lab_5();
-			break;
-
-		case '6':
-			system("cls");
-			lab_6();
-			break;
-
-		case 27:
-			system("cls");
-			puts("\nDo you want to exit? [Y/N]");
-
-			if (YN()) exit(0);
-
-			else {
+		char i_variant{};
+		while (2) {
+			switch (i_variant = _getch()) {
+			case '1':
+			case '2':
 				system("cls");
+				break;
+
+			case 'q':
+			case 'Q':
+				system("cls");
+				return;
+
+			default: continue;
+			}
+			break;
+		}
+
+		while (2) {
+			if (i_variant == '1') {
+				printf("\nPut only [Ctrl + Z] on new line and then [Enter] to end input.\nInput only [q] to quit.\n\n\nInput your binary code:\n\n");
+			}
+			else {
+				printf("\nPut only [Ctrl + Z] on new line and then [Enter] to end input.\nInput only [q] to quit.\n\n\nWrite a poem:\n\n");
+			}
+
+			bool b_memory_inicialize_fail = false;
+
+			size_t sz_user_text_size{ 1 }; // 1 cell for zero bit
+			char* p_ch_user_text = (char*)calloc(sz_user_text_size, sizeof(char));
+			if (p_ch_user_text == NULL) b_memory_inicialize_fail = true;
+
+			if (b_memory_inicialize_fail) {
+				system("cls");
+
+				printf("\nInternal error occurred. Try again.\n");
+
+				Sleep(1000);
+
 				continue;
 			}
 
-		default:
-			system("cls");
-			printf("\nNot valid input.");
+			int operation_code = string_input_handler(&p_ch_user_text, sz_user_text_size, sizeof(char));
+
+			if (sz_user_text_size == 1) {
+				printf("\nYou need to input something.");
+				Sleep(1000);
+				continue;
+			}
+			else if ((p_ch_user_text[0] == 'q' || p_ch_user_text[0] == 'Q') && sz_user_text_size == 3) return;
+
+			if (operation_code != 0) {
+				free(p_ch_user_text);
+				b_memory_inicialize_fail = true;
+			}
+
+			// Variant 2
+			if (i_variant == '1') {
+
+				int i_size_of_shortest{ -1 };                // Minus one shows, that it is firts etaration, and puts first block as shortest
+				int i_size_of_current{ 0 };
+				int i_shortest_position{};
+
+				bool b_is_binary = true;
+				bool b_has_binary{};
+
+				for (int i = 0; i < strlen(p_ch_user_text); ++i) {
+					if (!IS_CHAR_BINARY(p_ch_user_text[i]) && !IS_CHAR_SPLITTER(p_ch_user_text[i])) {
+						b_is_binary = false;
+						b_has_binary = false;
+						break;
+					}
+
+					if (IS_CHAR_BINARY(p_ch_user_text[i])) { // Iterating and searching for 1 or 0
+						int i_block_start = i;
+						b_has_binary = true;
+
+
+						i_size_of_current = 0;
+
+						                                     // Then counting current size and moving 'i' to the next block
+						for (i; !IS_CHAR_SPLITTER(p_ch_user_text[i]); ++i, ++i_size_of_current);
+
+						if (i_size_of_shortest == -1 || i_size_of_current < i_size_of_shortest) {
+							i_shortest_position = i_block_start;
+
+							i_size_of_shortest = i_size_of_current;
+						}
+					}
+				}
+
+				if (!b_is_binary) {
+					free(p_ch_user_text);
+					system("cls");
+					Sleep(400);
+					printf("\nIt is not binary code. Input again.\n\n");
+					Sleep(1500);
+					continue;
+				}
+				else if (!b_has_binary) {
+					system("cls");
+					Sleep(400);
+					printf("\nNo binary code. Input again.\n\n");
+					Sleep(1500);
+					continue;
+				}
+
+				system("cls");
+				printf("\nSearching for shortest block...");
+				Sleep(1000);
+				system("cls");
+
+				printf("\nIn your binary code:\n%s\nThe shortest binary block is: ", p_ch_user_text);
+
+				for (int i = i_shortest_position; i <= i_shortest_position + i_size_of_shortest; ++i) {
+					printf("%c", p_ch_user_text[i]);
+				}
+
+				break;
+			}
+			// Variant 12
+			else {
+				system("cls");
+				int i_position_to_dispaly{};
+				while (3) {
+					if (!input_handler("\nInput position in poem (from 1 to %d):\n", i_position_to_dispaly, (int)sz_user_text_size - 2)) {
+						system("cls");
+						return;
+					}
+					if (i_position_to_dispaly <= 0 || i_position_to_dispaly > sz_user_text_size - 2) {
+						system("cls");
+						printf("Not valid position. Input valid position.\n\n");
+						continue;
+					}
+					break;
+				}
+
+
+				int i_position = i_position_to_dispaly - 1;
+
+				int i_word_count{ 0 };
+				for (int i = 0; i <= i_position; ++i) { // Counting words. Every "first step" on the word counts one word
+					if (!IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i])){
+						++i_word_count;
+						                                // Moving 'i' to the next splitter or end of the text
+						while (p_ch_user_text[i] != '\0' && !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i])) ++i;
+					}
+				}
+
+				bool b_position_is_on_word = !IS_CHAR_SPLITTER(p_ch_user_text[i_position]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i_position]);
+
+				                                        // Moving position to the end of the word
+				while (i_position >= 0 && (IS_CHAR_SPLITTER(p_ch_user_text[i_position]) || IS_CHAR_PUNCTUATION(p_ch_user_text[i_position]))) {
+					--i_position;
+				}
+
+				int i_word_start = i_position;          // Calculating, where word starts and wether it in start of text 
+				for (i_word_start; i_word_start >= 0 && !IS_CHAR_SPLITTER(p_ch_user_text[i_word_start]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i_word_start]); --i_word_start);
+				++i_word_start;
+
+				system("cls");
+				printf("\nSearching for word...");
+				Sleep(1000);
+				system("cls");
+				
+				printf("\n-----------------------------------\n%s-----------------------------------", p_ch_user_text);
+
+				printf("\n\nHere is information for position %d:\n\n", i_position_to_dispaly);
+
+				printf("Position:     "); b_position_is_on_word ? printf("on word\n") : printf("not on word\n");
+				printf("Word:         ");
+				for (int i = i_word_start; !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i]); ++i) {
+					printf("%c", p_ch_user_text[i]);
+				}
+				printf("\n");
+				printf("Word index:   %d", i_word_count);
+
+				break;
+			}
+			free(p_ch_user_text);
+		}
+		USER_CONTINUE_USAGE()
+	}
+}
+// END
+
+
+
+// Main -- menu
+int main() {
+	while (1) {
+		printf(
+			"      __       _                     _                   \n"
+			"     / /  __ _| |__   ___  _ __ __ _| |_ ___  _ __ _   _       Kalenkovich Daniil Alekseevich\n"
+			"    / /  / _` | '_ \\ / _ \\| '__/ _` | __/ _ \\| '__| | | |\n"
+			"   / /__| (_| | |_) | (_) | | | (_| | || (_) | |  | |_| |      568405\n"
+			"   \\____/\\__,_|_.__/ \\___/|_|  \\__,_|\\__\\___/|_|   \\__, |\n"
+			"           __    __           _                    |___/\n"
+			"          / / /\\ \\ \\___  _ __| | _____                   \n"
+			"          \\ \\/  \\/ / _ \\| '__| |/ / __|                  \n"
+			"           \\  /\\  / (_) | |  |   <\\__ \\                  \n"
+			"            \\/  \\/ \\___/|_|  |_|\\_\\___/                  \n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"Linear calculations                  [1]                Strings usage               [7]\n"
+			"\n"
+			"Branching algorithms                 [2]  Arrays   [5]  Structure handling in files [8]\n"
+			"\n"
+			"Cycled algorithms and user functions [3]  Matrixes [6]  Plotting functions          [9]\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"\n"
+			"Exit [Esc]"
+		);
+
+		char keypress{};
+
+		while (2) {
+			switch (_getch()) {
+			case '1':
+				system("cls");
+				lab_1();
+				break;
+
+			case '2':
+				system("cls");
+				lab_2();
+				break;
+
+			case '3':
+				system("cls");
+				lab_3();
+				break;
+
+			case '5':
+				system("cls");
+				lab_5();
+				break;
+
+			case '6':
+				system("cls");
+				lab_6();
+				break;
+
+			case '7':
+				system("cls");
+				lab_7();
+				break;
+
+			case 27:
+				printf("     Press [Esc] again to exit.");
+
+				keypress = _getch();
+				if (keypress == 27) exit(0);
+
+				else {
+					system("cls");
+					break;
+				}
+
+			default: continue;
+			}
+			break;
 		}
 	}
 }

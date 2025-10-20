@@ -65,7 +65,7 @@ static unsigned int* seed_storage() {          // Pointer returns address of see
 
 void generate_seed() {
 	unsigned int* p_set_seed = seed_storage(); // Setting pointer on storage cell
-	*p_set_seed = GetTickCount64();            // Writing value by this address
+	*p_set_seed = (unsigned int)GetTickCount64();            // Writing value by this address
 }
 
 int my_random(int max_decade, int minus_chance) {

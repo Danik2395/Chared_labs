@@ -42,9 +42,7 @@ bool YN() {
 		case 'N':
 			return false;
 
-		default:
-			printf("\nNot valid input.\n");
-			//continue;
+		default: continue;
 		}
 	}
 }
