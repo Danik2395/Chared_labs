@@ -17,13 +17,14 @@
 #define FORMAT_F(p) (*p == '%' && *(p + 1) == 'f')
 #define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
 
-
+// Input checker
 bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
 
 // Numeric input handler
 // Writes user input into variable
+// Support %d %f and %% formats in ch_message. Put corresponding arguments in '...'
 template <class T>
-bool input_handler(const char* ch_message, T& T_input_variable, ...) {
+bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 	char ch_input[17];
 	va_list argument;
 	

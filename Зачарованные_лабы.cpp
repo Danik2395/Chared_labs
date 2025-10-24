@@ -19,19 +19,22 @@
 #include <string.h>
 using namespace std;
 
+#define IS_CHAR_BINARY(ch_c) (ch_c == '0' || ch_c == '1')
+#define IS_CHAR_SPLITTER(ch_c) (ch_c == '\n' || ch_c == ' ' || ch_c == '\t')
+
 
 // Laboratory work 1, variant 3
 static void lab_1() {
 	while (1) {
 		double d_x{};
-		if (!input_handler("\nInput X (or quit [q]):\n", d_x)) {
+		if (!number_input_handler("\nInput X (or quit [q]):\n", d_x)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_y{};
-		if (!input_handler("\nInput Y (or quit [q]):\n", d_y)) {
+		if (!number_input_handler("\nInput Y (or quit [q]):\n", d_y)) {
 			system("cls");
 			break;
 		}
@@ -71,7 +74,7 @@ static void lab_1() {
 
 		double d_z{};
 		while (2) {
-			if (!input_handler("\nInput Z (or quit [q]):\n", d_z)) {
+			if (!number_input_handler("\nInput Z (or quit [q]):\n", d_z)) {
 				system("cls");
 				return;
 			}
@@ -139,7 +142,7 @@ static void lab_2() {
 	while (1) {
 		double d_z{}, d_x{};
 		const char* ch_x_shw = "";
-		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\n\nInput Z (or quit [q]):\n", d_z)) {
+		if (!number_input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\n\nInput Z (or quit [q]):\n", d_z)) {
 			system("cls");
 			break;
 		}
@@ -241,14 +244,14 @@ static void lab_2() {
 		system("cls");*/
 
 		double d_a{};
-		if (!input_handler("\nInput A (or quit [q]):\n", d_a)) {
+		if (!number_input_handler("\nInput A (or quit [q]):\n", d_a)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_c{};
-		if (!input_handler("\nInput C (or quit [q]):\n", d_c)) {
+		if (!number_input_handler("\nInput C (or quit [q]):\n", d_c)) {
 			system("cls");
 			break;
 		}
@@ -295,14 +298,14 @@ static void lab_2() {
 
 // Laboratory work 3, variant 12 (and fourth also)
 
-static void Out_Rez_lab_3(double d_x, double d_y, double d_s, double d_fabs, int i_view_answer) {
+static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, int i_view_answer) {
 	switch (i_view_answer) {
 	case 1: // All
-		printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_s, d_fabs);
+		printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_sum, d_fabs);
 		break;
 
 	case 2: // S(X)
-		printf("%7.3f   %11.5f\n\n", d_x, d_s);
+		printf("%7.3f   %11.5f\n\n", d_x, d_sum);
 		break;
 
 	case 3: // Y(X)
@@ -319,26 +322,26 @@ static void Out_Rez_lab_3(double d_x, double d_y, double d_s, double d_fabs, int
 static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (!input_handler("\nInput A (in range +-1000) (or quit[q]) :\n", d_a)) {
+		if (!number_input_handler("\nInput A (in range +-20) (or quit[q]) :\n", d_a)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
-		if (d_a > 1000 || d_a < -1000) {
+		if (d_a > 20 || d_a < -20) {
 			printf("For better results A and B are limited\nTry again with valid range.\n\n");
 			continue;
 		}
 		
 		double d_b{};
 		while (2) {
-			system("cls");
-			if (!input_handler("\nInput B (in range +-1000) (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
+			if (!number_input_handler("\nInput B (in range +-20) (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
 				system("cls");
 				return;
 			}
 
-			if (d_b > 1000 || d_b < -1000) {
+			if (d_b > 20 || d_b < -20) {
+				system("cls");
 				printf("For better results A and B are limited\nTry again with valid range.\n\n");
 				continue;
 			}
@@ -346,7 +349,7 @@ static void lab_3() {
 		}
 		system("cls");
 
-		if (is_near_zero(my_fabs(d_b - d_a))) {             // If a = b, error
+		if (is_near_zero(my_fabs(d_b - d_a))) {                 // If a = b, error
 			system("cls");
 			Sleep(400);
 			printf("\nNot valid range. There must be a gap between A and B.");
@@ -356,7 +359,7 @@ static void lab_3() {
 
 		double d_h{};
 		while (2) {
-			if (!input_handler("\nInput H (or quit[q]) :\n", d_h)) {
+			if (!number_input_handler("\nInput H (or quit[q]) :\n", d_h)) {
 				system("cls");
 				return;
 			}
@@ -370,7 +373,7 @@ static void lab_3() {
 		}
 		system("cls");
 
-		double d_fraction = my_fmod(d_b - d_a, d_h);        // If steps is mot whole number, error
+		double d_fraction = my_fmod(d_b - d_a, d_h);            // If steps is mot whole number, error
 		if (d_fraction != my_NaN && my_fabs(d_fraction) > 0) {
 			system("cls");
 			Sleep(400);
@@ -389,10 +392,10 @@ static void lab_3() {
 		int i_n{};
 		while (2) {
 			if (my_fabs(d_a) >= 1 || my_fabs(d_b) >= 4) {
-				printf("\nFor better results N > 7");
+				printf("\nFor better results 10 < N <= 40");
 			}
 
-			if (!input_handler("\nInput N (or quit[q]) :\n", i_n)) {
+			if (!number_input_handler("\nInput N from 1 to 20 (or quit[q]) :\n", i_n)) {
 				system("cls");
 				return;
 			}
@@ -401,114 +404,147 @@ static void lab_3() {
 				printf("\nNot valid number of members. N can not be zero or below it.\n\n");
 				continue;
 			}
-			break;
-		}
-		system("cls");
-
-		printf("\nS(X), Y(X) or |Y(X) - S(X)| for every X from A to B with H step till N member.\n\n"
-			   "Your A = %10.5f\n"
-			   "Your B = %10.5f\n"
-			   "Your H = %10.5f\n"
-			   "Your N = %4d\n\n\n"
-			   "What to calculate? (or quit [q])\n\n"
-			   "All           [1]\n"
-			   "S(X)          [2]\n"
-			   "Y(X)          [3]\n"
-			   "|Y(X) - S(X)| [4]\n", d_a, d_b, d_h, i_n);
-
-		int i_view_answer{};
-		const char* text_for_answer = "";
-		const char* text_for_table = "";
-		while(2) {
-			switch (_getch()) {
-			case '1': // All
-				i_view_answer = 1;
-				text_for_answer = "S(X), Y(X) and |Y(X) - S(X)|";
-				text_for_table = "   X           Y(X)          S(X)          |Y(X) - S(X)|";
-				break;
-
-			case '2': // S(X)
-				i_view_answer = 2;
-				text_for_answer = "S(X)";
-				text_for_table = "   X           S(X)";
-				break;
-
-			case '3': // Y(X)
-				i_view_answer = 3;
-				text_for_answer = "Y(X)";
-				text_for_table = "   X           Y(X)";
-				break;
-
-			case '4':  // |Y(X) - S(X)|
-				i_view_answer = 4;
-				text_for_answer = "|Y(X) - S(X)|";
-				text_for_table = "   X           |Y(X) - S(X)|";
-				break;
-
-			case 'q':
-			case 'Q':
+			else if (i_n > 40) {
 				system("cls");
-				return;
-
-			default:
+				printf("\nNot valid number of members. For better results N is limited.\n\n");
 				continue;
 			}
 			break;
 		}
-
 		system("cls");
-		Sleep(700);
-		printf(".");
-		Sleep(200);
-		printf(".");
-		Sleep(100);
-		printf(".");
-		system("cls");
-
-		printf("\nHere is %s for every X from A to B with H step till N member\n\n"
-			"A = %10.5f\n"
-			"B = %10.5f\n"
-			"H = %10.5f\n"
-			"N = %4d\n\n\n", text_for_answer, d_a, d_b, d_h, i_n);
-
-		printf("%s\n\n", text_for_table);
-
-		double steps = (d_b - d_a) / d_h + 1;
-		for (int i = 1; i <= steps; ++i, d_a += d_h) {
-			double d_m{ 1 }, d_s{}, d_y{}, d_fabs{}; // d_fabs{} for |Y(X) - S(x)|
-
-			if (i_view_answer == 1 || i_view_answer == 3 || i_view_answer == 4) {
-				d_y = (1 - d_a * d_a / 2) * cos(d_a) - d_a * sin(d_a) / 2;
-			}
-
-			if (i_view_answer == 1 || i_view_answer == 2 || i_view_answer == 4) {
-				for (int k = 1; k <= i_n; ++k) {         // Internal 'for' for sigma Σ. k = 1, because, when k = 0 first member d_m = 1
-					d_s += d_m;
-
-					// M_n = -1 * X^2 * (2 * K^2 + 1) / (4 * K^2 - 2 * K) / (2 * K^2 - 4 * K + 3) * M_n-1
-					d_m *= -1 * d_a * d_a * (2 * k * k + 1) / (4 * k * k - 2 * k) / (2 * k * k - 4 * k + 3);
-				}
-			}
 		
-			if (i_view_answer == 1 || i_view_answer == 4) {
-				d_fabs = fabs(d_y - d_s);
+		int i_calculation_variant{ 0 };
+		bool b_first_input = true;
+		while (2) {                                             // Scope to calculate different thing
+			if (b_first_input) {
+				 printf("\nS(X), Y(X) or |Y(X) - S(X)| for every X from A to B with H step till N member.\n\n"
+					    "Your A = %10.5f\n"
+					    "Your B = %10.5f\n"
+					    "Your H = %10.5f\n"
+					    "Your N = %4d\n\n\n"
+					    "What to calculate? (or quit [q])\n\n", d_a, d_b, d_h, i_n);
+			}
+			else printf("\nCalculate something else?\n\n");
+
+				 printf("All           [1]\n"
+				 	    "S(X)          [2]\n"
+					    "Y(X)          [3]\n"
+					    "|Y(X) - S(X)| [4]\n");
+			if(!b_first_input){
+				 puts("\n\nWant to begin again? [Y/N]");
 			}
 
-			Out_Rez_lab_3(d_a, d_y, d_s, d_fabs, i_view_answer);
-		}
+			int i_view_answer{};
+			const char* text_for_answer = "";
+			const char* text_for_table = "";
+			bool b_start_again_mark{};
+			while (3) {
+				switch (_getch()) {
+				case '1': // All
+					i_view_answer = 1;
+					text_for_answer = "S(X), Y(X) and |Y(X) - S(X)|";
+					text_for_table = "   X           Y(X)          S(X)          |Y(X) - S(X)|";
+					break;
 
-		USER_CONTINUE_USAGE()
+				case '2': // S(X)
+					i_view_answer = 2;
+					text_for_answer = "S(X)";
+					text_for_table = "   X           S(X)";
+					break;
+
+				case '3': // Y(X)
+					i_view_answer = 3;
+					text_for_answer = "Y(X)";
+					text_for_table = "   X           Y(X)";
+					break;
+
+				case '4':  // |Y(X) - S(X)|
+					i_view_answer = 4;
+					text_for_answer = "|Y(X) - S(X)|";
+					text_for_table = "   X           |Y(X) - S(X)|";
+					break;
+
+				case 'q':
+				case 'Q':
+					if (b_first_input) {
+						system("cls");
+						return;
+					}
+					else continue;
+
+				case 'y':
+				case 'Y':
+					if (!b_first_input) b_start_again_mark = true;
+					else continue;
+					system("cls");
+					break;
+
+				case 'n':
+				case 'N':
+					if (!b_first_input) return;
+					else continue;
+
+				default:
+					continue;
+				}
+				break;
+			}
+			b_first_input = false;
+			if (b_start_again_mark) break;
+
+			system("cls");
+			Sleep(700);
+			printf(".");
+			Sleep(200);
+			printf(".");
+			Sleep(100);
+			printf(".");
+			system("cls");
+
+			printf("\nHere is %s for every X from A to B with H step till N member\n\n"
+				"A = %10.5f\n"
+				"B = %10.5f\n"
+				"H = %10.5f\n"
+				"N = %4d\n\n\n", text_for_answer, d_a, d_b, d_h, i_n);
+
+			printf("%s\n\n", text_for_table);
+
+			double steps = (d_b - d_a) / d_h + 1;
+			double d_x = d_a;
+			for (int i = 1; i <= steps; ++i, d_x += d_h) {
+				double d_member{ 1 }, d_sum{}, d_y{}, d_fabs{}; // d_fabs{} for |Y(X) - S(x)|
+
+				if (i_view_answer == 1 || i_view_answer == 3 || i_view_answer == 4) {
+					d_y = (1 - d_x * d_x / 2) * cos(d_x) - d_x * sin(d_x) / 2;
+				}
+
+				if (i_view_answer == 1 || i_view_answer == 2 || i_view_answer == 4) {
+					for (int k = 1; k <= i_n; ++k) {         // Internal 'for' for sigma Σ. k = 1, because, when k = 0 first member d_m = 1
+						d_sum += d_member;
+
+						// M_n = -1 * X^2 * (2 * K^2 + 1) / (4 * K^2 - 2 * K) / (2 * K^2 - 4 * K + 3) * M_n-1
+						d_member *= -1 * d_x * d_x * (2 * k * k + 1) / (4 * k * k - 2 * k) / (2 * k * k - 4 * k + 3);
+					}
+				}
+
+				if (i_view_answer == 1 || i_view_answer == 4) {
+					d_fabs = fabs(d_y - d_sum);
+				}
+
+				Out_Rez_lab_3(d_x, d_y, d_sum, d_fabs, i_view_answer);
+			}
+		}
 	}
 }
 // END
 
 
 
-// Laboratory work 5, variant 12
+// Laboratory work 5, variant 5 and 12
 static void lab_5() {
 	while (1) {
 		int i_array_size{};
-		if (!input_handler("\nInput size of array (from 1 to 10000) (or quit[q]) :\n", i_array_size)) {
+		if (!number_input_handler("\nInput size of array (from 1 to 10000) (or quit[q]) :\n", i_array_size)) {
 			system("cls");
 			break;
 		}
@@ -530,16 +566,14 @@ static void lab_5() {
 				b_manual_input = true;
 				break;
 
-			case '2':
-				break;
+			case '2': break;
 
 			case 'q':
 			case 'Q':
 				system("cls");
 				return;
 
-			default:
-				continue;
+			default: continue;
 			}
 			break;
 		}
@@ -565,6 +599,7 @@ static void lab_5() {
 			continue;
 		}
 
+
 		if (!b_manual_input) {
 			generate_seed();
 
@@ -585,16 +620,16 @@ static void lab_5() {
 		}
 		else {
 			int iter{0};
-			int operation_code{-1};
+			int operation_code{-1};                                    // For array_input_handler errors
 			while (iter < i_array_size) {
 				system("cls");
 
 				printf("\nPrefer [Enter] after every member."
 					   "\nWill clear all input after mistaken number, if input with [Space]."
-					   "\nRange is +-200000"
+					   "\nRange is +-200000."
 					   "\n\n\nInput array. (or quit [q])\n\n");
 
-				if (operation_code != -1) {
+				if (operation_code != -1) {                            // Doesn't show anything on first iteration
 					for (int j = 0; j < iter; ++j) {
 						printf("%d ", p_i_array[j]);
 					}
@@ -602,44 +637,35 @@ static void lab_5() {
 
 				operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
 
-				if (operation_code == 1) {
+				if (operation_code == 1) {                             // Quit
 					system("cls");
 					return;
 				}
 
-				else if (operation_code == 1 || operation_code == 3) {
+				else if (operation_code == 2 || operation_code == 3) { // If not valid size or incorrect input, entering "correcting" mode
 					(void)buffer_clean();
 
-					if (operation_code == 1) {
-						printf("\nNot valid element size. Input with valid size.");
+					if (operation_code == 2) {
+						printf("\nNot valid element range. Input in valid range.");
 					}
 
-					while (1) {
-						char ch_input[17];
-
+					while (operation_code == 2 || operation_code == 3) {
 						printf("\nInput from %d element again:\n", iter + 1);
-							
-						scanf_s("%16s", ch_input, 17);
-			
-						if (quit(ch_input)) return;
-			
-						if (is_correct_input(ch_input, 0) && my_abs(atoi(ch_input)) <= 200000) {
-							p_i_array[iter] = atoi(ch_input);
-							system("cls");
-							break;
-						}
-						else {
-							(void)buffer_clean();
-							continue;
-						}
+						
+						operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
+
+						(void)buffer_clean();                          // If number isn't valid again "eats" buffer to not to just skip invalid input
 					}
 				}
 				else ++iter;
 			}
+			(void)buffer_clean();
 		}
 		system("cls");
 
-		puts("Calculate sum of elements in array from first positive member? [Y/N]\n");
+		puts("What to calculate? (or quit [q])\n\n"
+			 "Sum of elements in array from first positive member [1]\n"
+			 "Sum of elements between first and last zeros        [2]\n\n");
 
 		printf("[");
 		for (int i = 0; i < i_array_size - 1; ++i) {
@@ -648,9 +674,18 @@ static void lab_5() {
 		printf("%d", p_i_array[i_array_size - 1]);
 		printf("]\n");
 
-		if (!YN()) {
-			system("cls");
-			free(p_i_array);
+		int i_variant{};
+		while (2) {
+			switch (i_variant = _getch()) {
+			case '1':
+			case '2':
+				break;
+			case 'q':
+			case 'Q':
+				return;
+
+			default: continue;
+			}
 			break;
 		}
 		
@@ -663,40 +698,106 @@ static void lab_5() {
 		printf(".");
 		system("cls");
 		
-		bool b_has_positive = false;
-		bool b_has_afters = false;
-		int i_sum_from_positive{};
-		for (int i = 0; i < i_array_size; ++i) {
-			if (p_i_array[i] > 0) {
-				b_has_positive = true;
+		// Variant 12
+		if (i_variant == '1') {
+			bool b_has_positive = false;
+			bool b_has_afters = false;
+			int i_sum_from_positive{};
+			for (int i = 0; i < i_array_size; ++i) {
+				if (p_i_array[i] > 0) {
+					b_has_positive = true;
 
-				if (i + 1 < i_array_size) {
-					b_has_afters = true;
+					if (i + 1 < i_array_size) {
+						b_has_afters = true;
 
-					for (++i; i < i_array_size; ++i) {
-						i_sum_from_positive += p_i_array[i];
+						for (++i; i < i_array_size; ++i) {
+							i_sum_from_positive += p_i_array[i];
+						}
 					}
 				}
 			}
-		}
 
-		if (!b_has_positive) {
-			puts("\nArray has not got positive numbers.\n");
-		}
-		else if (!b_has_afters && b_has_positive) {
-			puts("\nPositive number is the last element in the array\n");
-		}
-		else {
-			puts("Sum of elements in the array from first positive member.\n");
-
-			printf("[");
-			for (int i = 0; i < i_array_size - 1; ++i) {
-				printf("%d, ", p_i_array[i]);
+			if (!b_has_positive) {
+				puts("\nArray has not got positive numbers.\n");
 			}
-			printf("%d", p_i_array[i_array_size - 1]);
-			printf("]\n");
+			else if (!b_has_afters && b_has_positive) {
+				puts("\nPositive number is the last element in the array\n");
+			}
+			else {
+				puts("\nSum of elements in the array from first positive member.\n");
 
-			printf("\nHere is your answer: %d", i_sum_from_positive);
+				printf("[");
+				for (int i = 0; i < i_array_size - 1; ++i) {
+					printf("%d, ", p_i_array[i]);
+				}
+				printf("%d", p_i_array[i_array_size - 1]);
+				printf("]\n");
+
+				printf("\nHere is your answer: %d", i_sum_from_positive);
+			}
+		}
+		// Variant 2
+		else {
+			int i_first_zero_position{};
+			int i_last_zero_position{};
+
+			bool b_is_zero_in_array{};
+			bool b_one_zero_in_array = false;
+			bool b_space_between_zeros = true;
+
+			do {                                              // Scope to catch exceptions
+				for (int i = 0; i < i_array_size; ++i) {      // Searching for the first zero
+					if (p_i_array[i] == 0) {
+						b_is_zero_in_array = true;
+						i_first_zero_position = i;
+						break;
+					}
+				}
+				if (!b_is_zero_in_array) break;
+
+				for (int i = i_array_size - 1; i >= 0; --i) { // Searching for the last zero
+					if (p_i_array[i] == 0) {
+						i_last_zero_position = i;
+						break;
+					}
+				}
+				if (i_first_zero_position == i_last_zero_position) {
+					b_one_zero_in_array = true;
+					break;
+				}
+				else if (i_last_zero_position == i_first_zero_position + 1) {
+					b_space_between_zeros = false;
+					break;
+				}
+
+			} while (0);
+
+			if (!b_is_zero_in_array) {
+				puts("\nNo zero elements in the array.");
+			}
+			else if (b_one_zero_in_array) {
+				puts("\nThere is only one zero in the array.");
+			}
+			else if (!b_space_between_zeros) {
+				puts("\nNo elements between zeros.");
+			}
+			else {
+				puts("\nSum of the elements between two first zero elements in array.\n");
+
+				printf("[");
+				for (int i = 0; i < i_array_size - 1; ++i) {
+					printf("%d, ", p_i_array[i]);
+				}
+				printf("%d", p_i_array[i_array_size - 1]);
+				printf("]\n");
+
+				int i_sum_between_zeros{};
+				for (int i = i_first_zero_position; i <= i_last_zero_position; ++i) {
+					i_sum_between_zeros += p_i_array[i];
+				}
+
+				printf("\nHere is your answer: %d", i_sum_between_zeros);
+			}
 		}
 
 		free(p_i_array);
@@ -708,8 +809,10 @@ static void lab_5() {
 
 
 
-// Laboratory work 6, variant 12
-static void put_element_into_container(char* ch_matrix_container, int i_matrix_element, int i_matrix_size, int container_index) {
+// Laboratory work 6, variant 4 and 12
+
+// Puts element into container in "%3d" format 
+static void put_element_into_container(char* ch_matrix_container, int i_matrix_element, int container_index) {
 	if (i_matrix_element >= 10) {
 		ch_matrix_container[container_index] = ' ';
 		ch_matrix_container[container_index + 1] = i_matrix_element / 10 + '0';
@@ -736,17 +839,67 @@ static void put_element_into_container(char* ch_matrix_container, int i_matrix_e
 
 static void lab_6() {
 	while (1) {
-		int i_matrix_size{};
-		if (!input_handler("\nInput size of square matrix (or quit[q]) :\n", i_matrix_size)) {
-			system("cls");
+		puts("What to calculate?\n\n"
+			 "Product of elements above side diagonal [1]\n"
+			 "Special elements in columns             [2]");
+
+		int i_variant{};
+		while (2) {
+			switch (i_variant = _getch()) {
+			case '1':
+			case '2':
+				system("cls");
+				break;
+
+			case 'q':
+			case 'Q':
+				system("cls");
+				return;
+
+			default: continue;
+			}
 			break;
 		}
-		system("cls");
+		
+		int i_matrix_rows{};
+		int i_matrix_cols{};
+		while (1) {
+			if (i_variant == '1') {
+				if (!number_input_handler("\nInput square matrix size (from 2 to 10) (or quit[q]) :\n", i_matrix_rows)) {
+					system("cls");
+					return;
+				}
+			}
+			else {
+				if (!number_input_handler("\nInput number of matrix rows (from 2 to 10) (or quit[q]) :\n", i_matrix_rows)) {
+					system("cls");
+					return;
+				}
+			}			
+			system("cls");
 
-		if (i_matrix_size > 10 || i_matrix_size < 2) {
-			printf("\nInvalid size. Supported size is from 2 to 10");
-			continue;
+			if (i_matrix_rows > 10 || i_matrix_rows < 2) {
+				printf("\nInvalid size. Input valid size.\n\n");
+				continue;
+			}
+			break;
 		}
+		if (i_variant == '2') {             // Setting arbitrary matrix for variant 4
+			while (2) {
+				if (!number_input_handler("\nInput number of matrix columns (from 2 to 10) (or quit[q]) :\n", i_matrix_cols)) {
+					system("cls");
+					return;
+				}
+				system("cls");
+
+				if (i_matrix_cols > 10 || i_matrix_cols < 2) {
+					printf("\nInvalid size. Input valid size.\n\n");
+					continue;
+				}
+				break;
+			}
+		}
+		else i_matrix_cols = i_matrix_rows; // And if it's variant 12 setting square matrix
 
 		puts("How do you want to create matrix? (or quit [q])\n\n"
 			"Manually               [1]\n"
@@ -761,8 +914,7 @@ static void lab_6() {
 				manual_input = true;
 				break;
 
-			case '2':
-				break;
+			case '2': break;
 
 			case '3':
 				zero_in_random = false;
@@ -773,16 +925,15 @@ static void lab_6() {
 				system("cls");
 				return;
 
-			default:
-				printf("\nNot valid input.");
-				continue;
+			default: continue;
+
 			}
 			break;
 		}
 		system("cls");
 
-		if (manual_input && i_matrix_size > 4) {
-			printf("\nYou want to enter %d rows and cols manually? [Y/N]\n", i_matrix_size);
+		if (manual_input && (i_matrix_cols > 4 || i_matrix_rows > 4)) {
+			printf("\nYou want to enter %d rows and %d cols manually? [Y/N]\n", i_matrix_rows, i_matrix_cols);
 
 			if (!YN()) manual_input = false;
 		}
@@ -790,16 +941,16 @@ static void lab_6() {
 
 		bool b_memory_inicialize_fail = false;
 
-		int** p_i_matrix = (int**)calloc(i_matrix_size, sizeof(int*));     // Creating pointer to array of pointers
+		int** p_i_matrix = (int**)calloc(i_matrix_rows, sizeof(int*));     // Creating pointer to array of pointers
 		
 		if (p_i_matrix == NULL) b_memory_inicialize_fail = true;
 
 		int i_bad_row{};
 		if (!b_memory_inicialize_fail) {
-			for (int i = 0; i < i_matrix_size; ++i) {
-				p_i_matrix[i] = (int*)calloc(i_matrix_size, sizeof(int));  // Giving every pointer in array of pointers it's own pointer on start of array
+			for (int i = 0; i < i_matrix_rows; ++i) {
+				p_i_matrix[i] = (int*)calloc(i_matrix_cols, sizeof(int));  // Giving every pointer in array of pointers it's own pointer on start of array
 				if (p_i_matrix[i] == NULL) {
-					i_bad_row = i;
+					i_bad_row = i;                                         // To free() every row before the bad row
 					b_memory_inicialize_fail = true;
 					break;
 				}
@@ -808,7 +959,7 @@ static void lab_6() {
 
 		char* ch_matrix_container{};
 		if (!b_memory_inicialize_fail) {
-			ch_matrix_container = (char*)calloc(4 * i_matrix_size * i_matrix_size + i_matrix_size * 2 - 1, sizeof(char));
+			ch_matrix_container = (char*)calloc(4 * i_matrix_cols * i_matrix_rows + i_matrix_rows * 2 - 1, sizeof(char));
 			// Four bytes for every number, two new lines on after every line, except last, one \0
 
 			if (ch_matrix_container == NULL) b_memory_inicialize_fail = true;
@@ -844,19 +995,19 @@ static void lab_6() {
 
 			puts("");
 
-			for (int i = 0; i < i_matrix_size; ++i) {
-				for (int j = 0; j < i_matrix_size; ++j) {
+			for (int i = 0; i < i_matrix_rows; ++i) {
+				for (int j = 0; j < i_matrix_cols; ++j) {
 					do {
 						p_i_matrix[i][j] = my_random(20, 48);
 					} while (!zero_in_random && p_i_matrix[i][j] == 0);
 
-					put_element_into_container(ch_matrix_container, p_i_matrix[i][j], i_matrix_size, container_index);
+					put_element_into_container(ch_matrix_container, p_i_matrix[i][j], container_index);
 					container_index += 3;                       // Every element width is four positions
 					ch_matrix_container[container_index] = ' '; // This is fourth
 					++container_index;
 					printf("%3d ", p_i_matrix[i][j]);
 				}
-				if (i != i_matrix_size - 1) {                   // For the last row
+				if (i != i_matrix_rows - 1) {                   // For the last row not displaying "\n\n"
 					ch_matrix_container[container_index] = '\n';
 					ch_matrix_container[container_index + 1] = '\n';
 					container_index += 2;
@@ -868,12 +1019,12 @@ static void lab_6() {
 		}
 		else {
 			int operation_code{ -1 };
-			for (int row = 0; row < i_matrix_size; ++row) {
-				for (int col = 0; col < i_matrix_size; ++col) {
+			for (int row = 0; row < i_matrix_rows; ++row) {
+				for (int col = 0; col < i_matrix_cols; ++col) {
 					system("cls");
 
 					if (operation_code == 1) {
-						for (int i = 0; i < i_matrix_size; ++i) {
+						for (int i = 0; i < i_matrix_rows; ++i) {
 							free(p_i_matrix[i]);
 						}
 						free(p_i_matrix);
@@ -884,42 +1035,43 @@ static void lab_6() {
 
 					printf("\nPrefer [Enter] after every member."
 						   "\nWill clear all input after mistaken number, if input with [Space]."
-						   "\n\nInput matrix. (or quit [q])\n\n");
+						   "\nRange is +-20."
+						   "\n\n\nInput matrix. (or quit [q])\n\n");
 
 					if (operation_code != -1) {
 						for (int i = 0; i <= row; ++i) {
-							int col_limit = (i == row) ? col : i_matrix_size; // For all i, that are not current row, printing all elements.
+							int col_limit = (i == row) ? col : i_matrix_cols; // For all i, that are not current row, printing all elements.
 							for (int j = 0; j < col_limit; ++j) {             // Else printing elements till current column 
 								printf("%3d ", p_i_matrix[i][j]);
-								if (j == i_matrix_size -1) printf("\n\n");
+								if (j == i_matrix_cols -1) printf("\n\n");
 							}
 						}
 					}
 
-					operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_size, 20);
+					operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_cols, 20);
 
 
 					if (operation_code == 2 || operation_code == 3) {
 						(void)buffer_clean();
 
 						if (operation_code == 2) {
-							printf("\nNot valid element size. Valid size is +-20");
+							printf("\nNot valid element range. Input in valid range.");
 						}
 
 						while (operation_code == 2 || operation_code == 3) {
 							printf("\nInput from %d row and %d column again:\n", row + 1, col + 1);
 
-							operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_size, 20);
+							operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_cols, 20);
 
 							(void)buffer_clean();
 						}
 					}
-					put_element_into_container(ch_matrix_container, p_i_matrix[row][col], i_matrix_size, container_index);
+					put_element_into_container(ch_matrix_container, p_i_matrix[row][col], container_index);
 					container_index += 3;
 					ch_matrix_container[container_index] = ' ';
 					++container_index;
 				}
-				if (row != i_matrix_size - 1) {
+				if (row != i_matrix_rows - 1) {
 					ch_matrix_container[container_index] = '\n';
 					ch_matrix_container[container_index + 1] = '\n';
 					container_index += 2;
@@ -930,10 +1082,13 @@ static void lab_6() {
 		}
 		system("cls");
 
-		printf("Multiply elements above side diagonal? [Y/N]\n\n\n%s", ch_matrix_container);
+		if (i_variant == '1') {
+			printf("\nMultiply elements above side diagonal? [Y/N]\n\n\n%s", ch_matrix_container);
+		}
+		else printf("\nCalculate number of elements, that are bigger then sum of the rest elements in column? [Y/N]\n\n\n%s", ch_matrix_container);
 
 		if (!YN()) {
-			for (int i = 0; i < i_matrix_size; ++i) {
+			for (int i = 0; i < i_matrix_rows; ++i) {
 				free(p_i_matrix[i]);
 			}
 			free(p_i_matrix);
@@ -942,11 +1097,30 @@ static void lab_6() {
 			break;
 		}
 
-		long long int sum_above_dioganal{1};
-		int column_for_diagonal = i_matrix_size - 1;
-		for (int i = 0; i < i_matrix_size; ++i, --column_for_diagonal) {
-			for (int j = 0; j < column_for_diagonal; ++j) {
-				sum_above_dioganal *= p_i_matrix[i][j];
+		long long int lli_product_above_dioganal{ 1 };
+		int i_number_of_special_elements{};
+		if (i_variant == '1') {                        // Variant 12
+			int column_for_diagonal = i_matrix_cols - 1;
+			for (int i = 0; i < i_matrix_rows; ++i, --column_for_diagonal) {
+				for (int j = 0; j < column_for_diagonal; ++j) {
+					lli_product_above_dioganal *= p_i_matrix[i][j];
+				}
+			}
+		}
+		else {                                         // Variant 4
+			int i_sum_in_col{};
+			for (int j = 0; j < i_matrix_cols; ++j) {
+
+				// Calculating sum in the column
+				for (int i = 0; i < i_matrix_rows; ++i) {
+					i_sum_in_col += p_i_matrix[i][j];
+				}
+
+				for (int i = 0; i < i_matrix_rows; ++i) {
+					if (p_i_matrix[i][j] > i_sum_in_col - p_i_matrix[i][j]) ++i_number_of_special_elements; 
+				}
+
+				i_sum_in_col = 0;
 			}
 		}
 
@@ -959,9 +1133,11 @@ static void lab_6() {
 		printf(".");
 		system("cls");
 
-		printf("Multiplied elements above side diagonal.\n\n\n%s\n\n\nHere is your answer: %lld", ch_matrix_container, sum_above_dioganal);
+		if (i_variant == '1') printf("\nMultiplied elements above side diagonal.\n\n\n%s\n\n\nHere is your answer: %lld", ch_matrix_container, lli_product_above_dioganal);
 
-		for (int i = 0; i < i_matrix_size; ++i) {
+		else printf("\nNumber of elements, that are bigger then sum of the rest elements in column.\n\n\n%s\n\n\nHere is your answer: %d", ch_matrix_container, i_number_of_special_elements);
+
+		for (int i = 0; i < i_matrix_rows; ++i) {
 			free(p_i_matrix[i]);
 		}
 		free(p_i_matrix);
@@ -973,11 +1149,11 @@ static void lab_6() {
 // END
 
 
-// Laboratory work 7, variant 2 and 12
 
-#define IS_CHAR_BINARY(ch_s) (ch_s == '0' || ch_s == '1')
-#define IS_CHAR_SPLITTER(ch_s) (ch_s == '\n' || ch_s == ' ')
-#define IS_CHAR_PUNCTUATION(ch_s) (ch_s == '.' || ch_s == ',' || ch_s == ';' || ch_s == ':' || ch_s == '-' || ch_s == '—' || ch_s == '?' || ch_s == '!' || ch_s == '	')
+// Laboratory work 7, variant 2 and 12
+inline static bool is_char_punctuation(char ch_c) {
+	return strchr(".,?!/|\\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
+}
 
 static void lab_7() {
 	while (1) {
@@ -985,7 +1161,7 @@ static void lab_7() {
 			"Shortest binary code group   [1]\n"
 			"Word information by position [2]");
 
-		char i_variant{};
+		int i_variant{};
 		while (2) {
 			switch (i_variant = _getch()) {
 			case '1':
@@ -1047,32 +1223,36 @@ static void lab_7() {
 				int i_size_of_shortest{ -1 };                // Minus one shows, that it is firts etaration, and puts first block as shortest
 				int i_size_of_current{ 0 };
 				int i_shortest_position{};
+				char ch_I_O{};                               // One or zero
+				int i_block_start{};
 
 				bool b_is_binary = true;
-				bool b_has_binary{};
+				bool b_has_binary = true;
 
-				for (int i = 0; i < strlen(p_ch_user_text); ++i) {
-					if (!IS_CHAR_BINARY(p_ch_user_text[i]) && !IS_CHAR_SPLITTER(p_ch_user_text[i])) {
+				int i_user_text_length = strlen(p_ch_user_text);
+				for (int i = 0; i < i_user_text_length; ++i) {
+					if (p_ch_user_text[i] == '\n') {
+						++i;
+						continue;
+					}
+					else if (!IS_CHAR_BINARY(p_ch_user_text[i])) {
 						b_is_binary = false;
 						b_has_binary = false;
 						break;
 					}
 
-					if (IS_CHAR_BINARY(p_ch_user_text[i])) { // Iterating and searching for 1 or 0
-						int i_block_start = i;
-						b_has_binary = true;
+					ch_I_O = p_ch_user_text[i];
+					i_block_start = i;
 
+					i_size_of_current = 0;
+					 	                                     // Then counting current size and moving 'i' to the next block
+					for (i; p_ch_user_text[i] == ch_I_O; ++i, ++i_size_of_current);
+					--i;
 
-						i_size_of_current = 0;
+					if (i_size_of_shortest == -1 || i_size_of_current < i_size_of_shortest) {
+						i_shortest_position = i_block_start;
 
-						                                     // Then counting current size and moving 'i' to the next block
-						for (i; !IS_CHAR_SPLITTER(p_ch_user_text[i]); ++i, ++i_size_of_current);
-
-						if (i_size_of_shortest == -1 || i_size_of_current < i_size_of_shortest) {
-							i_shortest_position = i_block_start;
-
-							i_size_of_shortest = i_size_of_current;
-						}
+						i_size_of_shortest = i_size_of_current;
 					}
 				}
 
@@ -1085,6 +1265,7 @@ static void lab_7() {
 					continue;
 				}
 				else if (!b_has_binary) {
+					free(p_ch_user_text);
 					system("cls");
 					Sleep(400);
 					printf("\nNo binary code. Input again.\n\n");
@@ -1099,18 +1280,16 @@ static void lab_7() {
 
 				printf("\nIn your binary code:\n%s\nThe shortest binary block is: ", p_ch_user_text);
 
-				for (int i = i_shortest_position; i <= i_shortest_position + i_size_of_shortest; ++i) {
+				for (int i = i_shortest_position; i < i_shortest_position + i_size_of_shortest; ++i) {
 					printf("%c", p_ch_user_text[i]);
 				}
-
-				break;
 			}
 			// Variant 12
 			else {
 				system("cls");
 				int i_position_to_dispaly{};
 				while (3) {
-					if (!input_handler("\nInput position in poem (from 1 to %d):\n", i_position_to_dispaly, (int)sz_user_text_size - 2)) {
+					if (!number_input_handler("\nInput position in poem (from 1 to %d) (or quit [q]) :\n", i_position_to_dispaly, (int)sz_user_text_size - 2)) {
 						system("cls");
 						return;
 					}
@@ -1127,22 +1306,22 @@ static void lab_7() {
 
 				int i_word_count{ 0 };
 				for (int i = 0; i <= i_position; ++i) { // Counting words. Every "first step" on the word counts one word
-					if (!IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i])){
+					if (!IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i])){
 						++i_word_count;
 						                                // Moving 'i' to the next splitter or end of the text
-						while (p_ch_user_text[i] != '\0' && !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i])) ++i;
+						while (p_ch_user_text[i] != '\0' && !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i])) ++i;
 					}
 				}
 
-				bool b_position_is_on_word = !IS_CHAR_SPLITTER(p_ch_user_text[i_position]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i_position]);
+				bool b_position_is_on_word = !IS_CHAR_SPLITTER(p_ch_user_text[i_position]) && !is_char_punctuation(p_ch_user_text[i_position]);
 
 				                                        // Moving position to the end of the word
-				while (i_position >= 0 && (IS_CHAR_SPLITTER(p_ch_user_text[i_position]) || IS_CHAR_PUNCTUATION(p_ch_user_text[i_position]))) {
+				while (i_position >= 0 && (IS_CHAR_SPLITTER(p_ch_user_text[i_position]) || is_char_punctuation(p_ch_user_text[i_position]))) {
 					--i_position;
 				}
 
 				int i_word_start = i_position;          // Calculating, where word starts and wether it in start of text 
-				for (i_word_start; i_word_start >= 0 && !IS_CHAR_SPLITTER(p_ch_user_text[i_word_start]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i_word_start]); --i_word_start);
+				for (i_word_start; i_word_start >= 0 && !IS_CHAR_SPLITTER(p_ch_user_text[i_word_start]) && !is_char_punctuation(p_ch_user_text[i_word_start]); --i_word_start);
 				++i_word_start;
 
 				system("cls");
@@ -1156,15 +1335,14 @@ static void lab_7() {
 
 				printf("Position:     "); b_position_is_on_word ? printf("on word\n") : printf("not on word\n");
 				printf("Word:         ");
-				for (int i = i_word_start; !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !IS_CHAR_PUNCTUATION(p_ch_user_text[i]); ++i) {
+				for (int i = i_word_start; !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i]); ++i) {
 					printf("%c", p_ch_user_text[i]);
 				}
 				printf("\n");
 				printf("Word index:   %d", i_word_count);
-
-				break;
 			}
 			free(p_ch_user_text);
+			break;
 		}
 		USER_CONTINUE_USAGE()
 	}

@@ -21,18 +21,13 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 	int len = my_strlen(ch_dirt_input);
 	int i_dot_count = 0;
 
-	if (len == 0) {       // Checking if there is something to check
+	if (len == 0) {                                                                      // Checking if there is something to check
 		printf("\nNo input. Input number.");
 		return false;
 	}
 
-	//if (buffer_clean()) { // Cleans buffer, if there was more than 16 bytes, and giving exception
-	//	printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-	//	return false;
-	//}
-
 	if (ch_dirt_input[0] == '-' && len == 1 || ch_dirt_input[0] == '-' && (ch_dirt_input[1] < '0' || ch_dirt_input[1] > '9')) {
-		printf("\nNot valid input. Enter valid number."); // Checks if it is not only minus in input (or -. for example)
+		printf("\nNot valid input. Enter valid number.");                                // Checks if it is not only minus in input (or -. for example)
 		return false;
 	}
 
