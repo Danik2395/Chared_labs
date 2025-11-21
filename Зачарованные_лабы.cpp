@@ -17,6 +17,8 @@
 #include <conio.h>		// For _getch()
 #include <limits>
 #include <string.h>
+#include <fstream>
+#include <iostream>
 using namespace std;
 
 #define IS_CHAR_BINARY(ch_c) (ch_c == '0' || ch_c == '1')
@@ -42,7 +44,6 @@ static void lab_1() {
 
 		if (is_near_zero(d_x) && d_y < 0) {           // We cannot power zero in negative number
 			system("cls");
-			Sleep(400);
 			printf("\nZero can not be in negative power.\n\n");
 			Sleep(1500);
 			continue;
@@ -51,14 +52,12 @@ static void lab_1() {
 		double d_fraction_of_Y = my_fmod(d_y, 1);     // We cannot take root of negative number
 		if (d_x < 0 && my_fabs(d_fraction_of_Y) > 0 && d_fraction_of_Y != my_NaN) {
 			system("cls");
-			Sleep(400);
 			printf("\nCan not take root of negative number.\nTry again with another values.\n\n");
 			Sleep(1000);
 			continue;
 		}
 		else if (d_fraction_of_Y == my_NaN) {
 			system("cls");
-			Sleep(400);
 			printf("\nInternal error occurred.\nTry again with another values.\n\n");
 			Sleep(1000);
 		}
@@ -66,7 +65,6 @@ static void lab_1() {
 		double d_power_X_in_Y = pow(d_x, fabs(d_y));  // If powering is too large, error
 		if (d_power_X_in_Y > DBL_MAX) {
 			system("cls");
-			Sleep(400);
 			printf("\nX^Y is too large.\nTry again with another values.\n\n");
 			Sleep(1000);
 			continue;
@@ -351,7 +349,6 @@ static void lab_3() {
 
 		if (is_near_zero(my_fabs(d_b - d_a))) {                 // If a = b, error
 			system("cls");
-			Sleep(400);
 			printf("\nNot valid range. There must be a gap between A and B.");
 			Sleep(1500);
 			continue;
@@ -376,14 +373,12 @@ static void lab_3() {
 		double d_fraction = my_fmod(d_b - d_a, d_h);            // If steps is mot whole number, error
 		if (d_fraction != my_NaN && my_fabs(d_fraction) > 0) {
 			system("cls");
-			Sleep(400);
 			printf("\nNot valid input. Incorrect steps set.\nTry again with another values.\n\n");
 			Sleep(1500);
 			continue;
 		}
 		else if (d_fraction == my_NaN) {
 			system("cls");
-			Sleep(400);
 			printf("\nInternal error occurred.\nTry again with another values.\n\n");
 			Sleep(1500);
 			continue;
@@ -589,8 +584,6 @@ static void lab_5() {
 		int* p_i_array = (int*)calloc(i_array_size, sizeof(int)); // Points on array start. Calloc for minimizing errors
 		if (p_i_array == NULL) {
 			system("cls");
-
-			Sleep(400);
 
 			printf("\nInternal error occurred. Try again.\n\n");
 
@@ -1259,7 +1252,6 @@ static void lab_7() {
 				if (!b_is_binary) {
 					free(p_ch_user_text);
 					system("cls");
-					Sleep(400);
 					printf("\nIt is not binary code. Input again.\n\n");
 					Sleep(1500);
 					continue;
@@ -1267,7 +1259,6 @@ static void lab_7() {
 				else if (!b_has_binary) {
 					free(p_ch_user_text);
 					system("cls");
-					Sleep(400);
 					printf("\nNo binary code. Input again.\n\n");
 					Sleep(1500);
 					continue;
@@ -1351,6 +1342,72 @@ static void lab_7() {
 
 
 
+// Laboratory work 7, variant 12
+enum Name_type {FirstN, LastN} name_type;
+
+// FirstN - first name
+// LastN  - last name
+static const char* get_name(Name_type name_type, int i_name_position) {
+	static const char* ch_first_names[] = {
+		"James",   "Mary",    "John",    "Patricia",  "Robert",  "Jennifer",
+		"Michael", "Linda",   "William", "Elizabeth", "David",   "Susan",
+		"Richard", "Jessica", "Joseph",  "Sarah",     "Thomas",  "Karen",
+		"Charles", "Nancy",   "Daniel",  "Lisa",      "Matthew", "Betty",
+		"Anthony", "Emily",   "Mark",    "Sandra",    "Donald",  "Ashley"
+	};
+
+	static const char* ch_last_names[] = {
+		"Smith",  "Johnson",  "Williams",  "Brown",    "Jones",     "Garcia",
+		"Miller", "Davis",    "Rodriguez", "Martinez", "Hernandez", "Walker",
+		"Lopez",  "Gonzalez", "Wilson",    "Anderson", "Thomas",    "Taylor",
+		"Moore",  "Jackson",  "Martin",    "Lee",      "Perez",     "Thompson",
+		"White",  "Harris",   "Sanchez",   "Clark",    "Lewis",     "Robinson" 
+	};
+	static size_t sz_firsts_amount = sizeof(ch_first_names) / sizeof(ch_first_names[0]);
+	static size_t sz_lasts_amount = sizeof(ch_last_names) / sizeof(ch_last_names[0]);
+	static size_t sz_max_name_position = sz_firsts_amount >= sz_lasts_amount ? sz_lasts_amount : sz_firsts_amount;
+
+	if (i_name_position >= sz_max_name_position) i_name_position = sz_max_name_position; // More or equals zero because in names 0-29 positions, not 30
+	else if (i_name_position < 0) i_name_position = 0;
+
+	return name_type == FirstN ? ch_first_names[i_name_position] : ch_last_names[i_name_position];
+}
+
+static void lab_8() {
+	struct Student_form {
+		unsigned number{};
+		char name[16];
+		char surname[16];
+		unsigned mark_physics[16];
+		unsigned mark_math[16];
+		unsigned mark_bel[16];
+	} student_blank = { 0, "", "", 0, 0, 0 },
+	  student_form  = { 0, "", "", 0, 0, 0 };
+
+	ofstream My_database("C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", ios::out | ios::trunc);
+
+	if (!My_database) {
+		printf("No database\n");
+		Sleep(1000);
+		return;
+	}
+
+	generate_seed();
+	const char* ch_random_name{};
+	for (int i = 1; i <= 20; ++i) {
+		ch_random_name = get_name(FirstN, my_random(30, 0));
+		strcpy_s(student_form.name, sizeof(student_form.name), ch_random_name);
+
+		ch_random_name = get_name(LastN, my_random(30, 0));
+		strcpy_s(student_form.surname, sizeof(student_form.surname), ch_random_name);
+
+		My_database.write((char*)&student_form, sizeof(student_form));
+	}
+}
+// END
+
+
+
 // Main -- menu
 int main() {
 	while (1) {
@@ -1387,8 +1444,6 @@ int main() {
 			"Exit [Esc]"
 		);
 
-		char keypress{};
-
 		while (2) {
 			switch (_getch()) {
 			case '1':
@@ -1421,11 +1476,15 @@ int main() {
 				lab_7();
 				break;
 
+			case '8':
+				system("cls");
+				lab_8();
+				break;
+
 			case 27:
 				printf("     Press [Esc] again to exit.");
 
-				keypress = _getch();
-				if (keypress == 27) exit(0);
+				if (_getch() == 27) exit(0);
 
 				else {
 					system("cls");

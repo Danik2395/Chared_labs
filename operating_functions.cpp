@@ -97,18 +97,18 @@ int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i
 
 
 // String input handler
-int string_input_handler(char** p_ch_destination, size_t& string_size, size_t type_size) { // Pointer on pointer to not to loze array start, when reallocating it
+int string_input_handler(char** p_ch_destination, size_t& string_size, size_t type_size) { // Pointer on pointer to not to lose array start, when reallocating it
 	bool b_memory_inicialize_fail = false;
 
-	char buffer[129];    // Chunk of user input
-	char* copy_string{}; // To catch realloc fail
+	char buffer[129];                                                                      // Chunk of user input
+	char* copy_string{};                                                                   // To catch realloc fail
 
 	while (fgets(buffer, 129, stdin)) {
 		size_t buffer_size = strlen(buffer);
 
 		string_size += buffer_size;
 
-		copy_string = (char*)realloc(*p_ch_destination, string_size * type_size); // Resizing string container
+		copy_string = (char*)realloc(*p_ch_destination, string_size * type_size);          // Resizing string container
 
 		if (copy_string == NULL) {
 			b_memory_inicialize_fail = true;
@@ -117,7 +117,7 @@ int string_input_handler(char** p_ch_destination, size_t& string_size, size_t ty
 
 		*p_ch_destination = copy_string;
 
-		strcat_s(*p_ch_destination, string_size, buffer); // Safely putting chunk after last element in it
+		strcat_s(*p_ch_destination, string_size, buffer);                                  // Safely putting chunk after last element in it
 	}
 
 	return b_memory_inicialize_fail ? 1 : 0;

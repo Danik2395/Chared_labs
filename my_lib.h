@@ -24,13 +24,14 @@ double my_fabs(double var);
 int my_abs(int var);
 
 // Returns string length
-int my_strlen(const char*);
+int my_strlen(const char* ch_array);
 
 // Returns true if strings are equal
-bool my_strcmp(const char*, const char*);
+bool my_strcmp(const char* ch_array1, const char* ch_array2);
 
 void generate_seed();
 
 // Generates "random" number.
 // To use, call generate_seed() first.
-int my_random(int, int);
+// Range for max_number is +-65536
+int my_random(int max_number, int minus_chance);
