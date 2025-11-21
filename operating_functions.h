@@ -17,6 +17,14 @@
 #define FORMAT_F(p) (*p == '%' && *(p + 1) == 'f')
 #define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
 
+enum Operation_code {
+	Good,
+	First_iter,
+	Quit,
+	Not_val_size,
+	Not_val_num
+};
+
 // Input checker
 bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
 
@@ -67,11 +75,11 @@ bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 
 // Array input handler
 // Writes user input into array
-// 0 - number is good
-// 1 - quit
-// 2 - not valid size
-// 3 - not valid number
-int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int max_element_size);
+// Good 
+// Quit
+// Not_val_size - Not valid size
+// Not_valid_number - Not valid number
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int max_element_size);
 
 // String input handler
 // Writes user input into array-string

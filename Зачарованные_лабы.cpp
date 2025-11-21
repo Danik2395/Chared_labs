@@ -17,7 +17,6 @@
 #include <conio.h>		// For _getch()
 #include <limits>
 #include <string.h>
-#include <fstream>
 #include <iostream>
 using namespace std;
 
@@ -613,7 +612,7 @@ static void lab_5() {
 		}
 		else {
 			int iter{0};
-			int operation_code{-1};                                    // For array_input_handler errors
+			Operation_code operation_code{First_iter};                                      // For array_input_handler errors
 			while (iter < i_array_size) {
 				system("cls");
 
@@ -622,7 +621,7 @@ static void lab_5() {
 					   "\nRange is +-200000."
 					   "\n\n\nInput array. (or quit [q])\n\n");
 
-				if (operation_code != -1) {                            // Doesn't show anything on first iteration
+				if (operation_code != First_iter) {                                         // Doesn't show anything on first iteration
 					for (int j = 0; j < iter; ++j) {
 						printf("%d ", p_i_array[j]);
 					}
@@ -630,27 +629,25 @@ static void lab_5() {
 
 				operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
 
-				if (operation_code == 1) {                             // Quit
+				if (operation_code == Quit) {                                               // Quit
 					system("cls");
 					return;
 				}
 
-				else if (operation_code == 2 || operation_code == 3) { // If not valid size or incorrect input, entering "correcting" mode
-					(void)buffer_clean();
+				while (operation_code == Not_val_size || operation_code == Not_val_num) {
+					if(operation_code != Good) (void)buffer_clean();                                               // If number isn't valid again "eats" buffer to not to just skip invalid input
 
-					if (operation_code == 2) {
+
+					if (operation_code == Not_val_size) {
 						printf("\nNot valid element range. Input in valid range.");
 					}
 
-					while (operation_code == 2 || operation_code == 3) {
-						printf("\nInput from %d element again:\n", iter + 1);
+					printf("\nInput from %d element again:\n", iter + 1);
 						
-						operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
+					operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
 
-						(void)buffer_clean();                          // If number isn't valid again "eats" buffer to not to just skip invalid input
-					}
 				}
-				else ++iter;
+				++iter;
 			}
 			(void)buffer_clean();
 		}
@@ -658,7 +655,7 @@ static void lab_5() {
 
 		puts("What to calculate? (or quit [q])\n\n"
 			 "Sum of elements in array from first positive member [1]\n"
-			 "Sum of elements between first and last zeros        [2]\n\n");
+			 "Sum of elements between first and last zero members [2]\n\n");
 
 		printf("[");
 		for (int i = 0; i < i_array_size - 1; ++i) {
@@ -899,18 +896,18 @@ static void lab_6() {
 			"Randomly               [2]\n"
 			"Randomly without zeros [3]");
 
-		bool manual_input = false;
-		bool zero_in_random = true;
+		bool b_manual_input = false;
+		bool b_zero_in_random = true;
 		while (2) {
 			switch (_getch()) {
 			case '1':
-				manual_input = true;
+				b_manual_input = true;
 				break;
 
 			case '2': break;
 
 			case '3':
-				zero_in_random = false;
+				b_zero_in_random = false;
 				break;
 
 			case 'q':
@@ -925,10 +922,10 @@ static void lab_6() {
 		}
 		system("cls");
 
-		if (manual_input && (i_matrix_cols > 4 || i_matrix_rows > 4)) {
+		if (b_manual_input && (i_matrix_cols > 4 || i_matrix_rows > 4)) {
 			printf("\nYou want to enter %d rows and %d cols manually? [Y/N]\n", i_matrix_rows, i_matrix_cols);
 
-			if (!YN()) manual_input = false;
+			if (!YN()) b_manual_input = false;
 		}
 		system("cls");
 
@@ -953,7 +950,7 @@ static void lab_6() {
 		char* ch_matrix_container{};
 		if (!b_memory_inicialize_fail) {
 			ch_matrix_container = (char*)calloc(4 * i_matrix_cols * i_matrix_rows + i_matrix_rows * 2 - 1, sizeof(char));
-			// Four bytes for every number, two new lines on after every line, except last, one \0
+			// Four bytes for every number, two for new lines after every line, except last, one for \0
 
 			if (ch_matrix_container == NULL) b_memory_inicialize_fail = true;
 		}
@@ -977,7 +974,7 @@ static void lab_6() {
 		}
 
 		int container_index{ 0 };
-		if (!manual_input) {
+		if (!b_manual_input) {
 			generate_seed();
 
 			puts("\nGenerating...");
@@ -992,7 +989,7 @@ static void lab_6() {
 				for (int j = 0; j < i_matrix_cols; ++j) {
 					do {
 						p_i_matrix[i][j] = my_random(20, 48);
-					} while (!zero_in_random && p_i_matrix[i][j] == 0);
+					} while (!b_zero_in_random && p_i_matrix[i][j] == 0);
 
 					put_element_into_container(ch_matrix_container, p_i_matrix[i][j], container_index);
 					container_index += 3;                       // Every element width is four positions
@@ -1011,7 +1008,7 @@ static void lab_6() {
 			Sleep(1000);
 		}
 		else {
-			int operation_code{ -1 };
+			int operation_code{ -1 }; // Shows first iteration
 			for (int row = 0; row < i_matrix_rows; ++row) {
 				for (int col = 0; col < i_matrix_cols; ++col) {
 					system("cls");
@@ -1214,10 +1211,7 @@ static void lab_7() {
 			if (i_variant == '1') {
 
 				int i_size_of_shortest{ -1 };                // Minus one shows, that it is firts etaration, and puts first block as shortest
-				int i_size_of_current{ 0 };
 				int i_shortest_position{};
-				char ch_I_O{};                               // One or zero
-				int i_block_start{};
 
 				bool b_is_binary = true;
 				bool b_has_binary = true;
@@ -1234,10 +1228,11 @@ static void lab_7() {
 						break;
 					}
 
-					ch_I_O = p_ch_user_text[i];
-					i_block_start = i;
+					char ch_I_O = p_ch_user_text[i];		 // One or zero
 
-					i_size_of_current = 0;
+					int i_block_start = i;
+
+					int i_size_of_current = 0;
 					 	                                     // Then counting current size and moving 'i' to the next block
 					for (i; p_ch_user_text[i] == ch_I_O; ++i, ++i_size_of_current);
 					--i;
@@ -1342,18 +1337,39 @@ static void lab_7() {
 
 
 
-// Laboratory work 7, variant 12
-enum Name_type {FirstN, LastN} name_type;
+// Laboratory work 8
+enum Name_type {FirstN, LastN};
+
+struct Student_form {
+	int number{};
+	char name[16];
+	char surname[16];
+	int mark_physics[16];
+	int mark_math[16];
+};
 
 // FirstN - first name
 // LastN  - last name
-static const char* get_name(Name_type name_type, int i_name_position) {
+static const char* get_name(Name_type name_type, size_t i_name_position) {
 	static const char* ch_first_names[] = {
 		"James",   "Mary",    "John",    "Patricia",  "Robert",  "Jennifer",
 		"Michael", "Linda",   "William", "Elizabeth", "David",   "Susan",
 		"Richard", "Jessica", "Joseph",  "Sarah",     "Thomas",  "Karen",
 		"Charles", "Nancy",   "Daniel",  "Lisa",      "Matthew", "Betty",
-		"Anthony", "Emily",   "Mark",    "Sandra",    "Donald",  "Ashley"
+		"Anthony", "Emily",   "Mark",    "Sandra",    "Donald",  "Ashley",
+		"Steven",  "Kimberly","Paul",    "Donna",     "Andrew",  "Michelle",
+		"Joshua",  "Dorothy", "Kevin",   "Carol",     "Brian",   "Amanda",
+		"George",  "Melissa", "Edward",  "Deborah",   "Ronald",  "Stephanie",
+		"Timothy", "Rebecca", "Jason",   "Sharon",    "Jeffrey", "Laura",
+		"Ryan",    "Cynthia", "Jacob",   "Amy",       "Gary",    "Kathleen",
+		"Nicholas","Angela",  "Eric",    "Shirley",   "Stephen", "Brenda",
+		"Jonathan","Pamela",  "Larry",   "Emma",      "Justin",  "Nicole",
+		"Scott",   "Helen",   "Brandon", "Anna",      "Benjamin","Samantha",
+		"Samuel",  "Katherine","Frank", "Christine", "Gregory", "Debra",
+		"Raymond", "Rachel",  "Patrick", "Carolyn",   "Alexander","Janet",
+		"Jack",    "Maria",   "Dennis",  "Heather",   "Jerry",   "Catherine",
+		"Tyler",   "Diane",   "Aaron",   "Olivia",    "Henry",   "Julie",
+		"Jose",    "Joyce",   "Adam",    "Victoria",  "Peter",   "Kelly"
 	};
 
 	static const char* ch_last_names[] = {
@@ -1361,11 +1377,24 @@ static const char* get_name(Name_type name_type, int i_name_position) {
 		"Miller", "Davis",    "Rodriguez", "Martinez", "Hernandez", "Walker",
 		"Lopez",  "Gonzalez", "Wilson",    "Anderson", "Thomas",    "Taylor",
 		"Moore",  "Jackson",  "Martin",    "Lee",      "Perez",     "Thompson",
-		"White",  "Harris",   "Sanchez",   "Clark",    "Lewis",     "Robinson" 
+		"White",  "Harris",   "Sanchez",   "Clark",    "Lewis",     "Robinson",
+		"Hall",   "Allen",    "Young",     "King",     "Wright",    "Scott",
+		"Green",  "Baker",    "Adams",     "Nelson",   "Hill",      "Ramirez",
+		"Campbell","Mitchell","Roberts",   "Carter",   "Phillips",  "Evans",
+		"Turner", "Torres",   "Parker",    "Collins",  "Edwards",   "Stewart",
+		"Flores", "Morris",   "Nguyen",    "Murphy",   "Rivera",    "Cook",
+		"Rogers", "Morgan",   "Peterson",  "Cooper",   "Reed",      "Bailey",
+		"Bell",   "Gomez",    "Kelly",     "Howard",   "Ward",      "Cox",
+		"Diaz",   "Richardson","Wood",     "Watson",   "Brooks",    "Bennett",
+		"Gray",   "James",    "Reyes",     "Cruz",     "Hughes",    "Price",
+		"Myers",  "Long",     "Foster",    "Sanders",  "Ross",      "Morales",
+		"Powell", "Sullivan", "Russell",   "Ortiz",    "Jenkins",   "Gutierrez",
+		"Perry",  "Butler",   "Barnes",    "Fisher",   "Henderson", "Coleman",
+		"Patterson","Jordan", "Graham",    "Reynolds", "Hamilton",  "Ford"
 	};
 	static size_t sz_firsts_amount = sizeof(ch_first_names) / sizeof(ch_first_names[0]);
 	static size_t sz_lasts_amount = sizeof(ch_last_names) / sizeof(ch_last_names[0]);
-	static size_t sz_max_name_position = sz_firsts_amount >= sz_lasts_amount ? sz_lasts_amount : sz_firsts_amount;
+	static size_t sz_max_name_position = sz_firsts_amount >= sz_lasts_amount ? sz_lasts_amount - 1 : sz_firsts_amount - 1;
 
 	if (i_name_position >= sz_max_name_position) i_name_position = sz_max_name_position; // More or equals zero because in names 0-29 positions, not 30
 	else if (i_name_position < 0) i_name_position = 0;
@@ -1373,35 +1402,146 @@ static const char* get_name(Name_type name_type, int i_name_position) {
 	return name_type == FirstN ? ch_first_names[i_name_position] : ch_last_names[i_name_position];
 }
 
-static void lab_8() {
-	struct Student_form {
-		unsigned number{};
-		char name[16];
-		char surname[16];
-		unsigned mark_physics[16];
-		unsigned mark_math[16];
-		unsigned mark_bel[16];
-	} student_blank = { 0, "", "", 0, 0, 0 },
-	  student_form  = { 0, "", "", 0, 0, 0 };
-
-	ofstream My_database("C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", ios::out | ios::trunc);
-
-	if (!My_database) {
-		printf("No database\n");
-		Sleep(1000);
-		return;
+static void print_student_form(Student_form& student_form) {
+	printf("\n-------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nMarks:\n  Physics:      ",
+		student_form.number, student_form.name, student_form.surname);
+	for (int j = 0; j < 16; ++j) {
+		printf("%d ", student_form.mark_physics[j]);
 	}
+	printf("\n  Math:         ");
+	for (int j = 0; j < 16; ++j) {
+		printf("%d ", student_form.mark_math[j]);
+	}
+}
 
-	generate_seed();
-	const char* ch_random_name{};
-	for (int i = 1; i <= 20; ++i) {
-		ch_random_name = get_name(FirstN, my_random(30, 0));
-		strcpy_s(student_form.name, sizeof(student_form.name), ch_random_name);
+static void lab_8() {
+	bool b_first_input = true;
+	while (1) {
+		if (b_first_input) puts("\nStudents sample database generator.");
+		else { puts("\n\n\n"); }
+		puts("\n[q] - quit\n"
+			 "[1] - recreate database\n"
+			 "[2] - show all students\n"
+			 "[3] - show best students\n");
+		b_first_input = false;
 
-		ch_random_name = get_name(LastN, my_random(30, 0));
-		strcpy_s(student_form.surname, sizeof(student_form.surname), ch_random_name);
+		int i_command{};
+		while (2) {
+			switch (i_command = _getch()) {
+			case '1':
+				system("cls");
+				i_command = 1;
+				break;
 
-		My_database.write((char*)&student_form, sizeof(student_form));
+			case '2':
+				system("cls");				
+				i_command = 2;
+				break;
+
+			case '3':
+				system("cls");
+				i_command = 3;
+				break;
+
+			case 'q':
+			case 'Q':
+				system("cls");
+				return;
+
+			default: continue;
+			}
+			break;
+		}
+
+		Student_form student_form = { 0, "", "", 0, 0 };
+
+		FILE* Students_database = NULL;
+		
+		bool b_no_database = false;
+		while (2) {
+			if (i_command == 1) {
+				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "w+b")) {
+					b_no_database = true;
+					break;
+				}
+
+				generate_seed();
+				int i_number_of_groups = 2 + my_random(4, 0);
+				for (int g = 0; g <= i_number_of_groups; ++g) {
+					int i_groupe = my_random(482, 0) * 1000 + my_random(432, 0);
+
+					for (int i = 0; i < 5; ++i) {
+						int i_strength = my_random(1001, 0);
+
+						student_form.number = i_groupe + i;
+
+						const char* ch_random_name{};
+
+						ch_random_name = get_name(FirstN, my_random(119, 0));
+						strcpy_s(student_form.name, sizeof(student_form.name), ch_random_name);
+
+						ch_random_name = get_name(LastN, my_random(119, 0));
+						strcpy_s(student_form.surname, sizeof(student_form.surname), ch_random_name);
+
+						for (int j = 0; j < 16; ++j) {
+							if (i_strength > 865) {
+								student_form.mark_math[j] = 5 + my_random(5, 0);
+								student_form.mark_physics[j] = 4 + my_random(6, 0);
+							}
+							else if (i_strength < 327) {
+								student_form.mark_math[j] = 2 + my_random(5, 0);
+								student_form.mark_physics[j] = 1 + my_random(5, 0);
+							}
+							else {
+								student_form.mark_math[j] = 4 + my_random(5, 0);
+								student_form.mark_physics[j] = 4 + my_random(4, 0);
+							}
+
+
+						}
+
+						fwrite((char*)&student_form, sizeof(Student_form), 1, Students_database);
+					}
+				}
+				
+				fclose(Students_database);
+
+				system("cls");
+				printf("\nRecreating...");
+				Sleep(1000);
+				system("cls");
+				printf("\nDone.");
+				Sleep(800);
+				system("cls");
+
+				b_first_input = true;
+
+				break;
+			}
+			else if (i_command == 2) {
+				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
+					b_no_database = true;
+					break;
+				}
+
+				fseek(Students_database, 0, 0);
+				while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database)) {
+					print_student_form(student_form);
+				}
+
+				fclose(Students_database);
+
+				break;
+			}
+			else {
+				break;
+			}
+		}
+		if (b_no_database) {
+			printf("No database\n");
+			Sleep(1000);
+			continue;
+		}
 	}
 }
 // END

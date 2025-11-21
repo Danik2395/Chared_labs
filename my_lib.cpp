@@ -58,25 +58,24 @@ bool my_strcmp(const char* ch_array1, const char* ch_array2) {
 
 
 // Random
-static unsigned int* seed_storage() {             // Pointer returns address of seed_storage{}
-	static unsigned int seed_storage{};           // Actual unchanging storage, because of static
-	return &seed_storage;                         // This is address
+// Unsigned int because it overfills by module 2^32 and in any case won't give negative number
+static unsigned int* seed_storage() {                // Pointer returns address of seed_storage{}
+	static unsigned int seed_storage{};              // Actual unchanging storage, because of static
+	return &seed_storage;                            // This is address
 }
 
 void generate_seed() {
-	unsigned int* p_set_seed = seed_storage();    // Setting pointer on storage cell
-	*p_set_seed = (unsigned int)GetTickCount64(); // Writing value by this address
+	unsigned int* p_set_seed = seed_storage();       // Setting pointer on storage cell
+	*p_set_seed = (unsigned int)GetTickCount64();    // Writing value by this address
 }
 
 int my_random(int max_number, int minus_chance) {
 	unsigned int* p_seed = seed_storage();
-	unsigned int minus = *p_seed;                 // Writing seed to calculate minus
-	*p_seed = *p_seed * 1103515245 + 12345;       // Getting value from pointer and CHANGING it (numbers, calculated by smart people)
+	unsigned int minus = *p_seed;                    // Writing seed to calculate minus
+	*p_seed = *p_seed * 1103515245 + 12345;          // Getting value from pointer and CHANGING it (numbers, calculated by smart people)
 	minus = minus * 12345 + 1103515245;
-	int tick = (*p_seed / 65536) % max_number;
-	if (minus % 1000 < minus_chance * 10) {
-		tick = -tick;
-	}
+	int tick = (*p_seed / 65536) % (max_number + 1); // +1, because tick totally divided by max_number equals zero, and we can't reach max_number
+	if (minus % 1000 <= minus_chance * 10) tick = -tick;
 	return tick;
 }
 // END

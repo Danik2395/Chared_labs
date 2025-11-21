@@ -73,12 +73,12 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 
 
 // Array input handler
-int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i_max_element_size) {
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i_max_element_size) {
 	char ch_input[17];
 
 	scanf_s("%16s", ch_input, 17);
 
-	if (quit(ch_input)) return 1;
+	if (quit(ch_input)) return Quit;
 
 	bool valid_element_size = true;
 	if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
@@ -86,11 +86,11 @@ int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i
 	}
 	else {
 		if (!valid_element_size) {
-			return 2;
+			return Not_val_size;
 		}
-		return 3;
+		return Not_val_num;
 	}
-	return 0;
+	return Good;
 }
 // END
 

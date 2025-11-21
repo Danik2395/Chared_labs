@@ -7,8 +7,8 @@
 //
 #pragma once
 
-// Equivalent of zero
-constexpr double EPSILON = 1e-12; // constexpr for defining on compilation stage
+// constexpr for defining on compilation stage
+constexpr double EPSILON = 1e-12; // Equivalent of zero
 #define my_NaN 128101010.010101821
 
 // Checks if double is near zero
