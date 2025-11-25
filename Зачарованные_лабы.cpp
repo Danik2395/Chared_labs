@@ -1422,10 +1422,6 @@ static void print_student_form(Student_form& student_form) {
 	print_studend_marks(student_form.mark_physics, "Physics:");
 }
 
-/*
- Pointer because struct is a chunk of memory, and WHEN you put it's field IN FUNCTION, struct field behaves like pointer.
- Otherwise it behaves as default (static array in this case)
-*/
 static void generate_marks(int* p_i_marks_array, int i_strength) {
 	int i_marks_count = 4 + my_random(8, 0);
 

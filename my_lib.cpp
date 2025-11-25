@@ -58,7 +58,7 @@ bool my_strcmp(const char* ch_array1, const char* ch_array2) {
 
 
 // Random
-// Unsigned int because it overfills by module 2^32 and in any case won't give negative number
+// Unsigned int because it overfills by module of 2^32 and in any case won't give negative number
 static unsigned int* seed_storage() {                // Pointer returns address of seed_storage{}
 	static unsigned int seed_storage{};              // Actual unchanging storage, because of static
 	return &seed_storage;                            // This is address
