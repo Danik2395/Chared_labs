@@ -1337,8 +1337,9 @@ static void lab_7() {
 
 
 
-// Laboratory work 8
+// Laboratory work 8, variant 12
 enum Name_type {FirstN, LastN};
+enum Command {Regen_database, Sh_all, Sh_group, Sh_best};
 
 struct Student_form {
 	int number{};
@@ -1402,45 +1403,85 @@ static const char* get_name(Name_type name_type, size_t i_name_position) {
 	return name_type == FirstN ? ch_first_names[i_name_position] : ch_last_names[i_name_position];
 }
 
-static void print_student_form(Student_form& student_form) {
-	printf("\n-------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nMarks:\n  Physics:      ",
-		student_form.number, student_form.name, student_form.surname);
+static void print_studend_marks(int* p_i_marks_array, const char* subject_name) {
+	printf("\n  %-14s", subject_name);
+
 	for (int j = 0; j < 16; ++j) {
-		printf("%d ", student_form.mark_physics[j]);
+		if (p_i_marks_array[j] == -1) {
+			printf("  ");
+			continue;
+		}
+		printf("%d ", p_i_marks_array[j]);
 	}
-	printf("\n  Math:         ");
-	for (int j = 0; j < 16; ++j) {
-		printf("%d ", student_form.mark_math[j]);
+}
+
+static void print_student_form(Student_form& student_form) {
+	printf("\n---------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nMarks:", student_form.number, student_form.name, student_form.surname);
+
+	print_studend_marks(student_form.mark_math, "Math:");
+	print_studend_marks(student_form.mark_physics, "Physics:");
+}
+
+/*
+ Pointer because struct is a chunk of memory, and WHEN you put it's field IN FUNCTION, struct field behaves like pointer.
+ Otherwise it behaves as default (static array in this case)
+*/
+static void generate_marks(int* p_i_marks_array, int i_strength) {
+	int i_marks_count = 4 + my_random(8, 0);
+
+	for (int j = 0; j < 16; ++j) {               // Replacing marks with debug values
+		p_i_marks_array[j] = -1;
+	}
+
+	int i_placed_count = 0;
+	
+	while (i_placed_count < i_marks_count) {     // Would place i_marks_count amount of marks
+		int i_random_index = my_random(16, 0);
+
+		if (p_i_marks_array[i_random_index] == -1) { // Continue if index already has mark
+			if (i_strength > 865) {
+				p_i_marks_array[i_random_index] = 5 + my_random(5, 0);
+			}
+			else if (i_strength < 327) {
+				p_i_marks_array[i_random_index] = 2 + my_random(4, 0);
+			}
+			else {
+				p_i_marks_array[i_random_index] = 3 + my_random(5, 0);
+			}
+
+
+			++i_placed_count;
+		}
 	}
 }
 
 static void lab_8() {
-	bool b_first_input = true;
+	bool b_start_screen = true;
 	while (1) {
-		if (b_first_input) puts("\nStudents sample database generator.");
+		if (b_start_screen) puts("\nStudents sample database generator.");
 		else { puts("\n\n\n"); }
 		puts("\n[q] - quit\n"
 			 "[1] - recreate database\n"
 			 "[2] - show all students\n"
-			 "[3] - show best students\n");
-		b_first_input = false;
+			 "[3] - show students in group");
+		b_start_screen = false;
 
-		int i_command{};
+		Command cmd_main{};
 		while (2) {
-			switch (i_command = _getch()) {
+			switch (_getch()) {
 			case '1':
 				system("cls");
-				i_command = 1;
+				cmd_main = Regen_database;
 				break;
 
 			case '2':
 				system("cls");				
-				i_command = 2;
+				cmd_main = Sh_all;
 				break;
 
 			case '3':
 				system("cls");
-				i_command = 3;
+				cmd_main = Sh_group;
 				break;
 
 			case 'q':
@@ -1459,18 +1500,18 @@ static void lab_8() {
 		
 		bool b_no_database = false;
 		while (2) {
-			if (i_command == 1) {
+			if (cmd_main == Regen_database) {
 				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "w+b")) {
 					b_no_database = true;
 					break;
 				}
 
 				generate_seed();
-				int i_number_of_groups = 2 + my_random(4, 0);
-				for (int g = 0; g <= i_number_of_groups; ++g) {
+				int i_number_of_groups = 2; //+ my_random(4, 0);
+				for (int g = 1; g <= i_number_of_groups; ++g) {      // Generate groups
 					int i_groupe = my_random(482, 0) * 1000 + my_random(432, 0);
 
-					for (int i = 0; i < 5; ++i) {
+					for (int i = 0; i < 2; ++i) {                    // Generate students
 						int i_strength = my_random(1001, 0);
 
 						student_form.number = i_groupe + i;
@@ -1483,22 +1524,9 @@ static void lab_8() {
 						ch_random_name = get_name(LastN, my_random(119, 0));
 						strcpy_s(student_form.surname, sizeof(student_form.surname), ch_random_name);
 
-						for (int j = 0; j < 16; ++j) {
-							if (i_strength > 865) {
-								student_form.mark_math[j] = 5 + my_random(5, 0);
-								student_form.mark_physics[j] = 4 + my_random(6, 0);
-							}
-							else if (i_strength < 327) {
-								student_form.mark_math[j] = 2 + my_random(5, 0);
-								student_form.mark_physics[j] = 1 + my_random(5, 0);
-							}
-							else {
-								student_form.mark_math[j] = 4 + my_random(5, 0);
-								student_form.mark_physics[j] = 4 + my_random(4, 0);
-							}
-
-
-						}
+						generate_marks(student_form.mark_math, my_random(1000, 0));
+						generate_marks(student_form.mark_physics, my_random(1000, 0));
+						
 
 						fwrite((char*)&student_form, sizeof(Student_form), 1, Students_database);
 					}
@@ -1514,32 +1542,112 @@ static void lab_8() {
 				Sleep(800);
 				system("cls");
 
-				b_first_input = true;
+				b_start_screen = true;
 
 				break;
 			}
-			else if (i_command == 2) {
+
+			if (cmd_main == Sh_all || cmd_main == Sh_group) {
 				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
 					b_no_database = true;
 					break;
 				}
+			}
 
-				fseek(Students_database, 0, 0);
-				while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database)) {
-					print_student_form(student_form);
+			Command cmd_show_branch{}; // Level lower after main choise
+			if (cmd_main == Sh_all) {
+				bool b_back = false;
+				while (3) {
+					puts("\nShow all students\n\n"
+						"[q] - quit\n"
+						"[b] - back to start\n"
+						"[1] - show all students\n"
+						"[2] - show best students\n\n\n");
+
+					while (4) {
+						switch (_getch()) {
+						case '1':
+							system("cls");
+							cmd_show_branch = Sh_all;
+							break;
+
+						case '2':
+							system("cls");
+							cmd_show_branch = Sh_best;
+							break;
+
+						case 'b':
+						case 'B':
+							system("cls");
+							b_start_screen = true;
+							b_back = true;
+							fclose(Students_database);
+							break;
+
+						case 'q':
+						case 'Q':
+							system("cls");
+							fclose(Students_database);
+							return;
+
+						default: continue;
+						}
+						break;
+					}
+					if (b_back) break;
+
+					if (cmd_show_branch == Sh_all) {
+						fseek(Students_database, 0, 0);
+						while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database)) {
+							print_student_form(student_form);
+						}
+						printf("\n\n\n");
+					}
+					else {              // Sh_best
+						fseek(Students_database, 0, 0);
+						int i_good_students_amount = 0;
+						while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database)) {
+							bool b_good_student = false;
+
+							for (int i = 0; i < 16; ++i) {
+								if (student_form.mark_math[i] > 9 || student_form.mark_physics[i] == 7 || student_form.mark_physics[i] == 8) {
+									b_good_student = true;
+									++i_good_students_amount;
+									break;
+								}
+							}
+
+							if (b_good_student) print_student_form(student_form);
+						}
+
+						if (i_good_students_amount == 0) {
+							printf("\nNo good students :(\n\n\n");
+						}
+					}
 				}
+				if (b_back) break;
 
-				fclose(Students_database);
+				
+			}
+			//else {       // Sh_group
+			//	
 
-				break;
-			}
-			else {
-				break;
-			}
+			//	if (cmd_show_best == Sh_all_best) {
+
+			//	}
+			//	else {            // Sh_group_best
+
+			//	}
+
+			//	break;
+			//}
+			break;
 		}
 		if (b_no_database) {
 			printf("No database\n");
 			Sleep(1000);
+			system("cls");
+			b_start_screen = true;
 			continue;
 		}
 	}
