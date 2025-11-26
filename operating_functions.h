@@ -12,27 +12,24 @@
 #include <type_traits> // For is_same
 #include <stdarg.h>    // For changing number of arguments in function
 
-// Mind that macro takes not derefernced pointer
+// Mind that macro takes not dereferenced pointer
 #define FORMAT_D(p) (*p == '%' && *(p + 1) == 'd')
 #define FORMAT_F(p) (*p == '%' && *(p + 1) == 'f')
 #define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
 
-enum Operation_code {
-	Good,
-	First_iter,
-	Quit,
-	Not_val_size,
-	Not_val_num
-};
+
 
 // Input checker
 bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
 
+
+
 // Numeric input handler
 // Writes user input into variable
 // Support %d %f and %% formats in ch_message. Put corresponding arguments in '...'
+// Returns Good (expands into zero), Back and Quit
 template <class T>
-bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
+Operation_code number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 	char ch_input[17];
 	va_list argument;
 	
@@ -51,7 +48,7 @@ bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 		}
 
 		scanf_s("%16s", ch_input, 17);
-
+		
 		if (buffer_clean()) {                                      // Cleans buffer, if there was more than 16 bytes, and giving exception
 			printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
 			continue;
@@ -59,7 +56,8 @@ bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 
 		bool allow_fraction = std::is_same<T, double>::value;      // Checks whether it's double
 
-		if (quit(ch_input)) return false;
+		Operation_code check_change_trigger = change_menu(ch_input);
+		if (check_change_trigger) return check_change_trigger;
 
 		else if (is_correct_input(ch_input, allow_fraction)) {
 			if (allow_fraction) T_input_variable = atof(ch_input); // double - atof
@@ -67,7 +65,7 @@ bool number_input_handler(const char* ch_message, T& T_input_variable, ...) {
 			else				T_input_variable = atoi(ch_input); // int - atoi
 
 			va_end(argument);
-			return true;
+			return Good;
 		}
 	}
 }

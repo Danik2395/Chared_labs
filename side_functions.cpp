@@ -11,12 +11,6 @@
 #include <conio.h>
 
 
-bool quit(const char* ch_t) {
-	if (my_strcmp(ch_t, "q") || my_strcmp(ch_t, "Q")) return true;
-	else return false;
-}
-
-
 
 bool buffer_clean() {
 	int i_c{}, i_dbg_value = 0;

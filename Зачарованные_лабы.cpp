@@ -28,14 +28,14 @@ using namespace std;
 static void lab_1() {
 	while (1) {
 		double d_x{};
-		if (!number_input_handler("\nInput X (or quit [q]):\n", d_x)) {
+		if (number_input_handler("\nInput X (or quit [q]):\n", d_x) != Good) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_y{};
-		if (!number_input_handler("\nInput Y (or quit [q]):\n", d_y)) {
+		if (number_input_handler("\nInput Y (or quit [q]):\n", d_y) != Good) {
 			system("cls");
 			break;
 		}
@@ -71,7 +71,7 @@ static void lab_1() {
 
 		double d_z{};
 		while (2) {
-			if (!number_input_handler("\nInput Z (or quit [q]):\n", d_z)) {
+			if (number_input_handler("\nInput Z (or quit [q]):\n", d_z) != Good) {
 				system("cls");
 				return;
 			}
@@ -139,12 +139,11 @@ static void lab_2() {
 	while (1) {
 		double d_z{}, d_x{};
 		const char* ch_x_shw = "";
-		if (!number_input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\n\nInput Z (or quit [q]):\n", d_z)) {
+		if (number_input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\n\nInput Z (or quit [q]):\n", d_z) != Good) {
 			system("cls");
 			break;
 		}
 		else {
-			printf("%f", d_z);
 			if (d_z > 1) {
 				d_x = 1 / sqrt(d_z - 1);
 				ch_x_shw = "X = 1 / sqrt(Z - 1)";
@@ -198,12 +197,12 @@ static void lab_2() {
 		//Пишу русскими буквами, почему я так не сделал:
 		//	Пример: Вы работаете на заводе по производству джинс и оперируете стиральными машинами.
 		//	   Но, когда нужно было выбрать режим стирки, чтобы получить определённый вид джинс, вы случайно
-		//	   нажали не ту кнопку или что-то другое, а стиралка вам выдаёт: "Вы нажали не туда, поэтому будем стирать по циклу номер 1!" --,
+		//	   нажали не ту кнопку или что-то другое, а стиралка вам выдаёт: "Вы нажали не туда, поэтому будем стирать по циклу номер 1!" -,
 		//	   хотя вам нужен был цикл номер 3. 
 		//	   И вся партия джинс получилась не такой, как хотел заказчик, потому что какой-то программист добавил режим стирки по умолчанию, при неверном вводе.
 		//	   Вас уволят.
 
-		//Я могу сделать так, но не понимаю зачем. Как по мне, программа должна быть понятна пользователю, а не за него выбирать, что считать.
+		//Можно сделать так, но не понимаю зачем. Как по мне, программа должна быть понятна пользователю, а не за него выбирать, что считать.
 		
 
 		puts("\nChoose function for X (or quit [q])\n\nf(2X)  [1]\nf(X^2) [2]\nf(X/3) [3]\n\nFunction:");
@@ -241,14 +240,14 @@ static void lab_2() {
 		system("cls");*/
 
 		double d_a{};
-		if (!number_input_handler("\nInput A (or quit [q]):\n", d_a)) {
+		if (number_input_handler("\nInput A (or quit [q]):\n", d_a) != Good) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_c{};
-		if (!number_input_handler("\nInput C (or quit [q]):\n", d_c)) {
+		if (number_input_handler("\nInput C (or quit [q]):\n", d_c) != Good) {
 			system("cls");
 			break;
 		}
@@ -319,7 +318,7 @@ static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, i
 static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (!number_input_handler("\nInput A (in range +-20) (or quit[q]) :\n", d_a)) {
+		if (number_input_handler("\nInput A (in range +-20) (or quit[q/b]) :\n", d_a) != Good) {
 			system("cls");
 			break;
 		}
@@ -332,7 +331,7 @@ static void lab_3() {
 		
 		double d_b{};
 		while (2) {
-			if (!number_input_handler("\nInput B (in range +-20) (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
+			if (number_input_handler("\nInput B (in range +-20) (or quit[q/b]) :\n", d_b) != Good) { // Very cross variable!!!  d_b
 				system("cls");
 				return;
 			}
@@ -348,14 +347,14 @@ static void lab_3() {
 
 		if (is_near_zero(my_fabs(d_b - d_a))) {                 // If a = b, error
 			system("cls");
-			printf("\nNot valid range. There must be a gap between A and B.");
+			printf("\nNot valid range. There must be a gap between A and B.\n\n");
 			Sleep(1500);
 			continue;
 		}
 
 		double d_h{};
 		while (2) {
-			if (!number_input_handler("\nInput H (or quit[q]) :\n", d_h)) {
+			if (number_input_handler("\nInput H (or quit[q/b]) :\n", d_h) != Good) {
 				system("cls");
 				return;
 			}
@@ -389,7 +388,7 @@ static void lab_3() {
 				printf("\nFor better results 10 < N <= 40");
 			}
 
-			if (!number_input_handler("\nInput N from 1 to 20 (or quit[q]) :\n", i_n)) {
+			if (number_input_handler("\nInput N from 1 to 20 (or quit[q/b]) :\n", i_n) != Good) {
 				system("cls");
 				return;
 			}
@@ -538,7 +537,7 @@ static void lab_3() {
 static void lab_5() {
 	while (1) {
 		int i_array_size{};
-		if (!number_input_handler("\nInput size of array (from 1 to 10000) (or quit[q]) :\n", i_array_size)) {
+		if (number_input_handler("\nInput size of array (from 1 to 10000) (or quit[q/b]) :\n", i_array_size) != Good) {
 			system("cls");
 			break;
 		}
@@ -829,7 +828,7 @@ static void put_element_into_container(char* ch_matrix_container, int i_matrix_e
 
 static void lab_6() {
 	while (1) {
-		puts("What to calculate?\n\n"
+		puts("What to calculate? (or quit [q])\n\n"
 			 "Product of elements above side diagonal [1]\n"
 			 "Special elements in columns             [2]");
 
@@ -838,16 +837,15 @@ static void lab_6() {
 			switch (i_variant = _getch()) {
 			case '1':
 			case '2':
-				system("cls");
 				break;
 
 			case 'q':
 			case 'Q':
-				system("cls");
 				return;
 
 			default: continue;
 			}
+			system("cls");
 			break;
 		}
 		
@@ -855,13 +853,13 @@ static void lab_6() {
 		int i_matrix_cols{};
 		while (1) {
 			if (i_variant == '1') {
-				if (!number_input_handler("\nInput square matrix size (from 2 to 10) (or quit[q]) :\n", i_matrix_rows)) {
+				if (number_input_handler("\nInput square matrix size (from 2 to 10) (or quit[q/b]) :\n", i_matrix_rows) != Good) {
 					system("cls");
 					return;
 				}
 			}
 			else {
-				if (!number_input_handler("\nInput number of matrix rows (from 2 to 10) (or quit[q]) :\n", i_matrix_rows)) {
+				if (number_input_handler("\nInput number of matrix rows (from 2 to 10) (or quit[q/b]) :\n", i_matrix_rows) != Good) {
 					system("cls");
 					return;
 				}
@@ -876,7 +874,7 @@ static void lab_6() {
 		}
 		if (i_variant == '2') {             // Setting arbitrary matrix for variant 4
 			while (2) {
-				if (!number_input_handler("\nInput number of matrix columns (from 2 to 10) (or quit[q]) :\n", i_matrix_cols)) {
+				if (number_input_handler("\nInput number of matrix columns (from 2 to 10) (or quit[q/b]) :\n", i_matrix_cols) != Good) {
 					system("cls");
 					return;
 				}
@@ -1156,16 +1154,15 @@ static void lab_7() {
 			switch (i_variant = _getch()) {
 			case '1':
 			case '2':
-				system("cls");
 				break;
 
 			case 'q':
 			case 'Q':
-				system("cls");
 				return;
 
 			default: continue;
 			}
+			system("cls");
 			break;
 		}
 
@@ -1275,7 +1272,7 @@ static void lab_7() {
 				system("cls");
 				int i_position_to_dispaly{};
 				while (3) {
-					if (!number_input_handler("\nInput position in poem (from 1 to %d) (or quit [q]) :\n", i_position_to_dispaly, (int)sz_user_text_size - 2)) {
+					if (number_input_handler("\nInput position in poem (from 1 to %d) (or quit [q]) :\n", i_position_to_dispaly, (int)sz_user_text_size - 2) != Good) {
 						system("cls");
 						return;
 					}
@@ -1339,7 +1336,7 @@ static void lab_7() {
 
 // Laboratory work 8, variant 12
 enum Name_type {FirstN, LastN};
-enum Command {Regen_database, Sh_all, Sh_group, Sh_best};
+enum Command {Regen_database_manual, Regen_database_random, Sh_all, Sh_group, Sh_best};
 
 struct Student_form {
 	int number{};
@@ -1403,8 +1400,8 @@ static const char* get_name(Name_type name_type, size_t i_name_position) {
 	return name_type == FirstN ? ch_first_names[i_name_position] : ch_last_names[i_name_position];
 }
 
-static void print_studend_marks(int* p_i_marks_array, const char* subject_name) {
-	printf("\n  %-14s", subject_name);
+static void print_student_marks(int* p_i_marks_array, const char* ch_subject_name) {
+	printf("\n  %-14s", ch_subject_name);
 
 	for (int j = 0; j < 16; ++j) {
 		if (p_i_marks_array[j] == -1) {
@@ -1418,8 +1415,8 @@ static void print_studend_marks(int* p_i_marks_array, const char* subject_name) 
 static void print_student_form(Student_form& student_form) {
 	printf("\n---------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nMarks:", student_form.number, student_form.name, student_form.surname);
 
-	print_studend_marks(student_form.mark_math, "Math:");
-	print_studend_marks(student_form.mark_physics, "Physics:");
+	print_student_marks(student_form.mark_math, "Math:");
+	print_student_marks(student_form.mark_physics, "Physics:");
 }
 
 static void generate_marks(int* p_i_marks_array, int i_strength) {
@@ -1451,32 +1448,57 @@ static void generate_marks(int* p_i_marks_array, int i_strength) {
 	}
 }
 
+
+#define ENTER_DATABASE_PARAMS(i_number_of_parameter, i_min_range, i_max_range, ch_message)\
+	while (1) {\
+		Operation_code cod_screen_backwards = number_input_handler(ch_message, i_number_of_parameter);\
+		if (cod_screen_backwards == Quit) {\
+			fclose(Students_database);\
+			system("cls");\
+			return;\
+		}\
+		else if (cod_screen_backwards == Back) {\
+			system("cls");\
+			fclose(Students_database);\
+			break;\
+		}\
+		if (i_number_of_parameter < i_min_range || i_number_of_parameter > i_max_range) {\
+			system("cls");\
+			printf("\nNot valid range.\n\n");\
+			Sleep(1500);\
+			continue;\
+		}\
+		break;\
+	}\
+
 static void lab_8() {
-	bool b_start_screen = true;
 	while (1) {
-		if (b_start_screen) puts("\nStudents sample database generator.");
-		else { puts("\n\n\n"); }
-		puts("\n[q] - quit\n"
-			 "[1] - recreate database\n"
-			 "[2] - show all students\n"
-			 "[3] - show students in group");
-		b_start_screen = false;
+		puts("\nStudents sample database generator.\n\n"
+			 "[1] - recreate database randomly\n"
+			 "[2] - recreate database manually (amount of groups and students)\n"
+			 "[3] - show all students\n"
+			 "[4] - show students in group\n"
+			 "\n[q] - quit\n"
+			);
 
 		Command cmd_main{};
 		while (2) {
 			switch (_getch()) {
 			case '1':
 				system("cls");
-				cmd_main = Regen_database;
+				cmd_main = Regen_database_random;
 				break;
 
 			case '2':
-				system("cls");				
-				cmd_main = Sh_all;
+				system("cls");
+				cmd_main = Regen_database_manual;
 				break;
 
 			case '3':
-				system("cls");
+				cmd_main = Sh_all;
+				break;
+
+			case '4':
 				cmd_main = Sh_group;
 				break;
 
@@ -1487,6 +1509,7 @@ static void lab_8() {
 
 			default: continue;
 			}
+			system("cls");
 			break;
 		}
 
@@ -1496,18 +1519,33 @@ static void lab_8() {
 		
 		bool b_no_database = false;
 		while (2) {
-			if (cmd_main == Regen_database) {
+			if (cmd_main == Regen_database_random || cmd_main == Regen_database_manual) {
 				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "w+b")) {
 					b_no_database = true;
 					break;
 				}
 
 				generate_seed();
-				int i_number_of_groups = 2; //+ my_random(4, 0);
+
+				int i_number_of_groups{};
+				int i_number_of_students{};
+
+				if (cmd_main == Regen_database_random) {
+					int i_number_of_groups = 2; //+ my_random(4, 0);
+					int i_number_of_students = 2;
+				}
+				else {       // Regen_database_manual
+
+					// Could return here!!!
+					ENTER_DATABASE_PARAMS(i_number_of_groups, 1, 6, "\nInput amount of groups from 1 to 6 (quit [q], back [b]) :\n")
+					system("cls");
+					ENTER_DATABASE_PARAMS(i_number_of_students, 1, 10, "\nInput amount of students from 1 to 10 (quit [q], back [b]) :\n")
+				}
+
 				for (int g = 1; g <= i_number_of_groups; ++g) {      // Generate groups
 					int i_groupe = my_random(482, 0) * 1000 + my_random(432, 0);
 
-					for (int i = 0; i < 2; ++i) {                    // Generate students
+					for (int i = 0; i < i_number_of_students; ++i) { // Generate students
 						int i_strength = my_random(1001, 0);
 
 						student_form.number = i_groupe + i;
@@ -1522,12 +1560,12 @@ static void lab_8() {
 
 						generate_marks(student_form.mark_math, my_random(1000, 0));
 						generate_marks(student_form.mark_physics, my_random(1000, 0));
-						
+
 
 						fwrite((char*)&student_form, sizeof(Student_form), 1, Students_database);
 					}
 				}
-				
+
 				fclose(Students_database);
 
 				system("cls");
@@ -1537,8 +1575,6 @@ static void lab_8() {
 				printf("\nDone.");
 				Sleep(800);
 				system("cls");
-
-				b_start_screen = true;
 
 				break;
 			}
@@ -1555,39 +1591,36 @@ static void lab_8() {
 				bool b_back = false;
 				while (3) {
 					puts("\nShow all students\n\n"
-						"[q] - quit\n"
-						"[b] - back to start\n"
 						"[1] - show all students\n"
-						"[2] - show best students\n\n\n");
+						"[2] - show best students\n"
+						"\n[q] - quit\n"
+						"[b] - back to start\n\n\n"
+						);
 
 					while (4) {
 						switch (_getch()) {
 						case '1':
-							system("cls");
 							cmd_show_branch = Sh_all;
 							break;
 
 						case '2':
-							system("cls");
 							cmd_show_branch = Sh_best;
 							break;
 
 						case 'b':
 						case 'B':
-							system("cls");
-							b_start_screen = true;
 							b_back = true;
 							fclose(Students_database);
 							break;
 
 						case 'q':
 						case 'Q':
-							system("cls");
 							fclose(Students_database);
 							return;
 
 						default: continue;
 						}
+						system("cls");
 						break;
 					}
 					if (b_back) break;
@@ -1619,6 +1652,9 @@ static void lab_8() {
 						if (i_good_students_amount == 0) {
 							printf("\nNo good students :(\n\n\n");
 						}
+						else {
+							printf("\nAmount of good students in all groups is %d", i_good_students_amount);
+						}
 					}
 				}
 				if (b_back) break;
@@ -1643,7 +1679,6 @@ static void lab_8() {
 			printf("No database\n");
 			Sleep(1000);
 			system("cls");
-			b_start_screen = true;
 			continue;
 		}
 	}

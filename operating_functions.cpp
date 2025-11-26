@@ -78,7 +78,8 @@ Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_array_
 
 	scanf_s("%16s", ch_input, 17);
 
-	if (quit(ch_input)) return Quit;
+	Operation_code check_change_trigger = change_menu(ch_input);
+	if (check_change_trigger) return check_change_trigger;
 
 	bool valid_element_size = true;
 	if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
