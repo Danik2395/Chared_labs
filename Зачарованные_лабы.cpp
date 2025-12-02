@@ -1083,33 +1083,6 @@ static void lab_6() {
 			break;
 		}
 
-		long long int lli_product_above_dioganal{ 1 };
-		int i_number_of_special_elements{};
-		if (i_variant == '1') {                        // Variant 12
-			int column_for_diagonal = i_matrix_cols - 1;
-			for (int i = 0; i < i_matrix_rows; ++i, --column_for_diagonal) {
-				for (int j = 0; j < column_for_diagonal; ++j) {
-					lli_product_above_dioganal *= p_i_matrix[i][j];
-				}
-			}
-		}
-		else {                                         // Variant 4
-			int i_sum_in_col{};
-			for (int j = 0; j < i_matrix_cols; ++j) {
-
-				// Calculating sum in the column
-				for (int i = 0; i < i_matrix_rows; ++i) {
-					i_sum_in_col += p_i_matrix[i][j];
-				}
-
-				for (int i = 0; i < i_matrix_rows; ++i) {
-					if (p_i_matrix[i][j] > i_sum_in_col - p_i_matrix[i][j]) ++i_number_of_special_elements; 
-				}
-
-				i_sum_in_col = 0;
-			}
-		}
-
 		system("cls");
 		Sleep(300);
 		printf(".");
@@ -1119,15 +1092,95 @@ static void lab_6() {
 		printf(".");
 		system("cls");
 
-		if (i_variant == '1') printf("\nMultiplied elements above side diagonal.\n\n\n%s\n\n\nHere is your answer: %lld", ch_matrix_container, lli_product_above_dioganal);
+		if (i_variant == '1') {                        // Variant 12
+			long long int lli_product_above_dioganal{ 1 };
 
-		else printf("\nNumber of elements, that are bigger then sum of the rest elements in column.\n\n\n%s\n\n\nHere is your answer: %d", ch_matrix_container, i_number_of_special_elements);
+			int column_for_diagonal = i_matrix_cols - 1;
+			for (int i = 0; i < i_matrix_rows; ++i, --column_for_diagonal) {
+				for (int j = 0; j < column_for_diagonal; ++j) {
+					lli_product_above_dioganal *= p_i_matrix[i][j];
+				}
+			}
+
+			printf("\nMultiplied elements above side diagonal.\n\n\n%s\n\n\nHere is your answer: %lld", ch_matrix_container, lli_product_above_dioganal);
+		}
+		else {                                         // Variant 4
+			int i_number_of_special_elements{};
+			int i_sum_in_col{};
+			int* p_i_elements = (int*)calloc(1, sizeof(int));
+			int i_full_size_elements{};
+
+			 do {
+				 if (p_i_elements == NULL) {
+					 b_memory_inicialize_fail = true;
+					 break;
+				 }
+
+				for (int j = 0; j < i_matrix_cols; ++j) {
+
+					// Calculating sum in the column
+					for (int i = 0; i < i_matrix_rows; ++i) {
+						i_sum_in_col += p_i_matrix[i][j];
+					}
+
+					for (int i = 0; i < i_matrix_rows; ++i) {
+						if (p_i_matrix[i][j] > i_sum_in_col - p_i_matrix[i][j]) {
+							++i_number_of_special_elements;
+
+							i_full_size_elements = i_number_of_special_elements * 3;
+
+							int* copy_array = (int*)realloc(p_i_elements, sizeof(int) * i_full_size_elements);
+
+							if (copy_array == NULL) {
+								b_memory_inicialize_fail = true;
+								break;
+							}
+
+							p_i_elements = copy_array;
+
+							p_i_elements[i_full_size_elements -1] = j + 1;
+							p_i_elements[i_full_size_elements - 2] = i + 1;
+							p_i_elements[i_full_size_elements - 3] = p_i_matrix[i][j];
+						}
+					}
+					if (b_memory_inicialize_fail) break;
+
+
+					i_sum_in_col = 0;
+				}
+
+				printf("\nNumber of elements, that are bigger then sum of the rest elements in column.\n\n\n%s\n\n\nHere is your answer: %d", ch_matrix_container, i_number_of_special_elements);
+
+				if (i_number_of_special_elements != 0) {
+					printf("\n\nThe elements:\n");
+
+					for (int i = 0; i < i_full_size_elements; i += 3) {
+						printf("%d {%d, %d};  ", p_i_elements[i], p_i_elements[i + 1], p_i_elements[i + 2]);
+					}
+				}
+			 } while (0);
+			
+			 free(p_i_elements);
+			 if (b_memory_inicialize_fail) {
+				b_memory_inicialize_fail = true;
+
+				system("cls");
+
+				printf("\nAn internal error has occurred. Try again.\n");
+
+				Sleep(1000);
+			 }
+
+		}
+		
 
 		for (int i = 0; i < i_matrix_rows; ++i) {
 			free(p_i_matrix[i]);
 		}
 		free(p_i_matrix);
 		free(ch_matrix_container);
+
+		if (b_memory_inicialize_fail) continue;
 
 		USER_CONTINUE_USAGE()
 	}
@@ -1354,6 +1407,9 @@ struct Student_form {
 	char ch_surname[16];
 	int i_mark_physics[16];
 	int i_mark_math[16];
+	int i_mark_bel[16];
+	int i_mark_rus[16];
+	int i_mark_progr[16];
 };
 
 struct Database_info {
@@ -1433,6 +1489,9 @@ static void print_student_form(Student_form& student_form) {
 
 	print_student_marks(student_form.i_mark_math, "Math:");
 	print_student_marks(student_form.i_mark_physics, "Physics:");
+	print_student_marks(student_form.i_mark_bel, "Belarussian:");
+	print_student_marks(student_form.i_mark_rus, "Russian:");
+	print_student_marks(student_form.i_mark_progr, "Programming:");
 }
 
 static void generate_marks(int* p_i_marks_array, int i_strength) {
@@ -1694,6 +1753,9 @@ static void lab_8() {
 
 						generate_marks(student_form.i_mark_math, my_random(1000, 0));
 						generate_marks(student_form.i_mark_physics, my_random(1000, 0));
+						generate_marks(student_form.i_mark_bel, my_random(1000, 0));
+						generate_marks(student_form.i_mark_rus, my_random(1000, 0));
+						generate_marks(student_form.i_mark_progr, my_random(1000, 0));
 
 
 						fwrite((char*)&student_form, sizeof(Student_form), 1, Students_database);
