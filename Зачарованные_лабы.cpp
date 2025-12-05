@@ -18,6 +18,7 @@
 #include <limits>
 #include <string.h>
 #include <iostream>
+#include <io.h>         // For _chsize
 using namespace std;
 
 
@@ -73,7 +74,7 @@ static void lab_1() {
 				system("cls");
 				return;
 			}
-			
+
 			if (is_near_zero(d_z)) {
 				printf("\nDeterminator can not be zero. Input non zero number.\n\n");
 			}
@@ -82,7 +83,7 @@ static void lab_1() {
 				break;
 			}
 		}
-		
+
 		bool b_denominator_is_zero = false;
 		double d_dwn1{};
 		if (is_near_zero(d_dwn1 = 1 + d_x * d_x * d_y * d_y)) b_denominator_is_zero = true; // Calculates determinator to check if it's not zero and gives it to d_dwn1
@@ -98,15 +99,15 @@ static void lab_1() {
 		}
 
 		printf("\nCalculate [1 + sin(X + Y)^2] * X^|Y|  /  |X - 2Y / 1 + X^2 * Y^2|  +  cos[arctg(1 / Z)]^2? [Y/N]\n\n"
-				 "Your X = %10.5f\n"
-				 "Your Y = %10.5f\n"
-				 "Your Z = %10.5f\n", d_x, d_y, d_z);
+			"Your X = %10.5f\n"
+			"Your Y = %10.5f\n"
+			"Your Z = %10.5f\n", d_x, d_y, d_z);
 
 		if (!YN()) {
 			system("cls");
 			break;
 		}
-		
+
 		// V = [1 + sin(X + Y)^2] * X^|Y|  /  |X - 2Y / 1 + X^2 * Y^2|  +  cos[arctg(1 / Z)]^2
 		double d_v = (1 + pow(sin(d_x + d_y), 2)) * d_power_X_in_Y / d_dwn2 + pow(cos(atan(1 / d_z)), 2);
 
@@ -127,6 +128,7 @@ static void lab_1() {
 
 		USER_CONTINUE_USAGE()
 	}
+
 }
 // END
 
@@ -145,7 +147,7 @@ static void lab_2() {
 			if (d_z > 1) {
 				d_x = 1 / sqrt(d_z - 1);
 				ch_x_shw = "X = 1 / sqrt(Z - 1)";
-			}			
+			}
 			else {
 				if (d_z < -25) {
 					system("cls");
@@ -161,7 +163,7 @@ static void lab_2() {
 		double d_fx{};
 		const char* ch_fx_shw = "";
 		puts("\nChoose function for X (or quit [q])\n\nf(2X)  [1]\nf(X^2) [2]\nf(X/3) [3]\n\nFunction:");
-		while (2) {		
+		while (2) {
 			switch (_getch()) {
 			case '1':
 				d_fx = d_x * 2;
@@ -189,19 +191,19 @@ static void lab_2() {
 			break;
 		}
 		system("cls");
-		
+
 		// Another variant of switch
 		/*
 		//Пишу русскими буквами, почему я так не сделал:
 		//	Пример: Вы работаете на заводе по производству джинс и оперируете стиральными машинами.
 		//	   Но, когда нужно было выбрать режим стирки, чтобы получить определённый вид джинс, вы случайно
 		//	   нажали не ту кнопку или что-то другое, а стиралка вам выдаёт: "Вы нажали не туда, поэтому будем стирать по циклу номер 1!" -,
-		//	   хотя вам нужен был цикл номер 3. 
+		//	   хотя вам нужен был цикл номер 3.
 		//	   И вся партия джинс получилась не такой, как хотел заказчик, потому что какой-то программист добавил режим стирки по умолчанию, при неверном вводе.
 		//	   Вас уволят.
 
 		//Можно сделать так, но не понимаю зачем. Как по мне, программа должна быть понятна пользователю, а не за него выбирать, что считать.
-		
+
 
 		puts("\nChoose function for X (or quit [q])\n\nf(2X)  [1]\nf(X^2) [2]\nf(X/3) [3]\n\nFunction:");
 
@@ -285,6 +287,7 @@ static void lab_2() {
 
 		USER_CONTINUE_USAGE()
 	}
+
 }
 // END
 
@@ -310,13 +313,13 @@ static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, i
 		printf("%7.3f   %11.5f\n\n", d_x, d_fabs);
 		break;
 	}
-}
 
+}
 
 static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (number_input_handler("\nInput A (in range +-20) (or quit[q/b]) :\n", d_a) != Good) {
+		if (number_input_handler("\nInput A (in range +-20) (or quit [q]) :\n", d_a) != Good) {
 			system("cls");
 			break;
 		}
@@ -326,10 +329,10 @@ static void lab_3() {
 			printf("For better results A and B are limited\nTry again with valid range.\n\n");
 			continue;
 		}
-		
+
 		double d_b{};
 		while (2) {
-			if (number_input_handler("\nInput B (in range +-20) (or quit[q/b]) :\n", d_b) != Good) { // Very cross variable!!!  d_b
+			if (number_input_handler("\nInput B (in range +-20) (or quit [q]) :\n", d_b) != Good) { // Very cross variable!!!  d_b
 				system("cls");
 				return;
 			}
@@ -352,7 +355,7 @@ static void lab_3() {
 
 		double d_h{};
 		while (2) {
-			if (number_input_handler("\nInput H (or quit[q/b]) :\n", d_h) != Good) {
+			if (number_input_handler("\nInput H (or quit [q]) :\n", d_h) != Good) {
 				system("cls");
 				return;
 			}
@@ -386,7 +389,7 @@ static void lab_3() {
 				printf("\nFor better results 10 < N <= 40");
 			}
 
-			if (number_input_handler("\nInput N from 1 to 20 (or quit[q/b]) :\n", i_n) != Good) {
+			if (number_input_handler("\nInput N from 1 to 20 (or quit [q]) :\n", i_n) != Good) {
 				system("cls");
 				return;
 			}
@@ -403,26 +406,26 @@ static void lab_3() {
 			break;
 		}
 		system("cls");
-		
+
 		int i_calculation_variant{ 0 };
 		bool b_first_input = true;
 		while (2) {                                             // Scope to calculate different thing
 			if (b_first_input) {
-				 printf("\nS(X), Y(X) or |Y(X) - S(X)| for every X from A to B with H step till N member.\n\n"
-					    "Your A = %10.5f\n"
-					    "Your B = %10.5f\n"
-					    "Your H = %10.5f\n"
-					    "Your N = %4d\n\n\n"
-					    "What to calculate? (or quit [q])\n\n", d_a, d_b, d_h, i_n);
+				printf("\nS(X), Y(X) or |Y(X) - S(X)| for every X from A to B with H step till N member.\n\n"
+					"Your A = %10.5f\n"
+					"Your B = %10.5f\n"
+					"Your H = %10.5f\n"
+					"Your N = %4d\n\n\n"
+					"What to calculate? (or quit [q])\n\n", d_a, d_b, d_h, i_n);
 			}
 			else printf("\nCalculate something else?\n\n");
 
-				 printf("All           [1]\n"
-				 	    "S(X)          [2]\n"
-					    "Y(X)          [3]\n"
-					    "|Y(X) - S(X)| [4]\n");
-			if(!b_first_input){
-				 puts("\n\nWant to begin again? [Y/N]");
+			printf("All           [1]\n"
+				"S(X)          [2]\n"
+				"Y(X)          [3]\n"
+				"|Y(X) - S(X)| [4]\n");
+			if (!b_first_input) {
+				puts("\n\nWant to begin again? [Y/N]");
 			}
 
 			int i_view_answer{};
@@ -526,6 +529,7 @@ static void lab_3() {
 			}
 		}
 	}
+
 }
 // END
 
@@ -535,7 +539,7 @@ static void lab_3() {
 static void lab_5() {
 	while (1) {
 		int i_array_size{};
-		if (number_input_handler("\nInput size of array (from 1 to 10000) (or quit[q/b]) :\n", i_array_size) != Good) {
+		if (number_input_handler("\nInput size of array (from 1 to 10000) (or quit [q]) :\n", i_array_size) != Good) {
 			system("cls");
 			break;
 		}
@@ -545,7 +549,7 @@ static void lab_5() {
 			printf("\nInvalid size. Input with supported size.\n\n");
 			continue;
 		}
-	
+
 		puts("How do you want to create array? (or quit [q])\n\n"
 			"Manually [1]\n"
 			"Randomly [2]");
@@ -576,7 +580,7 @@ static void lab_5() {
 			if (!YN()) b_manual_input = false;
 		}
 		system("cls");
-				
+
 		int* p_i_array = (int*)calloc(i_array_size, sizeof(int)); // Points on array start. Calloc for minimizing errors
 		if (p_i_array == NULL) {
 			system("cls");
@@ -608,15 +612,15 @@ static void lab_5() {
 			Sleep(1000);
 		}
 		else {
-			int iter{0};
-			Operation_code operation_code{First_iter};                                      // For array_input_handler errors
+			int iter{ 0 };
+			Operation_code operation_code{ First_iter };                                      // For array_input_handler errors
 			while (iter < i_array_size) {
 				system("cls");
 
 				printf("\nPrefer [Enter] after every member."
-					   "\nWill clear all input after mistaken number, if input with [Space]."
-					   "\nRange is +-200000."
-					   "\n\n\nInput array. (or quit [q])\n\n");
+					"\nWill clear all input after mistaken number, if input with [Space]."
+					"\nRange is +-200000."
+					"\n\n\nInput array. (or quit [q])\n\n");
 
 				if (operation_code != First_iter) {                                         // Doesn't show anything on first iteration
 					for (int j = 0; j < iter; ++j) {
@@ -632,7 +636,7 @@ static void lab_5() {
 				}
 
 				while (operation_code == Not_val_size || operation_code == Not_val_num) {
-					if(operation_code != Good) (void)buffer_clean();                                               // If number isn't valid again "eats" buffer to not to just skip invalid input
+					if (operation_code != Good) (void)buffer_clean();                                               // If number isn't valid again "eats" buffer to not to just skip invalid input
 
 
 					if (operation_code == Not_val_size) {
@@ -640,7 +644,7 @@ static void lab_5() {
 					}
 
 					printf("\nInput from %d element again:\n", iter + 1);
-						
+
 					operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
 
 				}
@@ -651,8 +655,8 @@ static void lab_5() {
 		system("cls");
 
 		puts("What to calculate? (or quit [q])\n\n"
-			 "Sum of elements in array from first positive member [1]\n"
-			 "Sum of elements between first and last zero members [2]\n\n");
+			"Sum of elements in array from first positive member [1]\n"
+			"Sum of elements between first and last zero members [2]\n\n");
 
 		printf("[");
 		for (int i = 0; i < i_array_size - 1; ++i) {
@@ -675,7 +679,7 @@ static void lab_5() {
 			}
 			break;
 		}
-		
+
 		system("cls");
 		Sleep(500);
 		printf(".");
@@ -684,7 +688,7 @@ static void lab_5() {
 		Sleep(450);
 		printf(".");
 		system("cls");
-		
+
 		// Variant 12
 		if (i_variant == '1') {
 			bool b_has_positive = false;
@@ -791,6 +795,7 @@ static void lab_5() {
 
 		USER_CONTINUE_USAGE();
 	}
+
 }
 // END
 
@@ -798,7 +803,7 @@ static void lab_5() {
 
 // Laboratory work 6, variant 4 and 12
 
-// Puts element into container in "%3d" format 
+// Puts element into container in "%3d" format
 static void put_element_into_container(char* ch_matrix_container, int i_matrix_element, int container_index) {
 	if (i_matrix_element >= 10) {
 		ch_matrix_container[container_index] = ' ';
@@ -827,8 +832,8 @@ static void put_element_into_container(char* ch_matrix_container, int i_matrix_e
 static void lab_6() {
 	while (1) {
 		puts("What to calculate? (or quit [q])\n\n"
-			 "Product of elements above side diagonal [1]\n"
-			 "Special elements in columns             [2]");
+			"Product of elements above side diagonal [1]\n"
+			"Special elements in columns             [2]");
 
 		int i_variant{};
 		while (2) {
@@ -846,22 +851,22 @@ static void lab_6() {
 			system("cls");
 			break;
 		}
-		
+
 		int i_matrix_rows{};
 		int i_matrix_cols{};
 		while (1) {
 			if (i_variant == '1') {
-				if (number_input_handler("\nInput square matrix size (from 2 to 10) (or quit[q/b]) :\n", i_matrix_rows) != Good) {
+				if (number_input_handler("\nInput square matrix size (from 2 to 10) (or quit [q]) :\n", i_matrix_rows) != Good) {
 					system("cls");
 					return;
 				}
 			}
 			else {
-				if (number_input_handler("\nInput number of matrix rows (from 2 to 10) (or quit[q/b]) :\n", i_matrix_rows) != Good) {
+				if (number_input_handler("\nInput number of matrix rows (from 2 to 10) (or quit [q]) :\n", i_matrix_rows) != Good) {
 					system("cls");
 					return;
 				}
-			}			
+			}
 			system("cls");
 
 			if (i_matrix_rows > 10 || i_matrix_rows < 2) {
@@ -872,7 +877,7 @@ static void lab_6() {
 		}
 		if (i_variant == '2') {             // Setting arbitrary matrix for variant 4
 			while (2) {
-				if (number_input_handler("\nInput number of matrix columns (from 2 to 10) (or quit[q/b]) :\n", i_matrix_cols) != Good) {
+				if (number_input_handler("\nInput number of matrix columns (from 2 to 10) (or quit [q]) :\n", i_matrix_cols) != Good) {
 					system("cls");
 					return;
 				}
@@ -928,7 +933,7 @@ static void lab_6() {
 		bool b_memory_inicialize_fail = false;
 
 		int** p_i_matrix = (int**)calloc(i_matrix_rows, sizeof(int*));     // Creating pointer to array of pointers
-		
+
 		if (p_i_matrix == NULL) b_memory_inicialize_fail = true;
 
 		int i_bad_row{};
@@ -957,7 +962,7 @@ static void lab_6() {
 					free(p_i_matrix[i]);
 				}
 			}
-			
+
 			free(p_i_matrix);
 
 			system("cls");
@@ -1020,16 +1025,16 @@ static void lab_6() {
 					}
 
 					printf("\nPrefer [Enter] after every member."
-						   "\nWill clear all input after mistaken number, if input with [Space]."
-						   "\nRange is +-20."
-						   "\n\n\nInput matrix. (or quit [q])\n\n");
+						"\nWill clear all input after mistaken number, if input with [Space]."
+						"\nRange is +-20."
+						"\n\n\nInput matrix. (or quit [q])\n\n");
 
 					if (operation_code != -1) {
 						for (int i = 0; i <= row; ++i) {
 							int col_limit = (i == row) ? col : i_matrix_cols; // For all i, that are not current row, printing all elements.
 							for (int j = 0; j < col_limit; ++j) {             // Else printing elements till current column 
 								printf("%3d ", p_i_matrix[i][j]);
-								if (j == i_matrix_cols -1) printf("\n\n");
+								if (j == i_matrix_cols - 1) printf("\n\n");
 							}
 						}
 					}
@@ -1110,11 +1115,11 @@ static void lab_6() {
 			int* p_i_elements = (int*)calloc(1, sizeof(int));
 			int i_full_size_elements{};
 
-			 do {
-				 if (p_i_elements == NULL) {
-					 b_memory_inicialize_fail = true;
-					 break;
-				 }
+			do {
+				if (p_i_elements == NULL) {
+					b_memory_inicialize_fail = true;
+					break;
+				}
 
 				for (int j = 0; j < i_matrix_cols; ++j) {
 
@@ -1138,7 +1143,7 @@ static void lab_6() {
 
 							p_i_elements = copy_array;
 
-							p_i_elements[i_full_size_elements -1] = j + 1;
+							p_i_elements[i_full_size_elements - 1] = j + 1;
 							p_i_elements[i_full_size_elements - 2] = i + 1;
 							p_i_elements[i_full_size_elements - 3] = p_i_matrix[i][j];
 						}
@@ -1155,13 +1160,17 @@ static void lab_6() {
 					printf("\n\nThe elements:\n");
 
 					for (int i = 0; i < i_full_size_elements; i += 3) {
-						printf("%d {%d, %d};  ", p_i_elements[i], p_i_elements[i + 1], p_i_elements[i + 2]);
+						if (i % 15 == 0 && i != 0) {
+							printf("\n\n");
+						}
+
+						printf("%3d {%2d, %2d};  ", p_i_elements[i], p_i_elements[i + 1], p_i_elements[i + 2]);
 					}
 				}
-			 } while (0);
-			
-			 free(p_i_elements);
-			 if (b_memory_inicialize_fail) {
+			} while (0);
+
+			free(p_i_elements);
+			if (b_memory_inicialize_fail) {
 				b_memory_inicialize_fail = true;
 
 				system("cls");
@@ -1169,10 +1178,10 @@ static void lab_6() {
 				printf("\nAn internal error has occurred. Try again.\n");
 
 				Sleep(1000);
-			 }
+			}
 
 		}
-		
+
 
 		for (int i = 0; i < i_matrix_rows; ++i) {
 			free(p_i_matrix[i]);
@@ -1184,6 +1193,7 @@ static void lab_6() {
 
 		USER_CONTINUE_USAGE()
 	}
+
 }
 // END
 
@@ -1194,7 +1204,7 @@ static void lab_6() {
 #define IS_CHAR_SPLITTER(ch_c) (ch_c == '\n' || ch_c == ' ' || ch_c == '\t')
 
 inline static bool is_char_punctuation(char ch_c) {
-	return strchr(".,?!/|\\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
+	return strchr(".,?!/|\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
 }
 
 static void lab_7() {
@@ -1284,7 +1294,7 @@ static void lab_7() {
 					int i_block_start = i;
 
 					int i_size_of_current = 0;
-					 	                                     // Then counting current size and moving 'i' to the next block
+					// Then counting current size and moving 'i' to the next block
 					for (i; p_ch_user_text[i] == ch_I_O; ++i, ++i_size_of_current);
 					--i;
 
@@ -1326,7 +1336,7 @@ static void lab_7() {
 				system("cls");
 				int i_position_to_dispaly{};
 				while (3) {
-					if (number_input_handler("\nInput position in poem (from 1 to %d) (or quit [q]) :\n", i_position_to_dispaly, (int)sz_user_text_size - 2) != Good) {
+					if (number_input_handler("\nInput position in poem (from 1 to %d) (or quit [q]) :\n", i_position_to_dispaly, 0, (int)sz_user_text_size - 2) != Good) {
 						system("cls");
 						return;
 					}
@@ -1343,16 +1353,16 @@ static void lab_7() {
 
 				int i_word_count{ 0 };
 				for (int i = 0; i <= i_position; ++i) { // Counting words. Every "first step" on the word counts one word
-					if (!IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i])){
+					if (!IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i])) {
 						++i_word_count;
-						                                // Moving 'i' to the next splitter or end of the text
+						// Moving 'i' to the next splitter or end of the text
 						while (p_ch_user_text[i] != '\0' && !IS_CHAR_SPLITTER(p_ch_user_text[i]) && !is_char_punctuation(p_ch_user_text[i])) ++i;
 					}
 				}
 
 				bool b_position_is_on_word = !IS_CHAR_SPLITTER(p_ch_user_text[i_position]) && !is_char_punctuation(p_ch_user_text[i_position]);
 
-				                                        // Moving position to the end of the word
+				// Moving position to the end of the word
 				while (i_position >= 0 && (IS_CHAR_SPLITTER(p_ch_user_text[i_position]) || is_char_punctuation(p_ch_user_text[i_position]))) {
 					--i_position;
 				}
@@ -1365,7 +1375,7 @@ static void lab_7() {
 				printf("\nSearching for word...");
 				Sleep(1000);
 				system("cls");
-				
+
 				printf("\n-----------------------------------\n%s-----------------------------------", p_ch_user_text);
 
 				printf("\n\nHere is information for position %d:\n\n", i_position_to_dispaly);
@@ -1383,13 +1393,14 @@ static void lab_7() {
 		}
 		USER_CONTINUE_USAGE()
 	}
+
 }
 // END
 
 
 
 // Laboratory work 8, variant 12
-enum Name_type {FirstN, LastN};
+enum Name_type { FirstN, LastN };
 enum Command {
 	Regen_database_manual,
 	Regen_database_random,
@@ -1398,6 +1409,7 @@ enum Command {
 	Sh_best,
 	Sh_best_marks,
 	Sh_best_median,
+	Del_student,
 	No_command
 };
 
@@ -1405,41 +1417,48 @@ struct Student_form {
 	int i_number;
 	char ch_name[16];
 	char ch_surname[16];
+	struct {
+		int i_day;
+		int i_month;
+		int i_year;
+	} birth_date;
 	int i_mark_physics[16];
 	int i_mark_math[16];
 	int i_mark_bel[16];
-	int i_mark_rus[16];
-	int i_mark_progr[16];
+	int i_mark_chem[16];
+	int i_mark_inf[16];
+	double d_median;
 };
 
 struct Database_info {
 	int i_groups_amount;
-	int i_students_amount;
-	int i_group_numbers[6];
+	//int i_students_amount;
+	int i_group_numbers[6];            // Parallel
+	int i_students_in_group_amount[6]; // Arrays
 };
 
 // FirstN - first name
 // LastN  - last name
 static const char* get_name(Name_type name_type, size_t i_name_position) {
 	static const char* ch_first_names[] = {
-		"James",   "Mary",    "John",    "Patricia",  "Robert",  "Jennifer",
-		"Michael", "Linda",   "William", "Elizabeth", "David",   "Susan",
-		"Richard", "Jessica", "Joseph",  "Sarah",     "Thomas",  "Karen",
-		"Charles", "Nancy",   "Daniel",  "Lisa",      "Matthew", "Betty",
-		"Anthony", "Emily",   "Mark",    "Sandra",    "Donald",  "Ashley",
-		"Steven",  "Kimberly","Paul",    "Donna",     "Andrew",  "Michelle",
-		"Joshua",  "Dorothy", "Kevin",   "Carol",     "Brian",   "Amanda",
-		"George",  "Melissa", "Edward",  "Deborah",   "Ronald",  "Stephanie",
-		"Timothy", "Rebecca", "Jason",   "Sharon",    "Jeffrey", "Laura",
-		"Ryan",    "Cynthia", "Jacob",   "Amy",       "Gary",    "Kathleen",
-		"Nicholas","Angela",  "Eric",    "Shirley",   "Stephen", "Brenda",
-		"Jonathan","Pamela",  "Larry",   "Emma",      "Justin",  "Nicole",
-		"Scott",   "Helen",   "Brandon", "Anna",      "Benjamin","Samantha",
-		"Samuel",  "Katherine","Frank", "Christine", "Gregory", "Debra",
-		"Raymond", "Rachel",  "Patrick", "Carolyn",   "Alexander","Janet",
-		"Jack",    "Maria",   "Dennis",  "Heather",   "Jerry",   "Catherine",
-		"Tyler",   "Diane",   "Aaron",   "Olivia",    "Henry",   "Julie",
-		"Jose",    "Joyce",   "Adam",    "Victoria",  "Peter",   "Kelly"
+	"James",   "Mary",    "John",    "Patricia",  "Robert",  "Jennifer",
+	"Michael", "Linda",   "William", "Elizabeth", "David",   "Susan",
+	"Richard", "Jessica", "Joseph",  "Sarah",     "Thomas",  "Karen",
+	"Charles", "Nancy",   "Daniel",  "Lisa",      "Matthew", "Betty",
+	"Anthony", "Emily",   "Mark",    "Sandra",    "Donald",  "Ashley",
+	"Steven",  "Kimberly","Paul",    "Donna",     "Andrew",  "Michelle",
+	"Joshua",  "Dorothy", "Kevin",   "Carol",     "Brian",   "Amanda",
+	"George",  "Melissa", "Edward",  "Deborah",   "Ronald",  "Stephanie",
+	"Timothy", "Rebecca", "Jason",   "Sharon",    "Jeffrey", "Laura",
+	"Ryan",    "Cynthia", "Jacob",   "Amy",       "Gary",    "Kathleen",
+	"Nicholas","Angela",  "Eric",    "Shirley",   "Stephen", "Brenda",
+	"Jonathan","Pamela",  "Larry",   "Emma",      "Justin",  "Nicole",
+	"Scott",   "Helen",   "Brandon", "Anna",      "Benjamin","Samantha",
+	"Samuel",  "Katherine","Frank",  "Christine", "Gregory", "Debra",
+	"Raymond", "Rachel",  "Patrick", "Carolyn",   "Alexander","Janet",
+	"Jack",    "Maria",   "Dennis",  "Heather",   "Jerry",   "Catherine",
+	"Tyler",   "Diane",   "Aaron",   "Olivia",    "Henry",   "Julie",
+	"Jose",    "Joyce",   "Adam",    "Victoria",  "Peter",   "Kelly"
 	};
 
 	static const char* ch_last_names[] = {
@@ -1470,6 +1489,7 @@ static const char* get_name(Name_type name_type, size_t i_name_position) {
 	else if (i_name_position < 0) i_name_position = 0;
 
 	return name_type == FirstN ? ch_first_names[i_name_position] : ch_last_names[i_name_position];
+
 }
 
 static void print_student_marks(int* p_i_marks_array, const char* ch_subject_name) {
@@ -1477,21 +1497,26 @@ static void print_student_marks(int* p_i_marks_array, const char* ch_subject_nam
 
 	for (int j = 0; j < 16; ++j) {
 		if (p_i_marks_array[j] == -1) {
-			printf("  ");
+			printf("   ");
 			continue;
 		}
-		printf("%d ", p_i_marks_array[j]);
+		printf("%2d ", p_i_marks_array[j]);
 	}
+
 }
 
 static void print_student_form(Student_form& student_form) {
-	printf("\n---------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nMarks:", student_form.i_number, student_form.ch_name, student_form.ch_surname);
+	printf("\n-----------------------------------------------------------------\nStudent number: %d\nName:           %s\nSurname:        %s\nBirth day:      %02d.%02d.%d\nMarks:",
+		student_form.i_number, student_form.ch_name, student_form.ch_surname, student_form.birth_date.i_day, student_form.birth_date.i_month, student_form.birth_date.i_year
+	);
 
 	print_student_marks(student_form.i_mark_math, "Math:");
 	print_student_marks(student_form.i_mark_physics, "Physics:");
 	print_student_marks(student_form.i_mark_bel, "Belarussian:");
-	print_student_marks(student_form.i_mark_rus, "Russian:");
-	print_student_marks(student_form.i_mark_progr, "Programming:");
+	print_student_marks(student_form.i_mark_chem, "Chemistry:");
+	print_student_marks(student_form.i_mark_inf, "Informatics:");
+	printf("\n\nMedian mark:     %.1f", student_form.d_median);
+
 }
 
 static void generate_marks(int* p_i_marks_array, int i_strength) {
@@ -1502,13 +1527,13 @@ static void generate_marks(int* p_i_marks_array, int i_strength) {
 	}
 
 	int i_placed_count = 0;
-	
+
 	while (i_placed_count < i_marks_count) {         // Would place i_marks_count amount of marks
 		int i_random_index = my_random(16, 0);
 
 		if (p_i_marks_array[i_random_index] == -1) { // Continue if index already has mark
-			if (i_strength > 724) {
-				p_i_marks_array[i_random_index] = 5 + my_random(5, 0);
+			if (i_strength > 824) {
+				p_i_marks_array[i_random_index] = 7 + my_random(3, 0);
 			}
 			else if (i_strength < 327) {
 				p_i_marks_array[i_random_index] = 2 + my_random(4, 0);
@@ -1521,18 +1546,19 @@ static void generate_marks(int* p_i_marks_array, int i_strength) {
 			++i_placed_count;
 		}
 	}
+
 }
 
 static double get_median(Student_form& student_form) {
-	size_t sz_header = sizeof(student_form.i_number) + sizeof(student_form.ch_name) + sizeof(student_form.ch_surname);
+	size_t sz_header = sizeof(student_form.i_number) + sizeof(student_form.ch_name) + sizeof(student_form.ch_surname) + sizeof(student_form.birth_date);
 
-	size_t sz_marks_fields_size = sizeof(Student_form) - sz_header;
+	size_t sz_marks_fields_size = sizeof(Student_form) - sz_header - sizeof(student_form.d_median);
 
 	int i_mark_slots_amount = sz_marks_fields_size / sizeof(int);
 
-	// Moving the byte pointer to the marks fields start and then converting it to the int pointer. NumNameSurnameMathPhysics...  NumNameSurnameMathPhysics...
-	//                                                                                              ^                                           ^
-	const int* p_i_marks = (const int*)((const char*)&student_form + sz_header);
+	// Moving the byte pointer to the marks fields start and then converting it to the int pointer. NumNameSurnameBirthDateMathPhysics...  NumNameSurnameBirthDateMathPhysics...
+	//                                                                                              ^                                                             ^
+	const int* p_i_marks = (const int*)((const char*)&student_form + sz_header); // Pointer on start of marks
 
 	int i_marks_sum{};
 	int i_marks_amount{};
@@ -1545,31 +1571,45 @@ static double get_median(Student_form& student_form) {
 	}
 
 	return (double)i_marks_sum / (double)i_marks_amount;
+
 }
 
-static void show_students_filtered(FILE* Students_database, int i_target_group = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median = -1) {
+static void show_students_filtered(FILE* Students_database, int i_target_group = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1) {
 	Database_info database_info{ 0, 0, 0 };
 	Student_form student_form = { 0, "", "", 0, 0 };
-
 
 	fseek(Students_database, 0, SEEK_SET); // Collecting info for moving cursor in file
 	fread((char*)&database_info, sizeof(Database_info), 1, Students_database);
 
-	if (i_target_group == -1) fseek(Students_database, sizeof(Database_info), SEEK_SET);
-	else {
-		for (int i = 0; i < database_info.i_groups_amount; ++i) { // Calculating an offset to the target group from the start of the file
-			if (i_target_group == database_info.i_group_numbers[i]) {
-				fseek(Students_database, sizeof(Database_info) + i * sizeof(Student_form) * database_info.i_students_amount, SEEK_SET);
-				break;
-			}
+	int i_students_to_read{};
+	if (i_target_group == -1) {
+		fseek(Students_database, sizeof(Database_info), SEEK_SET);
+
+		for (int k = 0; k < database_info.i_groups_amount; k++) {
+			i_students_to_read += database_info.i_students_in_group_amount[k];
 		}
 	}
+	else {
+		int i_offset = sizeof(Database_info);
+
+		for (int i = 0; i < database_info.i_groups_amount; ++i) { // Calculating an offset to the target group from the start of the file
+			if (i_target_group == database_info.i_group_numbers[i]) {
+				i_students_to_read = database_info.i_students_in_group_amount[i];
+				break;
+			}
+
+			i_offset += database_info.i_students_in_group_amount[i] * sizeof(Student_form);
+		}
+
+		fseek(Students_database, i_offset, SEEK_SET);
+	}
+
+
+	//if (i_target_group == -1) i_students_to_read = database_info.i_groups_amount * database_info.i_students_amount;
+	//else i_students_to_read = database_info.i_students_amount;
+
 
 	// Here is better to copy fread() everywhere then write it once and in every iteration check bunch of if's
-	int i_students_to_read{};
-	if (i_target_group == -1) i_students_to_read = database_info.i_groups_amount * database_info.i_students_amount;
-	else i_students_to_read = database_info.i_students_amount;
-
 	int i_to_display_students_amount = 0;
 	if (filter == Sh_all) {
 		while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database) && i_students_to_read != 0) {
@@ -1594,7 +1634,7 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 				}
 			}
 			else {          // Sh_best_median
-				if (get_median(student_form) >= d_median) {
+				if (student_form.d_median >= d_median_input) {
 					b_good_student = true;
 					++i_to_display_students_amount;
 				}
@@ -1608,12 +1648,12 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 			printf("\n\n\nNo good students :(\n\n\n");
 		}
 		else {
-			if (i_target_group == -1)  {
+			if (i_target_group == -1) {
 				if (filter_mode == Sh_best_marks) {
 					printf("\n\n\n\nAmount of good students in all groups is %d\n\n\n", i_to_display_students_amount);
 				}
 				else if (filter_mode == Sh_best_median) {
-					printf("\n\n\n\nAmount of good students in all groups with median mark minimal of %.1f is %d\n\n\n", d_median, i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in all groups with median mark minimal of %.1f is %d\n\n\n", d_median_input, i_to_display_students_amount);
 				}
 			}
 			else {
@@ -1621,48 +1661,77 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 					printf("\n\n\n\nAmount of good students in group %d is %d\n\n\n", i_target_group, i_to_display_students_amount);
 				}
 				else if (filter_mode == Sh_best_median) {
-					printf("\n\n\n\nAmount of good students in group %d with median mark minimal of %.1f is %d\n\n\n", i_target_group, d_median, i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in group %d with median mark minimal of %.1f is %d\n\n\n", i_target_group, d_median_input, i_to_display_students_amount);
 				}
 			}
 		}
 	}
+
 }
 
-#define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message)\
-	while (1) {\
-		Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter);\
-		if (cod_screen_backwards == Quit) {\
-			fclose(Students_database);\
-			system("cls");\
-			return;\
-		}\
-		else if (cod_screen_backwards == Back) {\
-			system("cls");\
-			fclose(Students_database);\
-			b_back_to_general = true;\
-			break;\
-		}\
-		if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
-			system("cls");\
-			printf("\nNot valid range.\n\n");\
-			Sleep(1500);\
-			continue;\
-		}\
+static void del_student(FILE* Students_database, long l_student_position) {
+	Database_info database_info;
+
+	fread(&database_info, sizeof(Database_info), 1, Students_database);
+
+	long l_write_position = l_student_position;                                       // Position of the student to rewrite
+
+	fseek(Students_database, l_student_position + sizeof(Student_form), SEEK_SET);    // Moving cursor to the next student
+
+	Student_form student_form_buffer;
+	while (fread(&student_form_buffer, sizeof(Student_form), 1, Students_database)) { // Reading this "next" student to buffer
+		long l_resume_read_position = ftell(Students_database);                       // Saving position of the "next" student
+
+		fseek(Students_database, l_write_position, SEEK_SET);                         // Moving cursor to the "rewrite" student
+
+		fwrite(&student_form_buffer, sizeof(Student_form), 1, Students_database);     // Rewriting
+
+		l_write_position += sizeof(Student_form);                                     // Setting following student to "rewrite" student
+
+		fseek(Students_database, l_resume_read_position, SEEK_SET);                   // Moving cursor to the next student
+	}
+
+	int i_fd = _fileno(Students_database); // File descriptor (unique file number)
+	long l_current_size = _filelength(i_fd);
+	_chsize_s(i_fd, l_current_size - sizeof(Student_form)); // Shrinking file size to the position before extra student
+}
+
+#define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
+while (1) {\
+	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
+	if (cod_screen_backwards == Quit) {\
+		fclose(Students_database);\
+		system("cls");\
+		return;\
+	}\
+	else if (cod_screen_backwards == Back) {\
+		system("cls");\
+		fclose(Students_database);\
+		b_back_to_general = true;\
 		break;\
 	}\
-	if (b_back_to_general) break;\
+	if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
+		system("cls");\
+		printf("\nNot valid range.\n\n");\
+		Sleep(1500);\
+		continue;\
+	}\
+	break;\
+}\
+if (b_back_to_general) break;\
 
 
 static void lab_8() {
 	while (1) {
 		puts(
-			 "\nStudents sample database generator.\n\n"
-			 "[1] - recreate database randomly\n"
-			 "[2] - recreate database manually (amount of groups and students)\n"
-			 "[3] - show all students\n"
-			 "[4] - show students in group\n"
-			 "\n[q] - quit\n"
-			);
+			"\nStudents sample database generator.\n\n"
+			"[1] - recreate database randomly\n"
+			"[2] - recreate database manually (amount of groups and students)\n"
+			"[3] - show all students\n"
+			"[4] - show students in group\n"
+			"[5] - delete student\n"
+			"\n[q] - quit\n"
+		);
 
 		Command cmd_general{};
 		while (2) {
@@ -1683,6 +1752,10 @@ static void lab_8() {
 				cmd_general = Sh_group;
 				break;
 
+			case '5':
+				cmd_general = Del_student;
+				break;
+
 			case 'q':
 			case 'Q':
 				system("cls");
@@ -1699,13 +1772,12 @@ static void lab_8() {
 		Database_info database_info = { 0, 0, 0 };
 
 		FILE* Students_database = NULL;
-		
+
 		bool b_no_database = false;
 		bool b_back_to_general = false;
-		bool b_memory_initialize_fail = false;
+		//bool b_memory_initialize_fail = false;
 		do {
 			int i_amount_of_groups{};
-			int i_amount_of_students{};
 			if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual) {
 				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "w+b")) {
 					b_no_database = true;
@@ -1716,19 +1788,27 @@ static void lab_8() {
 
 				if (cmd_general == Regen_database_random) {
 					database_info.i_groups_amount = i_amount_of_groups = 2 + my_random(4, 0);
-					database_info.i_students_amount = i_amount_of_students = 2 + my_random(8, 0);
+					//database_info.i_students_amount = i_amount_of_students = 2 + my_random(8, 0);
+
+					for (int i = 0; i < i_amount_of_groups; ++i) {
+						database_info.i_students_in_group_amount[i] = 2 + my_random(10, 0);
+					}
 				}
-				else {      // Regen_database_manual
-					ENTER_DATABASE_INFO(i_amount_of_groups, 1, 6, "\nInput amount of groups from 1 to 6 (quit [q], back [b]) :\n")
+				else {          // Regen_database_manual
+					ENTER_DATABASE_INFO(i_amount_of_groups, 1, 6, "\nInput amount of groups from 1 to 6 (quit [q], back [b]) :\n", 0)
 					database_info.i_groups_amount = i_amount_of_groups;
 
 					system("cls");
+					for (int i = 0; i < database_info.i_groups_amount; ++i) {
+						int i_amount_of_students{};
 
-					ENTER_DATABASE_INFO(i_amount_of_students, 1, 10, "\nInput amount of students from 1 to 10 (quit [q], back [b]) :\n")
-					database_info.i_students_amount = i_amount_of_students;
+						ENTER_DATABASE_INFO(database_info.i_students_in_group_amount[i], 1, 10, "\nInput amount of students in %d group from 1 to 10 (quit [q], back [b]) :\n", i + 1)
+						system("cls");
+						//database_info.i_students_amount = i_amount_of_students;
+					}
 				}
 
-				// The iterator for filling group numbers firstly, because it works so. We can't do it lower, because it won't be the "third" information in file.
+				// The iterator for filling group numbers
 				for (int g = 0; g < i_amount_of_groups; ++g) {
 					database_info.i_group_numbers[g] = my_random(482, 0);
 				}
@@ -1738,7 +1818,7 @@ static void lab_8() {
 				for (int g = 0; g < i_amount_of_groups; ++g) {       // Generate groups
 					int i_group_number = database_info.i_group_numbers[g] * 1000 + my_random(432, 0);
 
-					for (int i = 0; i < i_amount_of_students; ++i) { // Generate students
+					for (int i = 0; i < database_info.i_students_in_group_amount[g]/*i_amount_of_students*/; ++i) { // Generate students
 						int i_strength = my_random(1000, 0);
 
 						student_form.i_number = i_group_number + i;
@@ -1751,12 +1831,17 @@ static void lab_8() {
 						ch_random_name = get_name(LastN, my_random(119, 0));
 						strcpy_s(student_form.ch_surname, sizeof(student_form.ch_surname), ch_random_name);
 
-						generate_marks(student_form.i_mark_math, my_random(1000, 0));
-						generate_marks(student_form.i_mark_physics, my_random(1000, 0));
-						generate_marks(student_form.i_mark_bel, my_random(1000, 0));
-						generate_marks(student_form.i_mark_rus, my_random(1000, 0));
-						generate_marks(student_form.i_mark_progr, my_random(1000, 0));
+						student_form.birth_date.i_day = 1 + my_random(30, 0);
+						student_form.birth_date.i_month = 1 + my_random(11, 0);
+						student_form.birth_date.i_year = 2006 + my_random(2, 0);
 
+						generate_marks(student_form.i_mark_math, i_strength);
+						generate_marks(student_form.i_mark_physics, i_strength);
+						generate_marks(student_form.i_mark_bel, i_strength);
+						generate_marks(student_form.i_mark_chem, i_strength);
+						generate_marks(student_form.i_mark_inf, i_strength);
+
+						student_form.d_median = get_median(student_form);
 
 						fwrite((char*)&student_form, sizeof(Student_form), 1, Students_database);
 					}
@@ -1775,11 +1860,82 @@ static void lab_8() {
 				break;
 			}
 
-			if (cmd_general == Sh_all || cmd_general == Sh_group) {
-				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
-					b_no_database = true;
-					break;
+			//if (cmd_general == Sh_all || cmd_general == Sh_group || cmd_general == Del_student) {
+			//	
+			//}
+			if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
+				b_no_database = true;
+				break;
+			}
+
+			if (cmd_general == Del_student) {
+				fread((char*)&database_info, sizeof(Database_info), 1, Students_database);
+
+				int i_student_id_to_del{};
+				while (3) {
+					show_students_filtered(Students_database);
+					fseek(Students_database, sizeof(database_info), SEEK_SET);
+
+					Operation_code cod_screen_backwards = number_input_handler("\nChoose student by id to delete from listed (or quit [q], back [b]) :\n", i_student_id_to_del, 1);
+					if (cod_screen_backwards == Quit) {
+						fclose(Students_database);
+						system("cls");
+						return;
+					}
+					else if (cod_screen_backwards == Back) {
+						fclose(Students_database);
+						system("cls");
+						b_back_to_general = true;
+						break;
+					}
+
+					bool b_student_exists = false;
+					long l_student_position{};
+					int i_group_index{};
+					for (int g = 0; g < database_info.i_groups_amount; ++g) { // Iterator to change students amount in database info
+						int i_students_count = database_info.i_students_in_group_amount[g];
+
+						for (int s = 0; s < i_students_count; ++s) {
+							long l_current_position = ftell(Students_database);
+
+							fread((char*)&student_form, sizeof(Student_form), 1, Students_database);
+
+							if (student_form.i_number == i_student_id_to_del) {
+								b_student_exists = true;
+								l_student_position = l_current_position;
+								i_group_index = g;
+								break;
+							}	
+						}
+						if (b_student_exists) break;
+					}
+
+					if (!b_student_exists) {
+						system("cls");
+						printf("\nNo such student. Input existing student number.\n\n");
+						Sleep(1500);
+						system("cls");
+						continue;
+					}
+
+					 del_student(Students_database, l_student_position);
+
+					 --database_info.i_students_in_group_amount[i_group_index];
+
+					 fseek(Students_database, 0, SEEK_SET);
+					 fwrite(&database_info, sizeof(Database_info), 1, Students_database); // Rewriting students amount
+
+					 system("cls");
+					 printf("\nDeleting...");
+					 Sleep(1000);
+					 system("cls");
+					 printf("\nDone.");
+					 Sleep(800);
+					 system("cls");
+
+					 continue;
 				}
+				if (b_back_to_general) break;
 			}
 
 			int i_group_number = -1;
@@ -1787,13 +1943,13 @@ static void lab_8() {
 				system("cls");
 				fread((char*)&database_info, sizeof(Database_info), 1, Students_database);
 
-				while (4) {
+				while (3) {
 					printf("\nAvailable groups:\n");
 					for (int i = 0; i < database_info.i_groups_amount; ++i) {
 						printf("%d ", database_info.i_group_numbers[i]);
 					}
 
-					Operation_code cod_screen_backwards = number_input_handler("\n\nInput wanted group number (or quit [q], back [b]) :\n", i_group_number);
+					Operation_code cod_screen_backwards = number_input_handler("\n\nInput wanted group number (or quit [q], back [b]) :\n", i_group_number, 1);
 					if (cod_screen_backwards == Quit) {
 						fclose(Students_database);
 						system("cls");
@@ -1883,7 +2039,7 @@ static void lab_8() {
 
 						bool b_back_to_menu = false;
 						while (4) {
-							Operation_code cod_screen_backwards = number_input_handler("\nInput median mark in range from 1 to 10 to filter students:\n", d_median);
+							Operation_code cod_screen_backwards = number_input_handler("\nInput median mark in range from 1 to 10 to filter students:\n", d_median, 1);
 							if (cod_screen_backwards == Quit) {
 								fclose(Students_database);
 								system("cls");
@@ -1918,13 +2074,13 @@ static void lab_8() {
 			system("cls");
 			continue;
 		}
-		else if (b_memory_initialize_fail) {
-			system("cls");
-			printf("\nAn internal error has occurred. Try again.\n");
-			Sleep(1000);
-			system("cls");
-			continue;
-		}
+		//else if (b_memory_initialize_fail) {
+		//	system("cls");
+		//	printf("\nAn internal error has occurred. Try again.\n");
+		//	Sleep(1000);
+		//	system("cls");
+		//	continue;
+		//}
 	}
 }
 // END

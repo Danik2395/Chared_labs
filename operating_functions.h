@@ -20,7 +20,7 @@
 
 
 // Input checker
-bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
+bool is_correct_input(char* ch_dirt_input, bool allow_fraction);
 
 
 
@@ -29,12 +29,12 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
 // Support %d %f and %% formats in ch_message. Put corresponding arguments in '...'
 // Returns Good (expands into zero), Back and Quit
 template <class T>
-Operation_code number_input_handler(const char* ch_message, T& T_input_variable, ...) {
+Operation_code number_input_handler(const char* ch_message, T& T_input_variable, int i_allow_back = 0 ...) {
 	char ch_input[17];
 	va_list argument;
 	
 	while (1) {
-		va_start(argument, &T_input_variable);                         // Setting va_start on last predicted argument. And updating it in every cycle
+		va_start(argument, i_allow_back);                         // Setting va_start on last predicted argument. And updating it in every cycle
 
 		// Displays call to input
 		for (const char* p = ch_message; *p; ++p) {                    // Moving 'p' on ch_message while *p has symbol under it (if (*p == \0) stop;)
@@ -56,7 +56,7 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 
 		bool allow_fraction = std::is_same<T, double>::value;      // Checks whether it's double
 
-		Operation_code check_change_trigger = change_menu(ch_input);
+		Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
 		if (check_change_trigger) return check_change_trigger;
 
 		else if (is_correct_input(ch_input, allow_fraction)) {

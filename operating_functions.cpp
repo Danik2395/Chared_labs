@@ -17,7 +17,7 @@
 
 
 // Input checker
-bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
+bool is_correct_input(char* ch_dirt_input, bool allow_fraction) {                        // '*' not to copy all the string, but take it address
 	int len = my_strlen(ch_dirt_input);
 	int i_dot_count = 0;
 
@@ -46,9 +46,9 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 						return false;
 					}
 				}
-				else if (ch_dirt_input[i] == ',') {                                      // If item is coma throws "not valid coma" code
-					printf("\nChar ',' not for float. Use '.' instead.");
-					return false;
+				else if (ch_dirt_input[i] == ',') {                                      // If item is coma, change it to dot
+					ch_dirt_input[i] = '.';
+					++i_dot_count;
 				}
 				else {                                                                   // If item is not number or dot throws "Not valid input" code
 					printf("\nNot valid input. Enter valid number.");

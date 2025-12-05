@@ -31,9 +31,10 @@ else {\
 
 // Returns Quit if input "q" or "Q"
 // Returns Back if input "b" or "B"
-inline Operation_code change_menu(const char* ch_t) {
+inline Operation_code change_menu(const char* ch_t, int i_allow_back = 0) {
 	if (my_strcmp(ch_t, "q") || my_strcmp(ch_t, "Q")) return Quit;
-	else if (my_strcmp(ch_t, "b") || my_strcmp(ch_t, "B")) return Back;
+	else if (i_allow_back && my_strcmp(ch_t, "b") || my_strcmp(ch_t, "B")) return Back;
+	return Good;
 }
 
 // "Eats" buffer and, if it's overfilled, returns true
