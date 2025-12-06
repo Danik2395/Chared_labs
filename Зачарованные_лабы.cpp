@@ -1406,10 +1406,16 @@ enum Command {
 	Regen_database_random,
 	Sh_all,
 	Sh_group,
+	Sh_one,
 	Sh_best,
 	Sh_best_marks,
 	Sh_best_median,
-	Del_student,
+	Change_student,
+	Ch_id,
+	Ch_name,
+	Ch_date,
+	Ch_marks,
+	Ch_del,
 	No_command
 };
 
@@ -1574,33 +1580,39 @@ static double get_median(Student_form& student_form) {
 
 }
 
-static void show_students_filtered(FILE* Students_database, int i_target_group = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1) {
+static void show_students_filtered(FILE* Students_database, long l_target = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1) {
 	Database_info database_info{ 0, 0, 0 };
 	Student_form student_form = { 0, "", "", 0, 0 };
 
-	fseek(Students_database, 0, SEEK_SET); // Collecting info for moving cursor in file
+	fseek(Students_database, 0, SEEK_SET);                            // Collecting info for moving cursor in file
 	fread((char*)&database_info, sizeof(Database_info), 1, Students_database);
 
 	int i_students_to_read{};
-	if (i_target_group == -1) {
+	if (l_target == -1) { // All
 		fseek(Students_database, sizeof(Database_info), SEEK_SET);
 
 		for (int k = 0; k < database_info.i_groups_amount; k++) {
 			i_students_to_read += database_info.i_students_in_group_amount[k];
 		}
 	}
-	else {
+	else {                   // Group or one
 		int i_offset = sizeof(Database_info);
 
-		for (int i = 0; i < database_info.i_groups_amount; ++i) { // Calculating an offset to the target group from the start of the file
-			if (i_target_group == database_info.i_group_numbers[i]) {
-				i_students_to_read = database_info.i_students_in_group_amount[i];
-				break;
-			}
-
-			i_offset += database_info.i_students_in_group_amount[i] * sizeof(Student_form);
+		if (filter == Sh_one) {
+			i_offset = l_target;
+			i_students_to_read = 1;
 		}
+		else {     // Sh_group
+			for (int i = 0; i < database_info.i_groups_amount; ++i) {     // Calculating an offset to the target group from the start of the file by using parallel arrays
+				if (l_target == database_info.i_group_numbers[i]) {       // If group numbers matched, we need to read amount of the students as in matched group
+					i_students_to_read = database_info.i_students_in_group_amount[i];
+					break;
+				}
 
+				i_offset += database_info.i_students_in_group_amount[i] * sizeof(Student_form);
+			}
+		}
+		
 		fseek(Students_database, i_offset, SEEK_SET);
 	}
 
@@ -1609,16 +1621,16 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 	//else i_students_to_read = database_info.i_students_amount;
 
 
-	// Here is better to copy fread() everywhere then write it once and in every iteration check bunch of if's
-	int i_to_display_students_amount = 0;
+	// Here is better to copy fread() everywhere then write it once and in every iteration check bunch of "if's"
+	int i_students_amount_to_display = 0;
 	if (filter == Sh_all) {
 		while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database) && i_students_to_read != 0) {
 			print_student_form(student_form);
 			--i_students_to_read;
-			++i_to_display_students_amount;
+			++i_students_amount_to_display;
 		}
-		if (i_target_group == -1) printf("\n\n\n\nAmount of students in all groups is %d\n\n\n", i_to_display_students_amount);
-		else                      printf("\n\n\n\nAmount of students in group %d is %d\n\n\n", i_target_group, i_to_display_students_amount);
+		if (l_target == -1) printf("\n\n\n\nAmount of students in all groups is %d\n\n\n", i_students_amount_to_display);
+		else                      printf("\n\n\n\nAmount of students in group %d is %d\n\n\n", l_target, i_students_amount_to_display);
 	}
 	else if (filter == Sh_best) {
 		while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database) && i_students_to_read != 0) {
@@ -1628,7 +1640,7 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 				for (int i = 0; i < 16; ++i) {
 					if (student_form.i_mark_math[i] > 9 || student_form.i_mark_physics[i] == 7 || student_form.i_mark_physics[i] == 8) {
 						b_good_student = true;
-						++i_to_display_students_amount;
+						++i_students_amount_to_display;
 						break;
 					}
 				}
@@ -1636,7 +1648,7 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 			else {          // Sh_best_median
 				if (student_form.d_median >= d_median_input) {
 					b_good_student = true;
-					++i_to_display_students_amount;
+					++i_students_amount_to_display;
 				}
 			}
 
@@ -1644,26 +1656,32 @@ static void show_students_filtered(FILE* Students_database, int i_target_group =
 			--i_students_to_read;
 		}
 
-		if (i_to_display_students_amount == 0) {
+		if (i_students_amount_to_display == 0) {
 			printf("\n\n\nNo good students :(\n\n\n");
 		}
 		else {
-			if (i_target_group == -1) {
+			if (l_target == -1) {
 				if (filter_mode == Sh_best_marks) {
-					printf("\n\n\n\nAmount of good students in all groups is %d\n\n\n", i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in all groups is %d\n\n\n", i_students_amount_to_display);
 				}
 				else if (filter_mode == Sh_best_median) {
-					printf("\n\n\n\nAmount of good students in all groups with median mark minimal of %.1f is %d\n\n\n", d_median_input, i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in all groups with median mark minimal of %.1f is %d\n\n\n", d_median_input, i_students_amount_to_display);
 				}
 			}
 			else {
 				if (filter_mode == Sh_best_marks) {
-					printf("\n\n\n\nAmount of good students in group %d is %d\n\n\n", i_target_group, i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in group %d is %d\n\n\n", l_target, i_students_amount_to_display);
 				}
 				else if (filter_mode == Sh_best_median) {
-					printf("\n\n\n\nAmount of good students in group %d with median mark minimal of %.1f is %d\n\n\n", i_target_group, d_median_input, i_to_display_students_amount);
+					printf("\n\n\n\nAmount of good students in group %d with median mark minimal of %.1f is %d\n\n\n", l_target, d_median_input, i_students_amount_to_display);
 				}
 			}
+		}
+	}
+	else if (filter == Sh_one) {
+		while (fread((char*)&student_form, sizeof(Student_form), 1, Students_database) && i_students_to_read != 0) {
+			print_student_form(student_form);
+			--i_students_to_read;
 		}
 	}
 
@@ -1729,7 +1747,7 @@ static void lab_8() {
 			"[2] - recreate database manually (amount of groups and students)\n"
 			"[3] - show all students\n"
 			"[4] - show students in group\n"
-			"[5] - delete student\n"
+			"[5] - change student information\n"
 			"\n[q] - quit\n"
 		);
 
@@ -1753,7 +1771,7 @@ static void lab_8() {
 				break;
 
 			case '5':
-				cmd_general = Del_student;
+				cmd_general = Change_student;
 				break;
 
 			case 'q':
@@ -1860,23 +1878,22 @@ static void lab_8() {
 				break;
 			}
 
-			//if (cmd_general == Sh_all || cmd_general == Sh_group || cmd_general == Del_student) {
-			//	
-			//}
 			if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
 				b_no_database = true;
 				break;
 			}
 
-			if (cmd_general == Del_student) {
+			Command cmd_filter{};
+			Command cmd_filter_mode{};
+			if (cmd_general == Change_student) {
 				fread((char*)&database_info, sizeof(Database_info), 1, Students_database);
 
-				int i_student_id_to_del{};
+				int i_student_id_to_change{};
 				while (3) {
 					show_students_filtered(Students_database);
 					fseek(Students_database, sizeof(database_info), SEEK_SET);
 
-					Operation_code cod_screen_backwards = number_input_handler("\nChoose student by id to delete from listed (or quit [q], back [b]) :\n", i_student_id_to_del, 1);
+					Operation_code cod_screen_backwards = number_input_handler("\nChoose student by id to change from listed (or quit [q], back [b]) :\n", i_student_id_to_change, 1);
 					if (cod_screen_backwards == Quit) {
 						fclose(Students_database);
 						system("cls");
@@ -1892,18 +1909,18 @@ static void lab_8() {
 					bool b_student_exists = false;
 					long l_student_position{};
 					int i_group_index{};
-					for (int g = 0; g < database_info.i_groups_amount; ++g) { // Iterator to change students amount in database info
+					for (int g = 0; g < database_info.i_groups_amount; ++g) {                        // Iterator to change students amount in database info and to catch student
 						int i_students_count = database_info.i_students_in_group_amount[g];
 
 						for (int s = 0; s < i_students_count; ++s) {
-							long l_current_position = ftell(Students_database);
+							long l_current_position = ftell(Students_database);                      // Saving student we reading position
 
-							fread((char*)&student_form, sizeof(Student_form), 1, Students_database);
+							fread((char*)&student_form, sizeof(Student_form), 1, Students_database); // Reading
 
-							if (student_form.i_number == i_student_id_to_del) {
+							if (student_form.i_number == i_student_id_to_change) {
 								b_student_exists = true;
-								l_student_position = l_current_position;
-								i_group_index = g;
+								l_student_position = l_current_position;                             // If student exists, we have it in student_form and we have it's position
+								i_group_index = g;                                                   // Also group index in parallel arrays
 								break;
 							}	
 						}
@@ -1918,22 +1935,132 @@ static void lab_8() {
 						continue;
 					}
 
-					 del_student(Students_database, l_student_position);
+					while (4) {
+						system("cls");
+						show_students_filtered(Students_database, l_student_position, Sh_one);
 
-					 --database_info.i_students_in_group_amount[i_group_index];
+						puts(
+							"\n\n\nChoose what to change in student information.\n"
+							"[1] - student's id\n"
+							"[2] - student's name\n"
+							"[3] - student's birth date\n"
+							"[4] - student's marks\n"
+							"[5] - delete student\n"
+							"\n[q] - quit\n"
+							"[b] - back\n"
+						);
 
-					 fseek(Students_database, 0, SEEK_SET);
-					 fwrite(&database_info, sizeof(Database_info), 1, Students_database); // Rewriting students amount
+						while (5) {
+							switch (_getch()) {
+							case '1':
+								cmd_filter = Ch_id;
+								break;
 
-					 system("cls");
-					 printf("\nDeleting...");
-					 Sleep(1000);
-					 system("cls");
-					 printf("\nDone.");
-					 Sleep(800);
-					 system("cls");
+							case '2':
+								cmd_filter = Ch_name;
+								break;
 
-					 continue;
+							case '3':
+								cmd_filter = Ch_date;
+								break;
+
+							case '4':
+								cmd_filter = Ch_marks;
+								break;
+
+							case '5':
+								cmd_filter = Ch_del;
+								break;
+
+							case 'b':
+							case 'B':
+								b_back_to_general = true;
+								//fclose(Students_database);
+								break;
+
+							case 'q':
+							case 'Q':
+								fclose(Students_database);
+								system("cls");
+								return;
+
+							default: continue;
+							}
+							system("cls");
+							break;
+						}
+						if (b_back_to_general) break;
+
+						while (5) {
+							system("cls");
+							show_students_filtered(Students_database, l_student_position, Sh_one);
+
+							fseek(Students_database, l_student_position, SEEK_SET);
+
+							if (cmd_filter == Ch_id) {
+								int i_new_id{};
+								Operation_code cod_screen_backwards = number_input_handler("\n\n\nInput new student id (or quit [q], back [b]) :\n", i_new_id, 1);
+								if (cod_screen_backwards == Quit) {
+									fclose(Students_database);
+									system("cls");
+									return;
+								}
+								else if (cod_screen_backwards == Back) {
+									//fclose(Students_database);
+									system("cls");
+									//b_back_to_general = true;
+									break;
+								}
+
+								student_form.i_number = i_new_id;
+
+								fwrite((char*)&student_form.i_number, sizeof(student_form.i_number), 1, Students_database);
+
+								system("cls");
+								printf("\nChanging...");
+								Sleep(800);
+								system("cls");
+								printf("\nDone.");
+								Sleep(800);
+								system("cls");
+							}
+							else if (cmd_filter == Ch_name) {
+
+							}
+							else if (cmd_filter == Ch_date) {
+
+							}
+							else if (cmd_filter == Ch_marks) {
+
+							}
+							else if (cmd_filter == Ch_del) {
+								del_student(Students_database, l_student_position);
+
+								--database_info.i_students_in_group_amount[i_group_index];
+
+								fseek(Students_database, 0, SEEK_SET);
+								fwrite(&database_info, sizeof(Database_info), 1, Students_database); // Rewriting students amount
+
+								system("cls");
+								printf("\nDeleting...");
+								Sleep(1000);
+								system("cls");
+								printf("\nDone.");
+								Sleep(800);
+								system("cls");
+
+								system("cls");
+								b_back_to_general = true;
+								break;
+							}
+						}
+						if (b_back_to_general) break;
+					}
+					//if (b_back_to_general) break;
+
+					
+
+					 //continue;
 				}
 				if (b_back_to_general) break;
 			}
@@ -1981,14 +2108,12 @@ static void lab_8() {
 				if (b_back_to_general) break;
 			}
 
-			Command cmd_filter{};
-			Command cmd_filter_mode{};
 			while (3) {
 				if (cmd_general == Sh_all) puts("\nShow all students menu\n");
 				else if (cmd_general == Sh_group) printf("\nShow students in group %d menu\n\n", i_group_number);
 				puts(
 					"[1] - show all students\n"
-					"[2] - show best students by marks\n"
+					"[2] - show best students by marks (physics 7 and 8, math > 9)\n"
 					"[3] - show best students by median\n"
 					"\n[q] - quit\n"
 					"[b] - back to start\n"
