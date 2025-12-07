@@ -14,7 +14,8 @@ enum Operation_code {
 	Quit,
 	Back,
 	Not_val_size,
-	Not_val_num
+	Not_val_num,
+	No_code
 };
 
 #define USER_CONTINUE_USAGE()\

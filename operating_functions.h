@@ -77,7 +77,7 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 // Quit
 // Not_val_size - Not valid size
 // Not_valid_number - Not valid number
-Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int max_element_size);
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int max_element_size, int i_allow_back = 0);
 
 // String input handler
 // Writes user input into array-string

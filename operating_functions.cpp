@@ -73,12 +73,12 @@ bool is_correct_input(char* ch_dirt_input, bool allow_fraction) {               
 
 
 // Array input handler
-Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i_max_element_size) {
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_max_element_size, int i_allow_back) {
 	char ch_input[17];
 
 	scanf_s("%16s", ch_input, 17);
 
-	Operation_code check_change_trigger = change_menu(ch_input);
+	Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
 	if (check_change_trigger) return check_change_trigger;
 
 	bool valid_element_size = true;

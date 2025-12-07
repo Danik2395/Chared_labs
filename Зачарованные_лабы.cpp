@@ -19,6 +19,7 @@
 #include <string.h>
 #include <iostream>
 #include <io.h>         // For _chsize
+#include <time.h>
 using namespace std;
 
 
@@ -617,6 +618,11 @@ static void lab_5() {
 			while (iter < i_array_size) {
 				system("cls");
 
+				if (operation_code == Quit) {                                               // Quit
+					system("cls");
+					return;
+				}
+
 				printf("\nPrefer [Enter] after every member."
 					"\nWill clear all input after mistaken number, if input with [Space]."
 					"\nRange is +-200000."
@@ -628,15 +634,10 @@ static void lab_5() {
 					}
 				}
 
-				operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
-
-				if (operation_code == Quit) {                                               // Quit
-					system("cls");
-					return;
-				}
+				operation_code = array_input_handler(iter, p_i_array, 200000);
 
 				while (operation_code == Not_val_size || operation_code == Not_val_num) {
-					if (operation_code != Good) (void)buffer_clean();                                               // If number isn't valid again "eats" buffer to not to just skip invalid input
+					if (operation_code != Good) (void)buffer_clean();                       // If number isn't valid again "eats" buffer to not to just skip invalid input
 
 
 					if (operation_code == Not_val_size) {
@@ -645,7 +646,7 @@ static void lab_5() {
 
 					printf("\nInput from %d element again:\n", iter + 1);
 
-					operation_code = array_input_handler(iter, p_i_array, i_array_size, 200000);
+					operation_code = array_input_handler(iter, p_i_array, 200000);
 
 				}
 				++iter;
@@ -655,7 +656,7 @@ static void lab_5() {
 		system("cls");
 
 		puts("What to calculate? (or quit [q])\n\n"
-			"Sum of elements in array from first positive member [1]\n"
+			"Sum of elements in array after first positive member [1]\n"
 			"Sum of elements between first and last zero members [2]\n\n");
 
 		printf("[");
@@ -715,7 +716,7 @@ static void lab_5() {
 				puts("\nPositive number is the last element in the array\n");
 			}
 			else {
-				puts("\nSum of elements in the array from first positive member.\n");
+				puts("\nSum of elements in the array after first positive member.\n");
 
 				printf("[");
 				for (int i = 0; i < i_array_size - 1; ++i) {
@@ -1009,12 +1010,12 @@ static void lab_6() {
 			Sleep(1000);
 		}
 		else {
-			int operation_code{ -1 }; // Shows first iteration
+			Operation_code operation_code{ First_iter }; // Shows first iteration
 			for (int row = 0; row < i_matrix_rows; ++row) {
 				for (int col = 0; col < i_matrix_cols; ++col) {
 					system("cls");
 
-					if (operation_code == 1) {
+					if (operation_code == Quit) {
 						for (int i = 0; i < i_matrix_rows; ++i) {
 							free(p_i_matrix[i]);
 						}
@@ -1029,7 +1030,7 @@ static void lab_6() {
 						"\nRange is +-20."
 						"\n\n\nInput matrix. (or quit [q])\n\n");
 
-					if (operation_code != -1) {
+					if (operation_code != First_iter) {
 						for (int i = 0; i <= row; ++i) {
 							int col_limit = (i == row) ? col : i_matrix_cols; // For all i, that are not current row, printing all elements.
 							for (int j = 0; j < col_limit; ++j) {             // Else printing elements till current column 
@@ -1039,23 +1040,20 @@ static void lab_6() {
 						}
 					}
 
-					operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_cols, 20);
+					operation_code = array_input_handler(col, p_i_matrix[row], 20);
+
+					while (operation_code == Not_val_size || operation_code == Not_val_num) {
+						if (operation_code != Good) (void)buffer_clean();                       // If number isn't valid again "eats" buffer to not to just skip invalid input
 
 
-					if (operation_code == 2 || operation_code == 3) {
-						(void)buffer_clean();
-
-						if (operation_code == 2) {
+						if (operation_code == Not_val_size) {
 							printf("\nNot valid element range. Input in valid range.");
 						}
 
-						while (operation_code == 2 || operation_code == 3) {
-							printf("\nInput from %d row and %d column again:\n", row + 1, col + 1);
+						printf("\nInput from %d row and %d column again:\n", row + 1, col + 1);
 
-							operation_code = array_input_handler(col, p_i_matrix[row], i_matrix_cols, 20);
+						operation_code = array_input_handler(col, p_i_matrix[row], 20);
 
-							(void)buffer_clean();
-						}
 					}
 					put_element_into_container(ch_matrix_container, p_i_matrix[row][col], container_index);
 					container_index += 3;
@@ -1204,7 +1202,7 @@ static void lab_6() {
 #define IS_CHAR_SPLITTER(ch_c) (ch_c == '\n' || ch_c == ' ' || ch_c == '\t')
 
 inline static bool is_char_punctuation(char ch_c) {
-	return strchr(".,?!/|\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
+	return strchr(".,?!/|\\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
 }
 
 static void lab_7() {
@@ -1709,6 +1707,68 @@ static void lab_7() {
 		_chsize_s(i_fd, l_current_size - sizeof(Student_form)); // Shrinking file size to the position before extra student
 	}
 
+	static Operation_code input_subject_marks(int* p_i_marks_array, const char* ch_subject_name) {
+		for (int i = 0; i < 16; ++i) p_i_marks_array[i] = -1; // Filling the array
+
+		int iter{ 0 };
+		Operation_code operation_code{ First_iter };
+
+		while (iter < 16) {
+			system("cls");
+
+			if (operation_code == Quit) {
+				system("cls");
+				return Quit;
+			}
+			else if (operation_code == Back) {
+				(void)buffer_clean();
+				return Back;
+			}
+
+			printf("\nInput marks for %s.\n"
+				"Range: 1 to 10 (or -1 for no mark).\n"
+				"Prefer [Enter] after every member.\n"
+				"\n[q] - quit\n"
+				"[b] - back\n\n", ch_subject_name);
+
+			if (operation_code != First_iter) {
+				//printf("Current: ");
+				for (int j = 0; j < iter; ++j) {
+					printf("%d ", p_i_marks_array[j]);
+				}
+				//printf("\n");
+			}
+
+			operation_code = array_input_handler(iter, p_i_marks_array, 10, 1);
+
+			while (operation_code == Not_val_size || operation_code == Not_val_num) {
+				if (operation_code != Good) (void)buffer_clean();
+
+				if (operation_code == Not_val_size) {
+					printf("\nNot valid mark range. Range is 1-10 (or -1).");
+				}
+
+				printf("\nInput mark number %d again:\n", iter + 1);
+
+				operation_code = array_input_handler(iter, p_i_marks_array, 10, 1);
+			}
+
+			if (p_i_marks_array[iter] == 0) {
+				printf("\nMark cannot be 0. Use -1 for empty or 1-10.");
+				Sleep(1000);
+				continue;
+			}
+
+			if (p_i_marks_array[iter] != -1) {
+				p_i_marks_array[iter] = my_abs(p_i_marks_array[iter]); // If mark accidentally lower then zero
+			}
+
+			++iter;
+		}
+		(void)buffer_clean();
+		return Good;
+	}
+
 	static Operation_code change_student(FILE* Students_database, long l_student_position, int i_group_index) {
 		enum Change_info {
 			Ch_id = '1',
@@ -1730,7 +1790,7 @@ static void lab_7() {
 		while (1) {
 			system("cls");
 			show_students_filtered(Students_database, l_student_position, Sh_one);
-			fseek(Students_database, l_student_position, SEEK_SET);
+			//fseek(Students_database, l_student_position, SEEK_SET);
 
 			puts(
 				"\n\n\nChoose what to change in student information.\n"
@@ -1743,15 +1803,18 @@ static void lab_7() {
 				"\n[q] - quit\n"
 				"[b] - back\n"
 			);
-
+			
 			bool b_back_the_screen = false;
-			//bool b_inf_changed = false;
 			Change_info ch_inf_filter{};
+			long l_offset_to_field = l_student_position;
 			while (2) {
+				// Maybe it's better to rewrite the whole struct, because of byte alignment, but I think that it doesn't matter today, so it rewrites only one field at the time.
+				// Temporary variables used because database could be left unchanged and because of that not to 'fread' every time this happened
+				Operation_code cod_screen_backwards{};
 				switch (ch_inf_filter = (Change_info)_getch()) {
 				case Ch_id: {
 					int i_new_id{};
-					Operation_code cod_screen_backwards = number_input_handler("\n\n\nInput new student's id (or quit [q], back [b]) :\n", i_new_id, 1);
+					cod_screen_backwards = number_input_handler("\n\n\nInput student's new id (or quit [q], back [b]) :\n", i_new_id, 1);
 					if (cod_screen_backwards == Quit) {
 						fclose(Students_database);
 						system("cls");
@@ -1765,6 +1828,7 @@ static void lab_7() {
 
 					student_form.i_number = i_new_id;
 
+					fseek(Students_database, l_offset_to_field, SEEK_SET);
 					fwrite((char*)&student_form.i_number, sizeof(student_form.i_number), 1, Students_database);
 
 					//b_inf_changed = true;
@@ -1774,19 +1838,20 @@ static void lab_7() {
 
 				case Ch_name:
 				case Ch_surname: {
+					l_offset_to_field += sizeof(student_form.i_number);
+
 					while (3) {
 						system("cls");
 						show_students_filtered(Students_database, l_student_position, Sh_one);
-						fseek(Students_database, l_student_position, SEEK_SET);
+						//fseek(Students_database, l_student_position, SEEK_SET);
 
-						char ch_new_name[17];
+						if (ch_inf_filter == Ch_name) printf("\n\n\nInput student's new name (or quit [q], back [b]) :\n");
+						else                          printf("\n\n\nInput student's new surname (or quit [q], back [b]) :\n");
 
-						if (ch_inf_filter == Ch_name) printf("\n\n\nInput new student's name (or quit [q], back [b]) :\n");
-						else                          printf("\n\n\nInput new student's surname (or quit [q], back [b]) :\n");
+						char ch_new_name[16];
+						scanf_s("%15s", ch_new_name, 16);
 
-						scanf_s("%16s", ch_new_name, 17);
-
-						Operation_code cod_screen_backwards = change_menu(ch_new_name, 1);
+						cod_screen_backwards = change_menu(ch_new_name, 1);
 						if (cod_screen_backwards == Quit) {
 							fclose(Students_database);
 							system("cls");
@@ -1800,7 +1865,7 @@ static void lab_7() {
 
 						if (buffer_clean()) {
 							system("cls");
-							printf("\nToo long. Input not more then 16 symbols, do not use spaces.");
+							printf("\nToo long. Input not more then 15 symbols, do not use spaces.");
 							Sleep(1800);
 							continue;
 						}
@@ -1808,15 +1873,15 @@ static void lab_7() {
 						if (ch_inf_filter == Ch_name) {
 							strcpy_s(student_form.ch_name, ch_new_name);
 
-							fseek(Students_database, sizeof(student_form.i_number), SEEK_CUR);
-
+							fseek(Students_database, l_offset_to_field, SEEK_SET);
 							fwrite((char*)&student_form.ch_name, sizeof(student_form.ch_name), 1, Students_database);
 						}
 						else {
+							l_offset_to_field += sizeof(student_form.ch_name);
+
 							strcpy_s(student_form.ch_surname, ch_new_name);
 
-							fseek(Students_database, sizeof(student_form.i_number) + sizeof(student_form.ch_name), SEEK_CUR);
-
+							fseek(Students_database, l_offset_to_field, SEEK_SET);
 							fwrite((char*)&student_form.ch_surname, sizeof(student_form.ch_surname), 1, Students_database);
 						}
 
@@ -1828,12 +1893,224 @@ static void lab_7() {
 				}
 
 				case Ch_date: {
-					
+					l_offset_to_field += sizeof(student_form.i_number) + sizeof(student_form.ch_name) + sizeof(student_form.ch_surname);
+					while (3) {
+
+						int i_new_day{},   i_current_day{};
+						int i_new_month{}, i_current_month{};
+						int i_new_year{},  i_current_year{};
+
+						while (4) {
+							system("cls");
+							show_students_filtered(Students_database, l_student_position, Sh_one);
+
+							cod_screen_backwards = number_input_handler("\n\n\nInput student's new day of birth (or quit [q], back [b]) :\n", i_new_day, 1);
+
+							if (!cod_screen_backwards && (i_new_day < 1 || i_new_day > 31)) {
+								printf("\n\nNot valid range. Input day from 1 to 31.");
+								continue;
+							}
+
+							break;
+						}
+
+						while (!cod_screen_backwards) {
+							system("cls");
+							show_students_filtered(Students_database, l_student_position, Sh_one);
+
+							cod_screen_backwards = number_input_handler("\n\n\nInput student's new month of birth (or quit [q], back [b]) :\n", i_new_month, 1);
+
+							if (!cod_screen_backwards && (i_new_month < 1 || i_new_month > 12)) {
+								printf("\n\nNot valid range. Input month from 1 to 12.");
+								continue;
+							}
+
+							break;
+						}
+
+						while (!cod_screen_backwards) {
+							system("cls");
+							show_students_filtered(Students_database, l_student_position, Sh_one);
+
+							if (!(cod_screen_backwards = number_input_handler("\n\n\nInput student's new year of birth (or quit [q], back [b]) :\n", i_new_year, 1))) break;
+
+							if (!cod_screen_backwards && (i_new_year < 1 || i_new_year > i_current_year)) {
+								printf("\n\nNot valid range. Input year from 1 to %d.", i_current_year);
+								continue;
+							}
+
+							break;
+						}
+
+						if (cod_screen_backwards == Quit) {
+							fclose(Students_database);
+							system("cls");
+							return Quit;
+						}
+						else if (cod_screen_backwards == Back) {
+							system("cls");
+							b_back_the_screen = true;
+							break;
+						}
+
+						time_t t = time(NULL);                                                            // Getting seconds since 1900 year
+						struct tm tm_info;                                                                // Creating formatted structure
+						localtime_s(&tm_info, &t);                                                        // Writing pack of raw seconds to the formatted structure
+
+						char ch_current_year_buffer[5];
+						strftime(ch_current_year_buffer, sizeof(ch_current_year_buffer), "%Y", &tm_info); // Pulling what we need from structure and writing it as char string
+						i_current_year = atoi(ch_current_year_buffer);
+
+						char ch_current_day_buffer[3];
+						strftime(ch_current_day_buffer, sizeof(ch_current_day_buffer), "%d", &tm_info);
+						i_current_day = atoi(ch_current_day_buffer);
+
+						char ch_current_month_buffer[3];
+						strftime(ch_current_month_buffer, sizeof(ch_current_month_buffer), "%m", &tm_info);
+						i_current_month = atoi(ch_current_month_buffer);
+
+						bool b_is_future = false;                                                         // Checking that input date not in the future
+						if (i_new_year > i_current_year) b_is_future = true;
+
+						else if (i_new_year == i_current_year) {
+							if (i_new_month > i_current_month) b_is_future = true;
+
+							else if (i_new_month == i_current_month) {
+								if (i_new_day > i_current_day) b_is_future = true;
+							}
+						}
+
+						if (b_is_future) {
+							system("cls");
+							printf("\nNot valid date. Your date: %02d.%02d.%d .  Current date is %02d.%02d.%d .",
+								i_new_day, i_new_month, i_new_year, i_current_day, i_current_month, i_current_year);
+							Sleep(5500);
+							continue;
+						}
+
+						student_form.birth_date.i_day = i_new_day;
+						student_form.birth_date.i_month = i_new_month;
+						student_form.birth_date.i_year = i_new_year;
+
+						fseek(Students_database, l_offset_to_field, SEEK_SET);
+						fwrite((char*)&student_form.birth_date, sizeof(student_form.birth_date), 1, Students_database);
+
+						break;
+					}
+					if (b_back_the_screen) break;
+
 					break;
 				}
 
 				case Ch_marks: {
+					l_offset_to_field += sizeof(student_form.i_number) + sizeof(student_form.ch_name) + sizeof(student_form.ch_surname) + sizeof(student_form.birth_date);
+					size_t sz_mark_field_size = sizeof(int) * 16;
+					
+					while(3) {
+						cod_screen_backwards = No_code;
 
+						system("cls");
+						show_students_filtered(Students_database, l_student_position, Sh_one);
+
+						puts(
+							"\n\n\nChoose what marks to change.\n"
+							"[1] - physics\n"
+							"[2] - mathematics\n"
+							"[3] - belarussian language\n"
+							"[4] - chemistry\n"
+							"[5] - informatics\n"
+							"\n[q] - quit\n"
+							"[b] - back\n"
+						);
+						
+						int* p_i_marks_buffer{};
+						const char* ch_subject_name{};
+						long l_offset_to_marks_array{};
+						while (4) {
+							char ch_mark_filter{};
+							switch (ch_mark_filter = _getch()) {
+							case '1':
+								l_offset_to_marks_array = l_offset_to_field;
+								p_i_marks_buffer = student_form.i_mark_physics;
+								ch_subject_name = "Physics";
+								break;
+
+							case '2':
+								l_offset_to_marks_array = l_offset_to_field + sz_mark_field_size;
+								p_i_marks_buffer = student_form.i_mark_math;
+								ch_subject_name = "Mathematic";
+								break;
+
+							case '3':
+								l_offset_to_marks_array = l_offset_to_field + sz_mark_field_size * 2;
+								p_i_marks_buffer = student_form.i_mark_bel;
+								ch_subject_name = "Belarussian language";
+								break;
+
+							case '4':
+								l_offset_to_marks_array = l_offset_to_field + sz_mark_field_size * 3;
+								p_i_marks_buffer = student_form.i_mark_chem;
+								ch_subject_name = "Chemistry";
+								break;
+
+							case '5':
+								l_offset_to_marks_array = l_offset_to_field + sz_mark_field_size * 4;
+								p_i_marks_buffer = student_form.i_mark_inf;
+								ch_subject_name = "Informatics";
+								break;
+
+							case 'b':
+							case 'B':
+								b_back_the_screen = true;
+								break;
+
+							case 'q':
+							case 'Q':
+								fclose(Students_database);
+								system("cls");
+								return Quit;
+
+							default: continue;
+							}
+
+							if (ch_mark_filter >= '1' && ch_mark_filter <= '5') {
+								cod_screen_backwards = input_subject_marks(p_i_marks_buffer, ch_subject_name);
+							}
+
+							system("cls");
+							break;
+						}
+
+						if (cod_screen_backwards == Good) {
+							student_form.d_median = get_median(student_form);
+							fseek(Students_database, l_offset_to_marks_array, SEEK_SET);
+							fwrite((char*)p_i_marks_buffer, sz_mark_field_size, 1, Students_database); // Already a pointer. No no need in & 
+
+							fseek(Students_database, l_student_position + sizeof(student_form) - sizeof(student_form.d_median), SEEK_SET);
+							fwrite((char*)&student_form.d_median, sizeof(student_form.d_median), 1, Students_database);
+
+							system("cls");
+							printf("\nChanging...");
+							Sleep(800);
+							system("cls");
+							printf("\nDone.");
+							Sleep(800);
+							system("cls");
+							continue;
+						}
+						else if (cod_screen_backwards == Quit) {
+							fclose(Students_database);
+							system("cls");
+							return Quit;
+						}
+						else if (cod_screen_backwards == Back) {
+							system("cls");
+							continue;
+						}
+
+						break;
+					}
+					
 					break;
 				}
 
@@ -1860,8 +2137,6 @@ static void lab_7() {
 
 				case 'b':
 				case 'B':
-					//b_back_the_screen = true;
-					//break;
 					return Back;
 
 				case 'q':
@@ -1877,7 +2152,7 @@ static void lab_7() {
 			}
 			if (b_back_the_screen) continue;
 
-			if (ch_inf_filter != Ch_del/* && b_inf_changed*/) {
+			if (ch_inf_filter != Ch_del) {
 				system("cls");
 				printf("\nChanging...");
 				Sleep(800);
@@ -2083,7 +2358,7 @@ static void lab_7() {
 						bool b_student_exists = false;
 						long l_student_position{};
 						int i_group_index{};
-						for (int g = 0; g < database_info.i_groups_amount; ++g) {                        // Iterator to change students amount in database info and to catch student
+						for (int g = 0; g < database_info.i_groups_amount; ++g) {                        // Iterator to catch student and to change students amount in database info
 							int i_students_count = database_info.i_students_in_group_amount[g];
 
 							for (int s = 0; s < i_students_count; ++s) {
@@ -2254,7 +2529,7 @@ static void lab_7() {
 				}
 			} while (0);
 			if (b_no_database) {
-				printf("\nNo database. Try again or check files.\n");
+				printf("\nNo database. Try again or restart application.\n");
 				Sleep(1500);
 				system("cls");
 				continue;
