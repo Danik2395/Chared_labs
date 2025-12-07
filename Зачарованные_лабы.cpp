@@ -2246,7 +2246,7 @@ static void lab_7() {
 			do {
 				int i_amount_of_groups{};
 				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual) {
-					if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "w+b")) {
+					if (fopen_s(&Students_database, "students_data.dat", "w+b")) {
 						b_no_database = true;
 						break;
 					}
@@ -2327,7 +2327,7 @@ static void lab_7() {
 					break;
 				}
 
-				if (fopen_s(&Students_database, "C:\\Users\\ASUS\\Desktop\\OAiP\\Chared labs\\databases\\students_data.dat", "r+b")) {
+				if (fopen_s(&Students_database, "students_data.dat", "r+b")) {
 					b_no_database = true;
 					break;
 				}
@@ -2391,9 +2391,7 @@ static void lab_7() {
 							return;
 						}
 						else if (change_return == Back) {
-							//fclose(Students_database);
 							system("cls");
-							//b_back_the_screen = true;
 							continue;
 						}
 					}
