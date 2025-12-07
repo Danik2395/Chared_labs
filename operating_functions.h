@@ -59,7 +59,7 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 		Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
 		if (check_change_trigger) return check_change_trigger;
 
-		else if (is_correct_input(ch_input, allow_fraction)) {
+		else if (is_correct_input(ch_input, allow_fraction)) {     // If input isn't correct, cycle starts again
 			if (allow_fraction) T_input_variable = atof(ch_input); // double - atof
 
 			else				T_input_variable = atoi(ch_input); // int - atoi
