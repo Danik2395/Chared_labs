@@ -1,0 +1,77 @@
+//
+// Lab_8.h
+//
+//      Author:  Kalenkovich Daniil Alekseevich, 568405
+//
+// Lab_8.cpp header.
+//
+#pragma once
+#include "C_Student.h"
+#include "C_Database_Info.h"
+#include "side_functions.h"
+#include "operating_functions.h"
+#include <conio.h>
+#include <windows.h>
+#include <io.h> // For _chsize
+#include <time.h>
+
+// !!! Could return from macro !!!
+#define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
+while (1) {\
+	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
+	if (cod_screen_backwards == Quit) {\
+		fclose(Students_database);\
+		system("cls");\
+		return;\
+	}\
+	else if (cod_screen_backwards == Back) {\
+		system("cls");\
+		fclose(Students_database);\
+		return;\
+	}\
+	if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
+		system("cls");\
+		printf("\nNot valid range.\n\n");\
+		Sleep(1500);\
+		continue;\
+	}\
+	break;\
+}\
+
+
+// !!! Could return from macro !!!
+#define READ_ERROR()\
+system("cls");\
+printf("\nError reading from file. Check file or recreate database\n\n");\
+Sleep(2000);\
+return;\
+
+
+enum Name_type { FirstN, LastN };
+enum Command {
+	Regen_database_manual,
+	Regen_database_random,
+	Sh_all,
+	Sh_group,
+	Sh_best,
+	Sh_best_marks,
+	Sh_best_median,
+	Change_student,
+	No_command
+};
+
+// FirstN - first name
+// LastN  - last name
+static const char* get_name(Name_type name_type, size_t i_name_position);
+
+static void show_students_filtered(FILE* Students_database, long l_target = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1);
+
+static void del_student(FILE* Students_database, long l_student_position, C_Database_Info& info);
+
+static Operation_code input_subject_marks(int* p_i_marks_array, int i_marks_cnt, const char* ch_subject_name);
+
+static Operation_code change_student(C_Student& student_form, bool b_creation_mode, FILE* Students_database = NULL, long l_student_position = 0);
+
+static void create_database_manual(FILE* Students_database, C_Database_Info& db_info);
+
+void lab_8();

@@ -12,6 +12,7 @@ enum Operation_code {
 	Good,
 	First_iter,
 	Quit,
+	Quit_s,
 	Back,
 	Not_val_size,
 	Not_val_num,
