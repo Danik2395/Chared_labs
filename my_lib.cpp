@@ -57,6 +57,17 @@ bool my_strcmp(const char* ch_array1, const char* ch_array2) {
 
 
 
+const char* my_strchr(const char* ch_str, char ch_c) { // Copy of the pointer, so we able to move it without losing the start address
+	if (!ch_str) return nullptr;
+	while (*ch_str) {                                  // While not null terminator under pointer
+		if (*ch_str == ch_c) return ch_str;
+		++ch_str;
+	}
+	return (ch_c == '\0') ? ch_str : nullptr;          // Reached the end (fread puts null terminator in the end of the buffer in any case), checking if we looking for it (for '\0')
+}
+
+
+
 // Random
 // Unsigned int because it overfills by module of 2^32 and in any case won't give negative number
 static unsigned int* seed_storage() {                // Pointer returns address of seed_storage{}

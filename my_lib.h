@@ -29,6 +29,8 @@ int my_strlen(const char* ch_array);
 // Returns true if strings are equal
 bool my_strcmp(const char* ch_array1, const char* ch_array2);
 
+const char* my_strchr(const char* ch_array, char ch_c);
+
 void generate_seed();
 
 // Generates "random" number.

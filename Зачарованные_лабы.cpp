@@ -1201,7 +1201,7 @@ static void lab_6() {
 #define IS_CHAR_SPLITTER(ch_c) (ch_c == '\n' || ch_c == ' ' || ch_c == '\t')
 
 inline static bool is_char_punctuation(char ch_c) {
-	return strchr(".,?!/|\\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
+	return my_strchr(".,?!/|\\:;@#№$%^&*(){}[]<>~`\"'", ch_c) != nullptr; // has pointer - true, no pointer - false
 }
 
 static void lab_7() {

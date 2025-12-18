@@ -45,3 +45,5 @@ bool buffer_clean();
 // _getch()
 // Y = true, N = false
 bool YN();
+
+int clean_fgets(char* ch_str);

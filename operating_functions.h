@@ -15,6 +15,7 @@
 // Mind that macro takes not dereferenced pointer
 #define FORMAT_D(p) (*p == '%' && *(p + 1) == 'd')
 #define FORMAT_F(p) (*p == '%' && *(p + 1) == 'f')
+#define FORMAT_S(p) (*p == '%' && *(p + 1) == 's')
 #define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
 
 
@@ -41,6 +42,8 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 			if (FORMAT_D(p)) printf("%d", va_arg(argument, int)), ++p; // ++p to not to print format letter
 
 			else if (FORMAT_F(p)) printf("%.2f", va_arg(argument, double)), ++p;
+
+			else if (FORMAT_S(p)) printf("%s", va_arg(argument, const char*)), ++p;
 
 			else if (FORMAT_PERC(p)) putchar('%'), ++p;
 
@@ -83,4 +86,4 @@ Operation_code array_input_handler(int& iter, int* p_i_input_array, int max_elem
 // Writes user input into array-string
 // 0 - all is good
 // 1 - memory initialize fail
-int string_input_handler(char** p_ch_destination, size_t& string_size, size_t type_size);
+int string_input_handler(char** p_p_ch_destination, size_t& sz_string_size, size_t sz_type_size);

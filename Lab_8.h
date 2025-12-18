@@ -10,12 +10,19 @@
 #include "C_Database_Info.h"
 #include "side_functions.h"
 #include "operating_functions.h"
+#include <cstdlib>
+#include <cstdio>
 #include <conio.h>
-#include <windows.h>
-#include <io.h> // For _chsize
+#include <windows.h> // File and directory handling
+#include <io.h>      // For _chsize
 #include <time.h>
+#include <direct.h>  // For _mkdir
 
-// !!! Could return from macro !!!
+#define MAX_FILES 64
+#define MAX_FILE_NAME 64
+#define DIR_PATH "C:\\Users\\ASUS\\Documents\\Databases\\"
+typedef unsigned long long file_sz;
+
 #define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
 while (1) {\
 	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
@@ -47,8 +54,12 @@ Sleep(2000);\
 return;\
 
 
+#define FPRINTF(i_f_num, ch_f_name, fsz_size) printf("[%02d]  %-12s %10llu b\n", i_f_num, ch_f_name, fsz_size);
+
+
 enum Name_type { FirstN, LastN };
 enum Command {
+	No_command,
 	Regen_database_manual,
 	Regen_database_random,
 	Sh_all,
@@ -56,8 +67,7 @@ enum Command {
 	Sh_best,
 	Sh_best_marks,
 	Sh_best_median,
-	Change_student,
-	No_command
+	Change_student
 };
 
 // FirstN - first name
@@ -73,5 +83,7 @@ static Operation_code input_subject_marks(int* p_i_marks_array, int i_marks_cnt,
 static Operation_code change_student(C_Student& student_form, bool b_creation_mode, FILE* Students_database = NULL, long l_student_position = 0);
 
 static void create_database_manual(FILE* Students_database, C_Database_Info& db_info);
+
+static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest);
 
 void lab_8();
