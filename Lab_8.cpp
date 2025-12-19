@@ -10,6 +10,12 @@
 #include "Lab_8.h"
 
 
+static char* dir_path() {
+	static char ch_dir_path[MAX_PATH] = "C:\\Databases\\";
+	return ch_dir_path;
+}
+
+
 static const char* get_name(Name_type name_type, size_t i_name_position) {
 	static const char* ch_first_names[] = {
 	"James",   "Mary",    "John",    "Patricia",  "Robert",  "Jennifer",
@@ -641,10 +647,15 @@ static void create_database_manual(FILE* Students_database, C_Database_Info& db_
 
 
 
-static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest) {
-	const char* ch_dir_path = DIR_PATH;
+static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, char* ch_dir_path) {
+	//const char* ch_dir_path = DIR_PATH;
 	//_mkdir("C:\\Databases");
-	_mkdir("C:\\Users\\ASUS\\Documents\\Databases");
+	//_mkdir("C:\\Users\\ASUS\\Documents\\Databases");
+	char* ch_to_mkdir = (char*)calloc(MAX_PATH, sizeof(char));
+	strcpy_s(ch_to_mkdir, MAX_PATH, ch_dir_path);
+	ch_to_mkdir[my_strlen(ch_to_mkdir - 1)] = '\0';
+	_mkdir(ch_dir_path);
+	free(ch_to_mkdir);
 
 	bool b_back_the_screen = false;
 	while (1) {
@@ -878,16 +889,12 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest) {
 void lab_8() {
 	while (1) {
 		system("cls");
-		printf(
-			"  _____ ______  __ __  ___    ___     ____  ______ \n"
-			" / ___/|      ||  |  ||   \\  |   \\   /    ||      |\n"
-			"(   \\_ |      ||  |  ||    \\ |    \\ |  o  ||      |\n"
-			" \\__  ||_|  |_||  |  ||  D  ||  D  ||     ||_|  |_|\n"
-			" /  \\ |  |  |  |  :  ||     ||     ||  _  |  |  |  \n"
-			" \\    |  |  |  |     ||     ||     ||  |  |  |  |  \n"
-			"  \\___|  |__|   \\__,_||_____||_____||__|__|  |__|     \n\n\n"                                                
+		PRINT_LOGO()
+		printf( 
+			"\n\nCurrent directory: %s\n\n"
 			"[m] - DATABASE MANAGER\n"
-			"[q] - quit\n"
+			"[d] - change directory\n\n"
+			"[q] - quit\n", dir_path()
 		);
 
 		FILE* Students_database = NULL;
@@ -896,17 +903,19 @@ void lab_8() {
 
 		if (ch_selected_file_name == NULL) {
 			system("cls");
-			printf("\nAn internal error has occurred.\n");
+			printf("\nAn internal error has occurred. Try again or restart the application\n");
 			Sleep(1500);
-			return;
+			continue;
 		}
 
+		char* ch_dir_path = dir_path();
 		bool b_back_the_screen = false;
+		Operation_code op_code{};
 		while (2) {
 			switch (_getch()) {
 			case 'm':
 			case 'M': {
-				Operation_code op_code = file_manager(&Students_database, &ch_selected_file_name); // Hidden conversion to the pointer
+				op_code = file_manager(&Students_database, &ch_selected_file_name, ch_dir_path);
 				if (op_code == Quit) {
 					system("cls");
 					free(ch_selected_file_name);
@@ -919,6 +928,41 @@ void lab_8() {
 				}
 				else break;
 			}
+
+			case 'd':
+			case 'D': {
+				system("cls");
+				PRINT_LOGO()
+				printf("\n\nInput path to the databases new directory (or quit [q], back [b]) :\n");
+
+				char ch_path_buff[MAX_PATH];
+				while (3) {
+					fgets(ch_path_buff, MAX_PATH, stdin);
+					if (clean_fgets(ch_path_buff)) {
+						printf("\nOut of name range. Input name less or equals 64 chars.");
+						continue;
+					}
+
+					op_code = change_menu(ch_path_buff, 1);
+					if (op_code == Quit) return;
+					else if (op_code == Back) { b_back_the_screen = true; break; }
+
+					if (my_strlen(ch_path_buff) == 0) {
+						printf("\nInvalid path. Must include at least one symbol.");
+						continue;
+					}
+					break;
+				}
+				if (b_back_the_screen == true) break;
+
+				strcpy_s(ch_dir_path, MAX_PATH, ch_path_buff);
+
+				system("cls");
+				printf("\nDirectory changed.");
+				b_back_the_screen = true;
+				break;
+			}
+
 			case 'q':
 			case 'Q':
 				system("cls");
@@ -932,7 +976,7 @@ void lab_8() {
 		/*const char* ch_selected_file_name = ch_f_name_buffer;
 		free(ch_f_name_buffer);*/
 		char ch_path_to_file[MAX_PATH]{};
-		strcat_s(ch_path_to_file, MAX_PATH, DIR_PATH);
+		strcat_s(ch_path_to_file, MAX_PATH, ch_dir_path);
 		strcat_s(ch_path_to_file, MAX_PATH, ch_selected_file_name);
 
 		fseek(Students_database, 0, SEEK_END);

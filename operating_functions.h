@@ -13,9 +13,9 @@
 #include <stdarg.h>    // For changing number of arguments in function
 
 // Mind that macro takes not dereferenced pointer
-#define FORMAT_D(p) (*p == '%' && *(p + 1) == 'd')
-#define FORMAT_F(p) (*p == '%' && *(p + 1) == 'f')
-#define FORMAT_S(p) (*p == '%' && *(p + 1) == 's')
+#define FORMAT_D(p)    (*p == '%' && *(p + 1) == 'd')
+#define FORMAT_F(p)    (*p == '%' && *(p + 1) == 'f')
+#define FORMAT_S(p)    (*p == '%' && *(p + 1) == 's')
 #define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
 
 

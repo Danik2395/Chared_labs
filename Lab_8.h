@@ -20,8 +20,8 @@
 
 #define MAX_FILES 64
 #define MAX_FILE_NAME 64
-#define DIR_PATH "C:\\Users\\ASUS\\Documents\\Databases\\"
-typedef unsigned long long file_sz;
+//#define DIR_PATH "C:\\Users\\ASUS\\Documents\\Databases\\"
+typedef unsigned long long file_sz; // Because size_t is depended on the used OS
 
 #define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
 while (1) {\
@@ -57,6 +57,17 @@ return;\
 #define FPRINTF(i_f_num, ch_f_name, fsz_size) printf("[%02d]  %-12s %10llu b\n", i_f_num, ch_f_name, fsz_size);
 
 
+#define PRINT_LOGO() printf(\
+"  _____ ______  __ __  ___    ___     ____  ______ \n"\
+" / ___/|      ||  |  ||   \\  |   \\   /    ||      |\n"\
+"(   \\_ |      ||  |  ||    \\ |    \\ |  o  ||      |\n"\
+" \\__  ||_|  |_||  |  ||  D  ||  D  ||     ||_|  |_|\n"\
+" /  \\ |  |  |  |  :  ||     ||     ||  _  |  |  |  \n"\
+" \\    |  |  |  |     ||     ||     ||  |  |  |  |  \n"\
+"  \\___|  |__|   \\__,_||_____||_____||__|__|  |__|     \n"\
+);\
+
+
 enum Name_type { FirstN, LastN };
 enum Command {
 	No_command,
@@ -69,6 +80,8 @@ enum Command {
 	Sh_best_median,
 	Change_student
 };
+
+static char* dir_path();
 
 // FirstN - first name
 // LastN  - last name
@@ -84,6 +97,6 @@ static Operation_code change_student(C_Student& student_form, bool b_creation_mo
 
 static void create_database_manual(FILE* Students_database, C_Database_Info& db_info);
 
-static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest);
+static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, char* ch_dir_path);
 
 void lab_8();
