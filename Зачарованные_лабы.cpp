@@ -1,170 +1,73 @@
 ﻿//
 // Зачарованные_лабы.cpp
 //
-//      Author:  Kalenkovich Daniil Alekseevich
+//      Author:  Kalenkovich Daniil Alekseevich, 568405
 //
 // Main file of Зачарованные лабы project.
 //
 
 
 #include "my_lib.h"
-#include "side_func.h"
-#include <cstdio> 
+#include "side_functions.h"
+#include "operating_functions.h"
+#include <cstdio>       // For _getchar()
 #include <cmath>
 #include <cstdlib>		// For atoi(), atof()
 #include <windows.h>	// For operationts with console
-#include <conio.h>		// For _getch
+#include <conio.h>		// For _getch()
+#include <limits>
 using namespace std;
 
 
-// Input checkers
-
-bool correct_input_double(const char* ch_dirt_inp) {
-	int i_dot_count = 0;
-	int len = my_strlen(ch_dirt_inp);
-
-
-	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number. 6");
-		return false;
-	}
-
-	if (buffer_clean()) { // Cleans buffer, if there was more than 16 bytes, and giving exception
-		printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-		return false;
-	}
-
-	if (ch_dirt_inp[0] == '-' || ch_dirt_inp[0] >= '0' && ch_dirt_inp[0] <= '9') { // Checks if first item in usr_inpt[] is '-' or number
-		for (int i = 1; i < len; ++i) {                                            // Iterating from 1 (second of usr_inpt) to length of ch_dirt_inp
-			char ch_current = ch_dirt_inp[i];
-
-			if (ch_current >= '0' && ch_current <= '9') continue;                  // If item is number continues iterating
-
-			else if (ch_current == '.') {                                          // If item is dot adding it to i_dot_count
-				++i_dot_count;
-				if (i_dot_count > 1) {                                             // And if there is nome then one dot throws "Not valid input" code
-					printf("\nNot valid input. Enter valid number. 1");
-					return false;
-				}
-			}
-			else if (ch_current == ',') {                                          // If item is coma throws "not valid coma" code
-				printf("\nChar ',' not for float. Use '.' instead. 2");
-				return false;
-			}
-			else {                                                                 // If item is not number or dot throws "Not valid input" code
-				printf("\nNot valid input. Enter valid number. 3");
-				return false;
-			}
-		}
-	}
-	else {
-		printf("\nNot valid input. Enter valid number. 4");
-		return false;
-	}
-	return true;
-}
-
-
-bool correct_input_int(const char* ch_dirt_inp) {
-	int len = my_strlen(ch_dirt_inp);
-
-
-	if (len == 0) {       // Checking if there is something to check
-		printf("\nNo input. Input number. 6");
-		return false;
-	}
-
-	if (buffer_clean()) { // Cleans buffer, if there was more than 64 bytes, and giving exception
-		printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-		return false;
-	}
-
-	if (ch_dirt_inp[0] == '-' || ch_dirt_inp[0] >= '0' && ch_dirt_inp[0] <= '9') { // Checks if first item in usr_inpt[] is '-' or number
-		for (int i = 1; i < len; ++i) {                                            // Iterating from 1 (second of usr_inpt) to length of ch_dirt_inp
-			char ch_current = ch_dirt_inp[i];
-
-			if (ch_current >= '0' && ch_current <= '9') continue;                  // If item is number continues iterating
-
-			else {                                                                 // If item is not number throws "Not valid input" code
-				printf("\nNot valid input. Enter whole number. 3");
-				return false;
-			}
-		}
-	}
-	else {
-		printf("\nNot valid input. Enter whole number. 4");
-		return false;
-	}
-	return true;
-}
-// END
-
-
-
-// Input handlers
-bool input_handler(const char *ch_text, double& d_outside_var) { // For doubles
-	char ch_input[17];
-
-	
-	while (1) {
-		printf("%s", ch_text);            // Displays text from another function
-		scanf_s("%16s", ch_input, 17);
-
-		if (quit(ch_input)) return false;
-
-		else if (correct_input_double(ch_input)) {
-			d_outside_var = atof(ch_input); // If input is valid converts ch_inpt to double parametr
-			return true;
-		}
-	}
-}
-
-
-bool input_handler(const char *ch_text, int& d_outside_var) { // For ints
-	char ch_input[17];
-
-
-	while (1) {
-		printf("%s", ch_text);            // Displays text from another function
-		scanf_s("%16s", ch_input, 17);
-
-		if (quit(ch_input)) return false;
-
-		else if (correct_input_int(ch_input)) {
-			d_outside_var = atoi(ch_input); // If input is valid converts ch_inpt to int parametr
-			return true;
-		}
-	}
-}
-// END
-
-
-
 // Laboratory work 1, variant 3
-void lab_1() {
+static void lab_1() {
 	while (1) {
 		double d_x{};
-		if (!input_handler("\nInput X (or quit [q]):\n", d_x)) {
+		if (!input_handler("\nInput X (or quit [q]):\n", d_x, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_y{};
-		if (!input_handler("\nInput Y (or quit [q]):\n", d_y)) {
+		if (!input_handler("\nInput Y (or quit [q]):\n", d_y, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
+		if (is_near_zero(d_x) && d_y < 0) {           // We cannot power zero in negative number
+			system("cls");
+			printf("\nZero can not be in negative power.");
+			continue;
+		}
+
+		double d_fraction_of_Y = my_fmod(d_y, 1);     // We cannot take root of negative number
+		if (d_x < 0 && my_fabs(d_fraction_of_Y) > 0 && d_fraction_of_Y != my_NaN) {
+			system("cls");
+			printf("\nCan not take root of negative number.\nTry again with another values.");
+			continue;
+		}
+		else if (d_fraction_of_Y == my_NaN) {
+			system("cls");
+			printf("\nInternal error occurred.\nTry again with another values.");
+		}
+
+		double d_power_X_in_Y = pow(d_x, fabs(d_y));  // If powering is too large, error
+		if (d_power_X_in_Y > DBL_MAX) {
+			system("cls");
+			printf("\nX^Y is too large.\nTry again with another values.");
+			continue;
+		}
+
 		double d_z{};
 		while (2) {
-			if (!input_handler("\nInput Z (or quit [q]):\n", d_z)) {
+			if (!input_handler("\nInput Z (or quit [q]):\n", d_z, 1)) {
 				system("cls");
 				return;
 			}
 			
-			if (d_z == 0) {
+			if (is_near_zero(d_z)) {
 				puts("\nDeterminator can not be zero. Input non zero number.");
 			}
 			else {
@@ -172,10 +75,9 @@ void lab_1() {
 				break;
 			}
 		}
-		
-		
+				
 		double d_dwn1{};
-		if ((d_dwn1 = 1 + d_x * d_x * d_y * d_y) == 0) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
+		if (is_near_zero(d_dwn1 = 1 + d_x * d_x * d_y * d_y)) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
 			printf("\nDenominator equals zero when X and Y is %.5f and %.5f.", d_x, d_y);
 
 			puts("\n\n\nWant to continue? [Y/N]");
@@ -190,7 +92,7 @@ void lab_1() {
 		}
 
 		double d_dwn2{};
-		if ((d_dwn2 = fabs(d_x - 2 * d_y / d_dwn1)) == 0) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
+		if (is_near_zero(d_dwn2 = fabs(d_x - 2 * d_y / d_dwn1))) { // Calculates determinator to check if it's not zero and gives it to d_dwn1
 			printf("\nDenominator equals zero when X and Y is %.5f and %.5f.", d_x, d_y);
 
 			puts("\n\n\nWant to continue? [Y/N]");
@@ -212,7 +114,7 @@ void lab_1() {
 
 		if (YN()) {
 			// V = [1 + sin(X + Y)^2] * X^|Y|  /  |X - 2Y / 1 + X^2 * Y^2|  +  cos[arctg(1 / Z)]^2
-			double d_v = (1 + pow(sin(d_x + d_y), 2)) * pow(d_x, fabs(d_y)) / d_dwn2 + pow(cos(atan(1 / d_z)), 2);
+			double d_v = (1 + pow(sin(d_x + d_y), 2)) * d_power_X_in_Y / d_dwn2 + pow(cos(atan(1 / d_z)), 2);
 
 			system("cls");
 			Sleep(700);
@@ -223,7 +125,7 @@ void lab_1() {
 			printf(".");
 			system("cls");
 
-			printf("\nV = [1 + sin(X + Y) ^ 2] * X ^ | Y|  /  |X - 2Y / 1 + X ^ 2 * Y ^ 2 | + cos[arctg(1 / Z)] ^ 2\n\n"
+			printf("\nV = [1 + sin(X + Y) ^ 2] * X ^ |Y|  /  |X - 2Y / 1 + X ^ 2 * Y ^ 2 | + cos[arctg(1 / Z)] ^ 2\n\n"
 				   "X = %10.5f\n"
 				   "Y = %10.5f\n"
 				   "Z = %10.5f\n", d_x, d_y, d_z);
@@ -234,15 +136,7 @@ void lab_1() {
 			break;
 		}
 
-		puts("\n\n\nWant to continue? [Y/N]");
-		if (YN()) {
-			system("cls");
-			continue;
-		}
-		else {
-			system("cls");
-			break;
-		}
+		USER_CONTINUE_USAGE()
 	}
 }
 // END
@@ -250,11 +144,11 @@ void lab_1() {
 
 
 // Laboratory work 2, variant 12
-void lab_2() {
+static void lab_2() {
 	while (1) {
 		double d_z{}, d_x{};
 		const char* ch_x_shw = "";
-		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\nInput Z (or quit [q]):\n", d_z)) {
+		if (!input_handler("\nX_1 = Z^2 + 1;         Z <= 1\nX_2 = 1 / sqrt(Z - 1); Z >  1\n\nInput Z (or quit [q]):\n", d_z, 1)) {
 			system("cls");
 			break;
 		}
@@ -265,6 +159,11 @@ void lab_2() {
 				ch_x_shw = "X = 1 / sqrt(Z - 1)";
 			}			
 			else {
+				if (d_z < -25) {
+					system("cls");
+					printf("\nUndefined calculations. Z could be approximately -25.\nInput again for better results.");
+					continue;
+				}
 				d_x = d_z * d_z + 1;
 				ch_x_shw = "X = Z^2 + 1";
 			}
@@ -310,7 +209,7 @@ void lab_2() {
 		//Пишу русскими буквами, почему я так не сделал:
 		//	Пример: Вы работаете на заводе по производству джинс и оперируете стиральными машинами.
 		//	   Но, когда нужно было выбрать режим стирки, чтобы получить определённый вид джинс, вы случайно
-		//	   нажали не ту кнопку или что-то другое, а стиралка вам выдаёт: "Вы нажади не туда, поэтому будем стирать по циклу номер 1!" --,
+		//	   нажали не ту кнопку или что-то другое, а стиралка вам выдаёт: "Вы нажали не туда, поэтому будем стирать по циклу номер 1!" --,
 		//	   хотя вам нужен был цикл номер 3. 
 		//	   И вся партия джинс получилась не такой, как хотел заказчик, потому что какой-то программист добавил режим стирки по умолчанию, при неверном вводе.
 		//	   Вас уволят.
@@ -353,20 +252,20 @@ void lab_2() {
 		system("cls");*/
 
 		double d_a{};
-		if (!input_handler("\nInput A (or quit [q]):\n", d_a)) {
+		if (!input_handler("\nInput A (or quit [q]):\n", d_a, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
 		double d_c{};
-		if (!input_handler("\nInput C (or quit [q]):\n", d_c)) {
+		if (!input_handler("\nInput C (or quit [q]):\n", d_c, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 
-		printf("\nCalculate A * sin(%s^2 - 1)^3 + c * ln(|X|) + e^X ? [Y/N]\n\n"
+		printf("\nCalculate A * sin(%s^2 - 1)^3 + C * ln(|X|) + e^X ? [Y/N]\n\n"
 			"Your A = %10.5f\n"
 			"Your C = %10.5f\n"
 			"Your Z = %10.5f\n\n"
@@ -387,7 +286,7 @@ void lab_2() {
 			Sleep(200);
 			system("cls");
 
-			printf("\nY = A * sin(%s^2 - 1)^3 + c * ln(|X|) + e^X\n\n"
+			printf("\nY = A * sin(%s^2 - 1)^3 + C * ln(|X|) + e^X\n\n"
 				   "A = %10.5f\n"
 				   "C = %10.5f\n"
 				   "Z = %10.5f\n\n"
@@ -400,15 +299,7 @@ void lab_2() {
 			break;
 		}
 
-		puts("\n\n\nWant to continue? [Y/N]");
-		if (YN()) {
-			system("cls");
-			continue;
-		}
-		else {
-			system("cls");
-			break;
-		}
+		USER_CONTINUE_USAGE()
 	}
 }
 // END
@@ -417,7 +308,7 @@ void lab_2() {
 
 // Laboratory work 3, variant 12 (and fourth also)
 
-void Out_Rez_lab_3(double d_x, double d_b, double d_h, int i_n) {
+static void Out_Rez_lab_3(double d_x, double d_b, double d_h, int i_n) {
 	printf("\nHere is S(X), Y(X) and |Y(X) - S(X)| for every X from A to B with H step till N member\n\n"
 		"A = %10.5f\n"
 		"B = %10.5f\n"
@@ -426,83 +317,86 @@ void Out_Rez_lab_3(double d_x, double d_b, double d_h, int i_n) {
 
 	puts("   X           Y(X)          S(X)          |Y(X) - S(X)|\n");
 
-	for (int i = 1; i = (d_b - d_x) / d_h + 1; ++i) { // Handling stacking of float numbers inaccuracies (ex. 0.100000000000000000000000561563254732169347...)
-		double d_s{}, d_y{}, d_fabs{}, d_dwn1{};      // d_fabs{} for |Y(X) - S(x)|, d_dwn1{} for (2k)! in S(X)
+	double steps = (d_b - d_x) / d_h + 1;
+	for (int i = 1; i <= steps; ++i, d_x += d_h) {
+		double d_m{1}, d_s{}, d_y{}, d_fabs{}; // d_fabs{} for |Y(X) - S(x)|
 
 
 		d_y = (1 - d_x * d_x / 2) * cos(d_x) - d_x * sin(d_x) / 2;
 
-		for (int k = 0; k <= i_n; ++k) {              // Internal 'for' for sigma Σ
-			d_dwn1 = 1;
+		for (int k = 1; k <= i_n; ++k) {       // Internal 'for' for sigma Σ. k = 1, because, when k = 0 first member d_m = 1
+			d_s += d_m;
 
-			for (int i = 2 * k; i > 0; --i) {         // From 2*k to 1 with step 1 multiplying every number. Aka factorial
-				d_dwn1 *= i;
-			}
-
-			d_s += pow(-1, k) * (2 * k * k + 1) * pow(d_x, 2 * k) / d_dwn1;
+		 // M_n = -1 * X^2 * (2 * K^2 + 1) / (4 * K^2 - 2 * K) / (2 * K^2 - 4 * K + 3) * M_n-1
+			d_m *= -1 * d_x * d_x * (2 * k * k + 1) / (4 * k * k - 2 * k) / (2 * k * k - 4 * k + 3);
 		}
 
 		d_fabs = fabs(d_y - d_s);
 
 		printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_s, d_fabs);
-
-		d_x += d_h;
 	}
-
-	//for (d_x; d_x <= d_b; d_x += d_h) {          // External 'for' for every x
-	//	double d_s{}, d_y{}, d_fabs{}, d_dwn1{}; // d_fabs{} for |Y(X) - S(x)|, d_dwn1{} for (2k)! in S(X)
-
-
-	//	d_y = (1 - d_x * d_x / 2) * cos(d_x) - d_x * sin(d_x) / 2;
-
-	//	for (int k = 0; k <= i_n; ++k) {         // Internal 'for' for sigma Σ
-	//		d_dwn1 = 1;
-
-	//		for (int i = 2 * k; i > 0; --i) {    // From 2*k to 1 with step 1 multiplying every number. Aka factorial
-	//			d_dwn1 *= i;
-	//		}
-
-	//		d_s += pow(-1, k) * (2 * k * k + 1) * pow(d_x, 2 * k) / d_dwn1;
-	//	}
-
-	//	d_fabs = fabs(d_y - d_s);
-
-	//	printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_s, d_fabs);
-	//}
 }
 
 
-void lab_3() {
+static void lab_3() {
 	while (1) {
 		double d_a{};
-		if (!input_handler("\nInput A (or quit[q]) :\n", d_a)) {
+		if (!input_handler("\nInput A (or quit[q]) :\n", d_a, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
 		
 		double d_b{};
-		if (!input_handler("\nInput B (or quit[q]) :\n", d_b)) { // Very cross variable!!!  d_b
+		if (!input_handler("\nInput B (or quit[q]) :\n", d_b, 1)) { // Very cross variable!!!  d_b
 			system("cls");
 			break;
 		}
 		system("cls");
 
+		if (d_a > 1000 || d_a < -1000 || d_b > 1000 || d_b < -1000) {
+			printf("For better results A and B range is +-1000\nTry again with valid range.");
+			continue;
+		}
+
+		if (is_near_zero(my_fabs(d_b - d_a))) {             // If a = b, error
+			system("cls");
+			printf("\nNot valid range. There must be a gap between A and B.");
+			continue;
+		}
+
 		double d_h{};
-		if (!input_handler("\nInput H (or quit[q]) :\n", d_h)) {
+		if (!input_handler("\nInput H (or quit[q]) :\n", d_h, 1)) {
 			system("cls");
 			break;
 		}
 		system("cls");
+
+		if (d_b > d_a && d_h < 0 || d_b < d_a && d_h > 0) { // If a <-h- b, error
+			system("cls");
+			printf("\nNot valid input. You moving backwards. Need to move from A to B");
+			continue;
+		}
+
+		double d_fraction = my_fmod(d_b - d_a, d_h);        // If steps is mot whole number, error
+		if (d_fraction != my_NaN && my_fabs(d_fraction) > 0) {
+			system("cls");
+			printf("\nNot valid input. Incorrect steps set.\nTry again with another values.");
+			continue;
+		}
+		else if (d_fraction == my_NaN) {
+			system("cls");
+			printf("\nInternal error occurred.\nTry again with another values.");
+		}
 
 		int i_n{};
 		while (2) {
-			if (!input_handler("\nInput N (or quit[q]) :\n", i_n)) {
+			if (!input_handler("\nInput N (or quit[q]) :\n", i_n, 1)) {
 				system("cls");
 				return;
 			}
 			else if (i_n < 3 || i_n > 9) {
-				printf("\nInvalid range. For better results 3 <= N <= 9 ");
+				printf("\nNot valid range. For better results 3 <= N <= 9 ");
 			}
 			else break;
 		}
@@ -533,15 +427,7 @@ void lab_3() {
 			break;
 		}
 
-		puts("\n\n\nWant to continue? [Y/N]");
-		if (YN()) {
-			system("cls");
-			continue;
-		}
-		else {
-			system("cls");
-			break;
-		}
+		USER_CONTINUE_USAGE()
 	}
 }
 // END
@@ -552,7 +438,7 @@ void lab_3() {
 int main() {
 	while (1) {
 		puts("\nlab 1(3) [1], lab 2(12) [2], lab 3(12) [3], exit [esc]");
-		
+
 		switch (_getch()) {
 		case '1':
 			system("cls");
