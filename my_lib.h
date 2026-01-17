@@ -7,8 +7,8 @@
 //
 #pragma once
 
-// Equivalent of zero
-constexpr double EPSILON = 1e-12; // constexpr for defining on compilation stage
+// constexpr for defining on compilation stage
+constexpr double EPSILON = 1e-12; // Equivalent of zero
 #define my_NaN 128101010.010101821
 
 // Checks if double is near zero
@@ -24,13 +24,16 @@ double my_fabs(double var);
 int my_abs(int var);
 
 // Returns string length
-int my_strlen(const char*);
+int my_strlen(const char* ch_array);
 
 // Returns true if strings are equal
-bool my_strcmp(const char*, const char*);
+bool my_strcmp(const char* ch_array1, const char* ch_array2);
+
+const char* my_strchr(const char* ch_array, char ch_c);
 
 void generate_seed();
 
 // Generates "random" number.
 // To use, call generate_seed() first.
-int my_random(int, int);
+// Range for max_number is +-65536
+int my_random(int max_number, int minus_chance);

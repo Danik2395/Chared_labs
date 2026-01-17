@@ -17,22 +17,17 @@
 
 
 // Input checker
-bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
+bool is_correct_input(char* ch_dirt_input, bool allow_fraction) {                        // '*' not to copy all the string, but take it address
 	int len = my_strlen(ch_dirt_input);
-	short i_dot_count = 0;
+	int i_dot_count = 0;
 
-	if (len == 0) {       // Checking if there is something to check
+	if (len == 0) {                                                                      // Checking if there is something to check
 		printf("\nNo input. Input number.");
 		return false;
 	}
 
-	//if (buffer_clean()) { // Cleans buffer, if there was more than 16 bytes, and giving exception
-	//	printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
-	//	return false;
-	//}
-
 	if (ch_dirt_input[0] == '-' && len == 1 || ch_dirt_input[0] == '-' && (ch_dirt_input[1] < '0' || ch_dirt_input[1] > '9')) {
-		printf("\nNot valid input. Enter valid number."); // Checks if it is not only minus in input (or -. for example)
+		printf("\nNot valid input. Enter valid number.");                                // Checks if it is not only minus in input (or -. for example)
 		return false;
 	}
 
@@ -51,9 +46,9 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 						return false;
 					}
 				}
-				else if (ch_dirt_input[i] == ',') {                                      // If item is coma throws "not valid coma" code
-					printf("\nChar ',' not for float. Use '.' instead.");
-					return false;
+				else if (ch_dirt_input[i] == ',') {                                      // If item is coma, change it to dot
+					ch_dirt_input[i] = '.';
+					++i_dot_count;
 				}
 				else {                                                                   // If item is not number or dot throws "Not valid input" code
 					printf("\nNot valid input. Enter valid number.");
@@ -78,12 +73,13 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 
 
 // Array input handler
-int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i_max_element_size) {
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int i_max_element_size, int i_allow_back) {
 	char ch_input[17];
 
 	scanf_s("%16s", ch_input, 17);
 
-	if (quit(ch_input)) return 1;
+	Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
+	if (check_change_trigger) return check_change_trigger;
 
 	bool valid_element_size = true;
 	if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
@@ -91,67 +87,40 @@ int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i
 	}
 	else {
 		if (!valid_element_size) {
-			return 2;
+			return Not_val_size;
 		}
-		return 3;
+		return Not_val_num;
 	}
-	return 0;
+	return Good;
 }
+// END
 
 
 
+// String input handler
+int string_input_handler(char** p_p_ch_destination, size_t& sz_string_size, size_t sz_type_size) { // Pointer on pointer to not to lose array start, when reallocating it
+	bool b_memory_inicialize_fail = false;
 
+	char buffer[129];                                                                      // Chunk of user input
+	char* copy_string{};                                                                   // To catch realloc fail
 
+	while (fgets(buffer, 129, stdin)) {
+		size_t buffer_size = strlen(buffer);
 
+		sz_string_size += buffer_size;
 
-//bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int i_max_element_size) {
-//	char ch_input[17];
-//
-//	printf("%s", ch_text_to_display);
-//
-//	for (int i = 0; i < i_array_size; ++i) {
-//		scanf_s("%16s", ch_input, 17);
-//
-//		if (quit(ch_input)) return false;
-//
-//
-//		bool valid_element_size = true;
-//		if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-//			p_i_input_array[i] = atoi(ch_input);
-//		}
-//		else {
-//			(void)buffer_clean();
-//
-//			if (!valid_element_size) {
-//				printf("\nNot valid element size. Valid size is +-%d", i_max_element_size);
-//			}
-//
-//			while (1) {
-//				printf("\nInput from %d element again:\n", i + 1);
-//				
-//				scanf_s("%16s", ch_input, 17);
-//
-//				if (quit(ch_input)) return false;
-//
-//				if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-//					p_i_input_array[i] = atoi(ch_input);
-//					system("cls");
-//					break;
-//				}
-//			}
-//		}
-//
-//		system("cls");
-//
-//		printf("%s", ch_text_to_display);
-//
-//		for (int j = 0; j <= i; ++j) {
-//			printf("%3d ", p_i_input_array[j]);
-//		}
-//	}
-//
-//	(void)buffer_clean();
-//
-//	return true;
-//}
+		copy_string = (char*)realloc(*p_p_ch_destination, sz_string_size * sz_type_size);          // Resizing string container
+
+		if (copy_string == NULL) {
+			b_memory_inicialize_fail = true;
+			break;
+		}
+
+		*p_p_ch_destination = copy_string;
+
+		strcat_s(*p_p_ch_destination, sz_string_size, buffer);                                  // Safely putting chunk after last element in it
+	}
+
+	return b_memory_inicialize_fail ? 1 : 0;
+}
 // END

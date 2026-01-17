@@ -11,22 +11,11 @@
 #include <conio.h>
 
 
-bool quit(const char* ch_t) {
-	if (my_strcmp(ch_t, "q") || my_strcmp(ch_t, "Q")) return true;
-	else return false;
-}
-
-
 
 bool buffer_clean() {
 	int i_c{}, i_dbg_value = 0;
-
-
 	while ((i_c = getchar()) != '\n' && i_c != EOF) ++i_dbg_value;
-
-	if (i_dbg_value == 0) return false;
-
-	else return true;
+	return (i_dbg_value == 0) ? false : true;
 }
 
 
@@ -42,9 +31,20 @@ bool YN() {
 		case 'N':
 			return false;
 
-		default:
-			printf("\nNot valid input.\n");
-			//continue;
+		default: continue;
 		}
 	}
+}
+
+
+
+int clean_fgets(char* str) {
+	if (!str || *str == '\0') return 1;
+	while (*str != '\0') ++str;
+	if (*(--str) != '\n') {
+		(void)buffer_clean();
+		return 1;
+	}
+	*str = '\0';
+	return 0;
 }

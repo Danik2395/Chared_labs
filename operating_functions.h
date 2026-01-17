@@ -10,20 +10,48 @@
 #include <cstdlib>
 #include <cstdio>
 #include <type_traits> // For is_same
+#include <stdarg.h>    // For changing number of arguments in function
 
-bool is_correct_input(const char* ch_dirt_input, bool allow_fraction);
+// Mind that macro takes not dereferenced pointer
+#define FORMAT_D(p)    (*p == '%' && *(p + 1) == 'd')
+#define FORMAT_F(p)    (*p == '%' && *(p + 1) == 'f')
+#define FORMAT_S(p)    (*p == '%' && *(p + 1) == 's')
+#define FORMAT_PERC(p) (*p == '%' && *(p + 1) == '%')
+
+
+
+// Input checker
+bool is_correct_input(char* ch_dirt_input, bool allow_fraction);
+
+
 
 // Numeric input handler
 // Writes user input into variable
+// Support %d %f and %% formats in ch_message. Put corresponding arguments in '...'
+// Returns Good (expands into zero), Back and Quit
 template <class T>
-bool input_handler(const char* ch_text_to_display, T& T_input_variable) {
+Operation_code number_input_handler(const char* ch_message, T& T_input_variable, int i_allow_back = 0 ...) {
 	char ch_input[17];
-
-
+	va_list argument;
+	
 	while (1) {
-		printf("%s", ch_text_to_display);                          // Displays call to input
-		scanf_s("%16s", ch_input, 17);
+		va_start(argument, i_allow_back);                         // Setting va_start on last predicted argument. And updating it in every cycle
 
+		// Displays call to input
+		for (const char* p = ch_message; *p; ++p) {                    // Moving 'p' on ch_message while *p has symbol under it (if (*p == \0) stop;)
+			if (FORMAT_D(p)) printf("%d", va_arg(argument, int)), ++p; // ++p to not to print format letter
+
+			else if (FORMAT_F(p)) printf("%.2f", va_arg(argument, double)), ++p;
+
+			else if (FORMAT_S(p)) printf("%s", va_arg(argument, const char*)), ++p;
+
+			else if (FORMAT_PERC(p)) putchar('%'), ++p;
+
+			else putchar(*p);
+		}
+
+		scanf_s("%16s", ch_input, 17);
+		
 		if (buffer_clean()) {                                      // Cleans buffer, if there was more than 16 bytes, and giving exception
 			printf("\nSorry, low memory machine does not support more than 16 bytes input :(\nInput supported value.");
 			continue;
@@ -31,14 +59,16 @@ bool input_handler(const char* ch_text_to_display, T& T_input_variable) {
 
 		bool allow_fraction = std::is_same<T, double>::value;      // Checks whether it's double
 
-		if (quit(ch_input)) return false;
+		Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
+		if (check_change_trigger) return check_change_trigger;
 
-		else if (is_correct_input(ch_input, allow_fraction)) {
+		else if (is_correct_input(ch_input, allow_fraction)) {     // If input isn't correct, cycle starts again
 			if (allow_fraction) T_input_variable = atof(ch_input); // double - atof
 
 			else				T_input_variable = atoi(ch_input); // int - atoi
 
-			return true;
+			va_end(argument);
+			return Good;
 		}
 	}
 }
@@ -46,8 +76,14 @@ bool input_handler(const char* ch_text_to_display, T& T_input_variable) {
 
 // Array input handler
 // Writes user input into array
-// 0 - number is good
-// 1 - quit
-// 2 - not valid size
-// 3 - not valid number
-int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int max_element_size);
+// Good 
+// Quit
+// Not_val_size - Not valid size
+// Not_valid_number - Not valid number
+Operation_code array_input_handler(int& iter, int* p_i_input_array, int max_element_size, int i_allow_back = 0);
+
+// String input handler
+// Writes user input into array-string
+// 0 - all is good
+// 1 - memory initialize fail
+int string_input_handler(char** p_p_ch_destination, size_t& sz_string_size, size_t sz_type_size);

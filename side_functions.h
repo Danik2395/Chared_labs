@@ -6,9 +6,21 @@
 // Side functions header.
 //
 #pragma once
+#include "my_lib.h"
+
+enum Operation_code {
+	No_code = -1,
+	Good,
+	First_iter,
+	Quit,
+	Quit_s,
+	Back,
+	Not_val_size,
+	Not_val_num,
+};
 
 #define USER_CONTINUE_USAGE()\
-puts("\n\n\nWant to continue? [Y/N]");\
+puts("\n\n\nWant to begin again? [Y/N]");\
 if (YN()) {\
 	system("cls");\
 	continue;\
@@ -19,8 +31,13 @@ else {\
 }\
 
 
-// Returns true if input "q" or "Q"
-bool quit(const char*);
+// Returns Quit if input "q" or "Q"
+// Returns Back if input "b" or "B"
+inline Operation_code change_menu(const char* ch_t, int i_allow_back = 0) {
+	if (my_strcmp(ch_t, "q") || my_strcmp(ch_t, "Q")) return Quit;
+	else if (i_allow_back && my_strcmp(ch_t, "b") || my_strcmp(ch_t, "B")) return Back;
+	return Good;
+}
 
 // "Eats" buffer and, if it's overfilled, returns true
 bool buffer_clean();
@@ -28,3 +45,5 @@ bool buffer_clean();
 // _getch()
 // Y = true, N = false
 bool YN();
+
+int clean_fgets(char* ch_str);
