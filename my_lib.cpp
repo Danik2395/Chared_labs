@@ -71,7 +71,7 @@ void generate_seed() {
 int my_random(int max_decade, int minus_chance) {
 	unsigned int* p_seed = seed_storage();
 	unsigned int minus = *p_seed;              // Writing seed to calculate minus
-	*p_seed = *p_seed * 1103515245 + 12345;    // Getting value from pointer and changing it (numbers, calculated by smart people)
+	*p_seed = *p_seed * 1103515245 + 12345;    // Getting value from pointer and CHANGING it (numbers, calculated by smart people)
 	minus = minus * 12345 + 1103515245;
 	int tick = (*p_seed / 65536) % max_decade;
 	if (minus % 1000 > minus_chance * 10) {

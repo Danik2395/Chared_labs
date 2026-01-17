@@ -78,54 +78,80 @@ bool is_correct_input(const char* ch_dirt_input, bool allow_fraction) {
 
 
 // Array input handler
-bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int i_max_element_size) {
+int array_input_handler(int& iter, int* p_i_input_array, int i_array_size, int i_max_element_size) {
 	char ch_input[17];
 
-	printf("%s", ch_text_to_display);
+	scanf_s("%16s", ch_input, 17);
 
-	for (int i = 0; i < i_array_size; ++i) {
-		scanf_s("%16s", ch_input, 17);
+	if (quit(ch_input)) return 1;
 
-		if (quit(ch_input)) return false;
-
-
-		bool valid_element_size = true;
-		if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-			p_i_input_array[i] = atoi(ch_input);
-		}
-		else {
-			(void)buffer_clean();
-
-			if (!valid_element_size) {
-				printf("\nNot valid element size. Valid size is +-%d", i_max_element_size);
-			}
-
-			while (1) {
-				printf("\nInput from %d element again:\n", i + 1);
-				
-				scanf_s("%16s", ch_input, 17);
-
-				if (quit(ch_input)) return false;
-
-				if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
-					p_i_input_array[i] = atoi(ch_input);
-					system("cls");
-					break;
-				}
-			}
-		}
-
-		system("cls");
-
-		printf("%s", ch_text_to_display);
-
-		for (int j = 0; j <= i; ++j) {
-			printf("%d ", p_i_input_array[j]);
-		}
+	bool valid_element_size = true;
+	if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
+		p_i_input_array[iter] = atoi(ch_input);
 	}
-
-	(void)buffer_clean();
-
-	return true;
+	else {
+		if (!valid_element_size) {
+			return 2;
+		}
+		return 3;
+	}
+	return 0;
 }
+
+
+
+
+
+
+
+//bool array_input_handler(const char* ch_text_to_display, int* p_i_input_array, int i_array_size, int i_max_element_size) {
+//	char ch_input[17];
+//
+//	printf("%s", ch_text_to_display);
+//
+//	for (int i = 0; i < i_array_size; ++i) {
+//		scanf_s("%16s", ch_input, 17);
+//
+//		if (quit(ch_input)) return false;
+//
+//
+//		bool valid_element_size = true;
+//		if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
+//			p_i_input_array[i] = atoi(ch_input);
+//		}
+//		else {
+//			(void)buffer_clean();
+//
+//			if (!valid_element_size) {
+//				printf("\nNot valid element size. Valid size is +-%d", i_max_element_size);
+//			}
+//
+//			while (1) {
+//				printf("\nInput from %d element again:\n", i + 1);
+//				
+//				scanf_s("%16s", ch_input, 17);
+//
+//				if (quit(ch_input)) return false;
+//
+//				if (is_correct_input(ch_input, 0) && (valid_element_size = my_abs(atoi(ch_input)) <= i_max_element_size)) {
+//					p_i_input_array[i] = atoi(ch_input);
+//					system("cls");
+//					break;
+//				}
+//			}
+//		}
+//
+//		system("cls");
+//
+//		printf("%s", ch_text_to_display);
+//
+//		for (int j = 0; j <= i; ++j) {
+//			printf("%3d ", p_i_input_array[j]);
+//		}
+//	}
+//
+//	(void)buffer_clean();
+//
+//	return true;
+//}
 // END
