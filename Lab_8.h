@@ -26,16 +26,8 @@ typedef unsigned long long file_sz; // Because size_t is depended on the used OS
 #define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
 while (1) {\
 	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
-	if (cod_screen_backwards == Quit) {\
-		fclose(Students_database);\
-		system("cls");\
-		return;\
-	}\
-	else if (cod_screen_backwards == Back) {\
-		system("cls");\
-		fclose(Students_database);\
-		return;\
-	}\
+	if (cod_screen_backwards == Quit) return Quit;\
+	else if (cod_screen_backwards == Back) return Back;\
 	if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
 		system("cls");\
 		printf("\nNot valid range.\n\n");\
@@ -95,8 +87,12 @@ static Operation_code input_subject_marks(int* p_i_marks_array, int i_marks_cnt,
 
 static Operation_code change_student(C_Student& student_form, bool b_creation_mode, FILE* Students_database = NULL, long l_student_position = 0);
 
-static void create_database_manual(FILE* Students_database, C_Database_Info& db_info);
+static Operation_code create_database_manual(FILE* Students_database, C_Database_Info& db_info);
 
 static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, char* ch_dir_path);
+
+static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_path, char* ch_temp_path_dest);
+
+static void commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path);
 
 void lab_8();

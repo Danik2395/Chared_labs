@@ -9,6 +9,7 @@
 #include "my_lib.h"
 
 enum Operation_code {
+	No_code = -1,
 	Good,
 	First_iter,
 	Quit,
@@ -16,7 +17,6 @@ enum Operation_code {
 	Back,
 	Not_val_size,
 	Not_val_num,
-	No_code
 };
 
 #define USER_CONTINUE_USAGE()\

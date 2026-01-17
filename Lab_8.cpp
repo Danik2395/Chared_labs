@@ -566,7 +566,7 @@ static Operation_code change_student(C_Student& student_form, bool b_creation_mo
 
 
 
-static void create_database_manual(FILE* Students_database, C_Database_Info& db_info) {
+static Operation_code create_database_manual(FILE* Students_database, C_Database_Info& db_info) {
 	int i_amount_of_groups{};
 	ENTER_DATABASE_INFO(i_amount_of_groups, 1, 6, "\nInput amount of groups from 1 to 6 (quit [q], back [b]) :\n", 0);
 
@@ -579,7 +579,7 @@ static void create_database_manual(FILE* Students_database, C_Database_Info& db_
 	ENTER_DATABASE_INFO(db_info.i_marks_per_subject, 1, 32, "\nInput amount of marks per subject (1-32) (quit [q], back [b]) :\n", 0);
 	system("cls");
 
-	for (int i = 0; i < i_amount_of_groups; ++i) { // Input Students Amount per Group
+	for (int i = 0; i < i_amount_of_groups; ++i) {                                   // Input Students Amount per Group
 		ENTER_DATABASE_INFO(db_info.p_i_students_in_group_amount[i], 1, 10, "\nInput amount of students in group number %d from 1 to 10 (quit [q], back [b]) :\n", i + 1);
 		system("cls");
 
@@ -591,7 +591,7 @@ static void create_database_manual(FILE* Students_database, C_Database_Info& db_
 	db_info.save_to_file(Students_database);
 
 	C_Student temp_student;
-	temp_student.init_mark_arrays(db_info.i_marks_per_subject); // Allocate dynamic memory for student
+	temp_student.init_mark_arrays(db_info.i_marks_per_subject);                      // Allocate dynamic memory for student
 
 	for (int g = 0; g < i_amount_of_groups; ++g) {
 		for (int s = 0; s < db_info.p_i_students_in_group_amount[g]; ++s) {
@@ -608,16 +608,16 @@ static void create_database_manual(FILE* Students_database, C_Database_Info& db_
 			Operation_code op = change_student(temp_student, true);
 
 			if (op == Quit) {
-				db_info.p_i_students_in_group_amount[g] = s;       // If quit, set students amount to current index (what we already have)
+				db_info.p_i_students_in_group_amount[g] = s;                         // If quit, set students amount to current index (what we already have)
 
-				for (int k = g + 1; k < i_amount_of_groups; ++k) { // All remaining groups are empty
+				for (int k = g + 1; k < i_amount_of_groups; ++k) {                   // All remaining groups are empty
 					db_info.p_i_students_in_group_amount[k] = 0;
 				}
 
-				fseek(Students_database, 0, SEEK_SET);             // Rewrite header with new amounts
+				fseek(Students_database, 0, SEEK_SET);                               // Rewrite header with new amounts
 				db_info.save_to_file(Students_database);
 
-				return;
+				return Quit;
 			}
 
 			temp_student.save_to_file(Students_database);
@@ -636,7 +636,7 @@ static void create_database_manual(FILE* Students_database, C_Database_Info& db_
 				fseek(Students_database, 0, SEEK_SET);
 				db_info.save_to_file(Students_database);
 
-				return;
+				return Quit;
 			}
 		}
 	}
@@ -651,11 +651,13 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 	//const char* ch_dir_path = DIR_PATH;
 	//_mkdir("C:\\Databases");
 	//_mkdir("C:\\Users\\ASUS\\Documents\\Databases");
-	char* ch_to_mkdir = (char*)calloc(MAX_PATH, sizeof(char));
-	strcpy_s(ch_to_mkdir, MAX_PATH, ch_dir_path);
-	ch_to_mkdir[my_strlen(ch_to_mkdir - 1)] = '\0';
+
+
+	//char* ch_to_mkdir = (char*)calloc(MAX_PATH, sizeof(char));
+	//strcpy_s(ch_to_mkdir, MAX_PATH, ch_dir_path);
+	//ch_to_mkdir[my_strlen(ch_to_mkdir) - 1] = '\0';
 	_mkdir(ch_dir_path);
-	free(ch_to_mkdir);
+	//free(ch_to_mkdir);
 
 	bool b_back_the_screen = false;
 	while (1) {
@@ -801,7 +803,7 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 
 				if (i_file_count == 0) {
 					system("cls");
-					printf("\nNo files fount. Delete some files first.\n");
+					printf("\nNo files found. Create some files first.\n");
 					Sleep(2000);
 					break;
 				}
@@ -832,6 +834,75 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 				--i_select; // To match array index
 
 				sprintf_s(ch_path_to_file, "%s%s", ch_dir_path, St_f_store.ch_names[i_select]);
+
+				// Temp finding logic -----------------------------------------------
+				char ch_temp_f[MAX_PATH];
+				strcpy_s(ch_temp_f, MAX_PATH, ch_path_to_file);
+				ch_temp_f[my_strlen(ch_temp_f) - 4] = '\0'; // Cutting .dat for message
+				strcat_s(ch_temp_f, MAX_PATH, "_temp.tmp");
+
+				WIN32_FIND_DATAA St_temp_find_data;
+				HANDLE H_temp_found_file = FindFirstFileA(ch_temp_f, &St_temp_find_data);
+				
+				if (H_temp_found_file != INVALID_HANDLE_VALUE) {
+					FindClose(H_temp_found_file);
+
+					system("cls");
+					printf("\nFound temporary for the file you want to access. What to do?\n\n");
+					printf(
+						"[1] - RECOVER (rewrite origin with temp)\n"
+						"[2] - delete temporary\n"
+						"[b] - cancel %s operation\n"
+						"[q] - quit\n", ch_msg
+					);
+
+					while (4) {
+						switch (_getch())
+						{
+						case '1': { // Open temp
+							if (!DeleteFileA(ch_path_to_file)) {
+								printf("\nError access original file.\n");
+								Sleep(1500);
+								b_back_the_screen = true;
+								break;
+							}
+
+							if (!MoveFileA(ch_temp_f, ch_path_to_file)) {
+								printf("\nError recovering file.\n");
+								Sleep(1500);
+								b_back_the_screen = true;
+								break;
+							}
+
+							system("cls");
+							printf("\nFile recovered successfully.\n");
+							Sleep(1000);
+
+							F_cmd = F_sel;
+							break;
+						}
+						case '2':   // Delete temp
+							DeleteFileA(ch_temp_f);
+							break;
+
+						case 'b':
+						case 'B':   // Cancel operation
+							b_back_the_screen = true;
+							break;
+
+						case 'q':
+						case 'Q': return Quit;
+
+						default: continue;
+						}
+						break;
+					}
+					if (b_back_the_screen) {
+						b_back_the_screen = false;
+						break;
+					}
+				}
+				// -------------------------------------------------------------------
 
 				system("cls");
 				if (F_cmd == F_del) {
@@ -886,16 +957,83 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 }
 
 
+
+static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_path, char* ch_temp_path_dest) {
+	fclose(*p_p_Database);
+	*p_p_Database = NULL;
+
+	strcpy_s(ch_temp_path_dest, MAX_PATH, ch_original_path);
+	ch_temp_path_dest[my_strlen(ch_temp_path_dest) - 4] = '\0';
+	strcat_s(ch_temp_path_dest, MAX_PATH, "_temp.tmp");
+
+	//sprintf_s(ch_temp_path_dest, MAX_PATH, "%s_temp.tmp", ch_original_path);
+
+	if (!CopyFileA(ch_original_path, ch_temp_path_dest, FALSE)) {
+		system("cls");
+		printf("\nError creating temporary file. Access denied or path invalid.\n");
+		Sleep(2000);
+
+		fopen_s(p_p_Database, ch_original_path, "r+b");
+		return Quit; // Or error code
+	}
+
+	if (fopen_s(p_p_Database, ch_temp_path_dest, "r+b")) {
+		system("cls");
+		printf("\nError opening temporary file.\n");
+		Sleep(2000);
+		// Try to reopen original
+		fopen_s(p_p_Database, ch_original_path, "r+b");
+		return Quit;
+	}
+
+	return Good;
+}
+
+
+
+static void commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path) {
+	system("cls");
+
+	fclose(*p_p_Database);
+	*p_p_Database = NULL;
+
+	printf("\nSave changes to the file? [Y/N]\n");
+	if (!YN()) {
+		DeleteFileA(ch_temp_path);
+		fopen_s(p_p_Database, ch_original_path, "r+b");
+		return;
+	}
+
+	if (!DeleteFileA(ch_original_path)) {             // Delete original file
+		system("cls");
+		printf("\nError updating database. Original file is locked.\n"
+			"Changes are saved in: %s\n", ch_temp_path);
+		Sleep(2500);
+		return;
+	}
+
+	if (!MoveFileA(ch_temp_path, ch_original_path)) { // Rename temp to original
+		system("cls");
+		printf("\nError renaming temporary file. Data saved in: %s\n", ch_temp_path);
+		Sleep(2500);
+		return;
+	}
+
+	fopen_s(p_p_Database, ch_original_path, "r+b");   // Reopen original file
+}
+
+
+
 void lab_8() {
 	while (1) {
 		system("cls");
 		PRINT_LOGO()
-		printf( 
-			"\n\nCurrent directory: %s\n\n"
-			"[m] - DATABASE MANAGER\n"
-			"[d] - change directory\n\n"
-			"[q] - quit\n", dir_path()
-		);
+			printf(
+				"\n\nCurrent directory: %s\n\n"
+				"[m] - DATABASE MANAGER\n"
+				"[d] - change directory\n\n"
+				"[q] - quit\n", dir_path()
+			);
 
 		FILE* Students_database = NULL;
 		//char ch_selected_file_name[MAX_FILE_NAME]{};
@@ -930,10 +1068,10 @@ void lab_8() {
 			}
 
 			case 'd':
-			case 'D': {
+			case 'D': { // May not work properly (actually not detecting non-existing directories)
 				system("cls");
 				PRINT_LOGO()
-				printf("\n\nInput path to the databases new directory (or quit [q], back [b]) :\n");
+					printf("\n\nInput path to the databases new directory (or quit [q], back [b]) :\n");
 
 				char ch_path_buff[MAX_PATH];
 				while (3) {
@@ -975,15 +1113,17 @@ void lab_8() {
 
 		/*const char* ch_selected_file_name = ch_f_name_buffer;
 		free(ch_f_name_buffer);*/
+		char ch_path_to_temp_file[MAX_PATH]{};
 		char ch_path_to_file[MAX_PATH]{};
 		strcat_s(ch_path_to_file, MAX_PATH, ch_dir_path);
-		strcat_s(ch_path_to_file, MAX_PATH, ch_selected_file_name);
+		strcat_s(ch_path_to_file, MAX_PATH, ch_selected_file_name); // It's just simpler then to add another parameter to file_manager
 
 		fseek(Students_database, 0, SEEK_END);
 		long l_size = ftell(Students_database);
 		rewind(Students_database);
-		bool b_file_is_empty = (l_size == 0);
+		bool b_file_is_empty = l_size == 0;
 
+		bool b_in_temp = false;
 		while (2) {
 			system("cls");
 			if (b_file_is_empty) {
@@ -1007,6 +1147,7 @@ void lab_8() {
 					"[4] - show students in group\n"
 					"[5] - change student information\n"
 					"\n[b] - close file and back\n"
+					"[s] - save\n"
 					"[q] - quit\n", ch_selected_file_name
 				);
 
@@ -1035,6 +1176,7 @@ void lab_8() {
 
 				case 'q':
 				case 'Q':
+					if (b_in_temp) commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
 					fclose(Students_database);
 					system("cls");
 					return;
@@ -1044,36 +1186,45 @@ void lab_8() {
 					b_back_the_screen = true;
 					break;
 
+				case 's':
+				case 'S':
+					commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
+					b_in_temp = false;
+					break;
+
 				default: continue;
 				}
 				system("cls");
 				break;
 			}
 			if (b_back_the_screen) {
+				if (b_in_temp) commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
 				fclose(Students_database);
 				break;
 			}
+			if (cmd_general == No_command) continue;
 
 			C_Student student_form;
 			C_Database_Info database_info;
 
 			bool b_no_database = false;
 			do {
+				if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
+					b_no_database = true;
+					break;
+				}
+				b_in_temp = true;
+
 				int i_amount_of_groups{};
 				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual) {
-					/*
-					if (fopen_s(&Students_database, "students_data.dat", "w+b")) {
-						b_no_database = true;
-						break;
-					}
-					*/
-					if (freopen_s(&Students_database, ch_path_to_file, "w+b", Students_database)) {
+					if (freopen_s(&Students_database, ch_path_to_temp_file, "w+b", Students_database)) {
 						b_no_database = true;
 						break;
 					}
 
 					generate_seed();
 
+					Operation_code op = No_code;
 					do {
 						if (cmd_general == Regen_database_random) {
 							database_info.i_groups_amount = i_amount_of_groups = 2 + my_random(4, 0);
@@ -1085,7 +1236,20 @@ void lab_8() {
 							}
 						}
 						else {          // Regen_database_manual
-							create_database_manual(Students_database, database_info);
+							op = create_database_manual(Students_database, database_info);
+							if (op == Quit) {
+								commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
+								fclose(Students_database);
+								system("cls");
+								return;
+							}
+							else if (op == Back) {
+								//commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
+								system("cls");
+								//fclose(Students_database);
+								//return;
+								break;
+							}
 							//fclose(Students_database);
 							//system("cls");
 							break;
@@ -1102,7 +1266,7 @@ void lab_8() {
 						for (int g = 0; g < i_amount_of_groups; ++g) {       // Generate groups
 							int i_group_number = database_info.p_i_group_numbers[g] * 1000 + my_random(432, 0);
 
-							for (int i = 0; i < database_info.p_i_students_in_group_amount[g]/*i_amount_of_students*/; ++i) { // Generate students
+							for (int i = 0; i < database_info.p_i_students_in_group_amount[g]; ++i) { // Generate students
 								int i_strength = my_random(1000, 0);
 
 								student_form.i_number = i_group_number + i;
@@ -1132,13 +1296,15 @@ void lab_8() {
 					}
 					b_file_is_empty = false;
 
-					system("cls");
-					printf("\nRecreating...");
-					Sleep(1000);
-					system("cls");
-					printf("\nDone.");
-					Sleep(800);
-					system("cls");
+					if (op != Back) {
+						system("cls");
+						printf("\nRecreating...");
+						Sleep(1000);
+						system("cls");
+						printf("\nDone.");
+						Sleep(800);
+						system("cls");
+					}
 
 					break;
 				}
@@ -1162,6 +1328,7 @@ void lab_8() {
 
 						Operation_code cod_screen_backwards = number_input_handler("\nChoose student by id to change from listed (or quit [q], back [b]) :\n", i_student_id_to_change, 1);
 						if (cod_screen_backwards == Quit) {
+							commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
 							fclose(Students_database);
 							system("cls");
 							return;
@@ -1237,7 +1404,10 @@ void lab_8() {
 							break;
 						}
 					}
-					if (b_back_the_screen) break;
+					if (b_back_the_screen) {
+						b_back_the_screen = false;
+						break;
+					}
 				}
 
 				int i_group_number = -1;
