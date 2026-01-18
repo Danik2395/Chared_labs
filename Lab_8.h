@@ -60,6 +60,11 @@ return;\
 );\
 
 
+#define XOR_FILE_HIDDEN_ATTR(ch_path_to_file)\
+DWORD attrb = GetFileAttributesA(ch_path_to_file);\
+SetFileAttributesA(ch_path_to_file, attrb ^= FILE_ATTRIBUTE_HIDDEN);\
+
+
 enum Name_type { FirstN, LastN };
 enum Command {
 	No_command,

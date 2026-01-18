@@ -19,6 +19,7 @@
 #include <limits>
 #include <string.h>
 #include <iostream>
+#include <stdarg.h>
 using namespace std;
 
 
@@ -295,7 +296,7 @@ static void lab_2() {
 
 // Laboratory work 3, variant 12 (and fourth also)
 
-static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, int i_view_answer) {
+/*static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, int i_view_answer) {
 	switch (i_view_answer) {
 	case 1: // All
 		printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_sum, d_fabs);
@@ -314,6 +315,14 @@ static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs, i
 		break;
 	}
 
+}
+*/
+
+static void Out_Rez_lab_3(double d_x, double d_res) {
+	printf("%7.3f   %11.5f\n\n", d_x, d_res);
+}
+static void Out_Rez_lab_3(double d_x, double d_y, double d_sum, double d_fabs) {
+	printf("%7.3f   %11.5f   %11.5f   %11.5f\n\n", d_x, d_y, d_sum, d_fabs);
 }
 
 static void lab_3() {
@@ -421,39 +430,35 @@ static void lab_3() {
 			else printf("\nCalculate something else?\n\n");
 
 			printf("All           [1]\n"
-				"S(X)          [2]\n"
-				"Y(X)          [3]\n"
-				"|Y(X) - S(X)| [4]\n");
+				   "S(X)          [2]\n"
+				   "Y(X)          [3]\n"
+				   "|Y(X) - S(X)| [4]\n");
 			if (!b_first_input) {
 				puts("\n\nWant to begin again? [Y/N]");
 			}
 
-			int i_view_answer{};
+			char ch_view_answer{};
 			const char* text_for_answer = "";
 			const char* text_for_table = "";
 			bool b_start_again_mark{};
 			while (3) {
-				switch (_getch()) {
+				switch (ch_view_answer = _getch()) {
 				case '1': // All
-					i_view_answer = 1;
 					text_for_answer = "S(X), Y(X) and |Y(X) - S(X)|";
 					text_for_table = "   X           Y(X)          S(X)          |Y(X) - S(X)|";
 					break;
 
 				case '2': // S(X)
-					i_view_answer = 2;
 					text_for_answer = "S(X)";
 					text_for_table = "   X           S(X)";
 					break;
 
 				case '3': // Y(X)
-					i_view_answer = 3;
 					text_for_answer = "Y(X)";
 					text_for_table = "   X           Y(X)";
 					break;
 
 				case '4':  // |Y(X) - S(X)|
-					i_view_answer = 4;
 					text_for_answer = "|Y(X) - S(X)|";
 					text_for_table = "   X           |Y(X) - S(X)|";
 					break;
@@ -505,14 +510,15 @@ static void lab_3() {
 
 			double steps = (d_b - d_a) / d_h + 1;
 			double d_x = d_a;
+			
 			for (int i = 1; i <= steps; ++i, d_x += d_h) {
 				double d_member{ 1 }, d_sum{}, d_y{}, d_fabs{}; // d_fabs{} for |Y(X) - S(x)|
 
-				if (i_view_answer == 1 || i_view_answer == 3 || i_view_answer == 4) {
+				if (ch_view_answer != '2') {
 					d_y = (1 - d_x * d_x / 2) * cos(d_x) - d_x * sin(d_x) / 2;
 				}
 
-				if (i_view_answer == 1 || i_view_answer == 2 || i_view_answer == 4) {
+				if (ch_view_answer != '3') {
 					for (int k = 1; k <= i_n; ++k) {         // Internal 'for' for sigma Σ. k = 1, because, when k = 0 first member d_m = 1
 						d_sum += d_member;
 
@@ -521,11 +527,12 @@ static void lab_3() {
 					}
 				}
 
-				if (i_view_answer == 1 || i_view_answer == 4) {
+				if (ch_view_answer == '1' || ch_view_answer == '4') {
 					d_fabs = fabs(d_y - d_sum);
 				}
-
-				Out_Rez_lab_3(d_x, d_y, d_sum, d_fabs, i_view_answer);
+				double d_res[3]{ d_sum, d_y, d_fabs };
+				if (ch_view_answer > '1') Out_Rez_lab_3(d_x, d_res[ch_view_answer - '2']);
+				else                      Out_Rez_lab_3(d_x, d_y, d_sum, d_fabs);
 			}
 		}
 	}

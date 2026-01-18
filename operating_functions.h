@@ -35,7 +35,7 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 	va_list argument;
 	
 	while (1) {
-		va_start(argument, i_allow_back);                         // Setting va_start on last predicted argument. And updating it in every cycle
+		va_start(argument, i_allow_back);                              // Setting va_start on last predicted argument. And updating it in every cycle
 
 		// Displays call to input
 		for (const char* p = ch_message; *p; ++p) {                    // Moving 'p' on ch_message while *p has symbol under it (if (*p == \0) stop;)

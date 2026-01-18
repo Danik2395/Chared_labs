@@ -958,30 +958,33 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 
 
 
-static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_path, char* ch_temp_path_dest) {
+static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_path, char* ch_temp_path) {
 	fclose(*p_p_Database);
 	*p_p_Database = NULL;
 
-	strcpy_s(ch_temp_path_dest, MAX_PATH, ch_original_path);
-	ch_temp_path_dest[my_strlen(ch_temp_path_dest) - 4] = '\0';
-	strcat_s(ch_temp_path_dest, MAX_PATH, "_temp.tmp");
+	strcpy_s(ch_temp_path, MAX_PATH, ch_original_path);
+	size_t len = my_strlen(ch_temp_path);
+	if (len > 4) ch_temp_path[len - 4] = '\0';
+	strcat_s(ch_temp_path, MAX_PATH, "_temp.tmp");
 
 	//sprintf_s(ch_temp_path_dest, MAX_PATH, "%s_temp.tmp", ch_original_path);
 
-	if (!CopyFileA(ch_original_path, ch_temp_path_dest, FALSE)) {
+	if (!CopyFileA(ch_original_path, ch_temp_path, FALSE)) {
 		system("cls");
 		printf("\nError creating temporary file. Access denied or path invalid.\n");
 		Sleep(2000);
 
 		fopen_s(p_p_Database, ch_original_path, "r+b");
-		return Quit; // Or error code
+		return Quit;
 	}
 
-	if (fopen_s(p_p_Database, ch_temp_path_dest, "r+b")) {
+	XOR_FILE_HIDDEN_ATTR(ch_temp_path) // Setting hidden attribute to the file (to authentic look)
+
+	if (fopen_s(p_p_Database, ch_temp_path, "r+b")) {
 		system("cls");
 		printf("\nError opening temporary file.\n");
 		Sleep(2000);
-		// Try to reopen original
+
 		fopen_s(p_p_Database, ch_original_path, "r+b");
 		return Quit;
 	}
@@ -1018,6 +1021,8 @@ static void commit_temp_session(FILE** p_p_Database, const char* ch_original_pat
 		Sleep(2500);
 		return;
 	}
+
+	XOR_FILE_HIDDEN_ATTR(ch_original_path)
 
 	fopen_s(p_p_Database, ch_original_path, "r+b");   // Reopen original file
 }
@@ -1217,10 +1222,15 @@ void lab_8() {
 
 				int i_amount_of_groups{};
 				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual) {
-					if (freopen_s(&Students_database, ch_path_to_temp_file, "w+b", Students_database)) {
+					//if (freopen_s(&Students_database, ch_path_to_temp_file, "w+b", Students_database)) {
+					//	b_no_database = true;
+					//	break;
+					//}
+					if (_chsize_s(_fileno(Students_database), 0)) { // Simpler way to "reopen" the file. C functions cannot open files with HIDDEN attribute
 						b_no_database = true;
 						break;
 					}
+					rewind(Students_database);
 
 					generate_seed();
 
