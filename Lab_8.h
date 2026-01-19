@@ -23,46 +23,24 @@
 //#define DIR_PATH "C:\\Users\\ASUS\\Documents\\Databases\\"
 typedef unsigned long long file_sz; // Because size_t is depended on the used OS
 
-#define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
-while (1) {\
-	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
-	if (cod_screen_backwards == Quit) return Quit;\
-	else if (cod_screen_backwards == Back) return Back;\
-	if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
-		system("cls");\
-		printf("\nNot valid range.\n\n");\
-		Sleep(1500);\
-		continue;\
-	}\
-	break;\
-}\
+static inline void printf_file_info(int i_f_num, char* ch_f_name, file_sz fsz_size) { printf("[%02d]  %-12s %10llu b\n", i_f_num, ch_f_name, fsz_size); }
 
+static inline void print_logo() {
+	printf(
+		"  _____ ______  __ __  ___    ___     ____  ______ \n"
+		" / ___/|      ||  |  ||   \\  |   \\   /    ||      |\n"
+		"(   \\_ |      ||  |  ||    \\ |    \\ |  o  ||      |\n"
+		" \\__  ||_|  |_||  |  ||  D  ||  D  ||     ||_|  |_|\n"
+		" /  \\ |  |  |  |  :  ||     ||     ||  _  |  |  |  \n"
+		" \\    |  |  |  |     ||     ||     ||  |  |  |  |  \n"
+		"  \\___|  |__|   \\__,_||_____||_____||__|__|  |__|     \n"
+	);
+}
 
-// !!! Could return from macro !!!
-#define READ_ERROR()\
-system("cls");\
-printf("\nError reading from file. Check file or recreate database\n\n");\
-Sleep(2000);\
-return;\
-
-
-#define FPRINTF(i_f_num, ch_f_name, fsz_size) printf("[%02d]  %-12s %10llu b\n", i_f_num, ch_f_name, fsz_size);
-
-
-#define PRINT_LOGO() printf(\
-"  _____ ______  __ __  ___    ___     ____  ______ \n"\
-" / ___/|      ||  |  ||   \\  |   \\   /    ||      |\n"\
-"(   \\_ |      ||  |  ||    \\ |    \\ |  o  ||      |\n"\
-" \\__  ||_|  |_||  |  ||  D  ||  D  ||     ||_|  |_|\n"\
-" /  \\ |  |  |  |  :  ||     ||     ||  _  |  |  |  \n"\
-" \\    |  |  |  |     ||     ||     ||  |  |  |  |  \n"\
-"  \\___|  |__|   \\__,_||_____||_____||__|__|  |__|     \n"\
-);\
-
-
-#define XOR_FILE_HIDDEN_ATTR(ch_path_to_file)\
-DWORD attrb = GetFileAttributesA(ch_path_to_file);\
-SetFileAttributesA(ch_path_to_file, attrb ^= FILE_ATTRIBUTE_HIDDEN);\
+static inline void xor_file_hidden_attr(const char* ch_path_to_file) {
+	DWORD attrb = GetFileAttributesA(ch_path_to_file);
+	SetFileAttributesA(ch_path_to_file, attrb ^= FILE_ATTRIBUTE_HIDDEN);
+}
 
 
 enum Name_type { FirstN, LastN };

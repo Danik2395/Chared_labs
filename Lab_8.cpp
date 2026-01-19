@@ -9,11 +9,33 @@
 
 #include "Lab_8.h"
 
+#define ENTER_DATABASE_INFO(i_amount_of_parameter, i_min_range, i_max_range, ch_message, i_group_by_count)\
+while (1) {\
+	Operation_code cod_screen_backwards = number_input_handler(ch_message, i_amount_of_parameter, 1, i_group_by_count);\
+	if (cod_screen_backwards == Quit) return Quit;\
+	else if (cod_screen_backwards == Back) return Back;\
+	if (i_amount_of_parameter < i_min_range || i_amount_of_parameter > i_max_range) {\
+		system("cls");\
+		printf("\nNot valid range.\n\n");\
+		Sleep(1500);\
+		continue;\
+	}\
+	break;\
+}\
+
+
+#define READ_ERROR()\
+system("cls");\
+printf("\nError reading from file. Check file or recreate database\n\n");\
+Sleep(2000);\
+return;\
+
 
 static char* dir_path() {
 	static char ch_dir_path[MAX_PATH] = "C:\\Databases\\";
 	return ch_dir_path;
 }
+
 
 
 static const char* get_name(Name_type name_type, size_t i_name_position) {
@@ -682,7 +704,7 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 				strcpy_s(St_f_store.ch_names[i_file_count], MAX_FILE_NAME, St_find_data.cFileName); // Coping found file name from structure to our buffer
 				St_f_store.fsz_sizes[i_file_count] = (file_sz)(St_find_data.nFileSizeHigh * 4294967296 + St_find_data.nFileSizeLow);
 				                                                                                    // Moving size from 32bit size parts to full 64bit size
-				FPRINTF(i_file_count + 1, St_f_store.ch_names[i_file_count], St_f_store.fsz_sizes[i_file_count])
+				printf_file_info(i_file_count + 1, St_f_store.ch_names[i_file_count], St_f_store.fsz_sizes[i_file_count]);
 				++i_file_count;                                                                     // While file is found or max files reached
 			} while (FindNextFileA(H_found_file, &St_find_data) != 0 && i_file_count <= MAX_FILES - 1);
 			FindClose(H_found_file);                                                                // Closing HANDLE finding process
@@ -710,7 +732,7 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 			case 'N': {
 				system("cls");
 				printf("\nCurrent directory: %s\n\n\n", ch_dir_path);
-				for (int i = 0; i < i_file_count; ++i) FPRINTF(i + 1, St_f_store.ch_names[i], St_f_store.fsz_sizes[i])
+				for (int i = 0; i < i_file_count; ++i) printf_file_info(i + 1, St_f_store.ch_names[i], St_f_store.fsz_sizes[i]);
 				printf("\n\n----------------------------\n");
 
 				if (i_file_count == MAX_FILES) {
@@ -814,7 +836,7 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 				while (3) {
 					system("cls");
 					printf("\nCurrent directory: %s\n\n\n", ch_dir_path);
-					for (int i = 0; i < i_file_count; ++i) FPRINTF(i + 1, St_f_store.ch_names[i], St_f_store.fsz_sizes[i])
+					for (int i = 0; i < i_file_count; ++i) printf_file_info(i + 1, St_f_store.ch_names[i], St_f_store.fsz_sizes[i]);
 					printf("\n\n----------------------------\n");
 
 					op_code = number_input_handler("\nInput number of file to %s (or quit [q], back [b]) :\n", i_select, 1, ch_msg);
@@ -978,7 +1000,7 @@ static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_
 		return Quit;
 	}
 
-	XOR_FILE_HIDDEN_ATTR(ch_temp_path) // Setting hidden attribute to the file (to authentic look)
+	xor_file_hidden_attr(ch_temp_path); // Setting hidden attribute to the file (to authentic look)
 
 	if (fopen_s(p_p_Database, ch_temp_path, "r+b")) {
 		system("cls");
@@ -1022,7 +1044,7 @@ static void commit_temp_session(FILE** p_p_Database, const char* ch_original_pat
 		return;
 	}
 
-	XOR_FILE_HIDDEN_ATTR(ch_original_path)
+	xor_file_hidden_attr(ch_original_path);
 
 	fopen_s(p_p_Database, ch_original_path, "r+b");   // Reopen original file
 }
@@ -1032,7 +1054,7 @@ static void commit_temp_session(FILE** p_p_Database, const char* ch_original_pat
 void lab_8() {
 	while (1) {
 		system("cls");
-		PRINT_LOGO()
+		print_logo();
 			printf(
 				"\n\nCurrent directory: %s\n\n"
 				"[m] - DATABASE MANAGER\n"
@@ -1075,7 +1097,7 @@ void lab_8() {
 			case 'd':
 			case 'D': { // May not work properly (actually not detecting non-existing directories)
 				system("cls");
-				PRINT_LOGO()
+				print_logo();
 					printf("\n\nInput path to the databases new directory (or quit [q], back [b]) :\n");
 
 				char ch_path_buff[MAX_PATH];
@@ -1214,11 +1236,13 @@ void lab_8() {
 
 			bool b_no_database = false;
 			do {
-				if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
-					b_no_database = true;
-					break;
+				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual || cmd_general == Change_student) {
+					if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
+						b_no_database = true;
+						break;
+					}
+					b_in_temp = true;
 				}
-				b_in_temp = true;
 
 				int i_amount_of_groups{};
 				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual) {
@@ -1463,6 +1487,7 @@ void lab_8() {
 					if (b_back_the_screen) break;
 				}
 
+				// "show" while
 				while (4) {
 					if (cmd_general == Sh_all) puts("\nAll students menu\n");
 					else if (cmd_general == Sh_group) printf("\nStudents in group %d menu\n\n", i_group_number);
@@ -1558,3 +1583,8 @@ void lab_8() {
 		}
 	}
 }
+
+
+
+#undef ENTER_DARABASE_INFO
+#undef READ_ERROR

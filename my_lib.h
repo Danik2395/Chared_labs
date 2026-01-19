@@ -7,7 +7,7 @@
 //
 #pragma once
 
-// constexpr for defining on compilation stage
+// constexpr for defining on compilation stage. constexpr is defined not as plain text like macros
 constexpr double EPSILON = 1e-12; // Equivalent of zero
 #define my_NaN 128101010.010101821
 
