@@ -58,6 +58,7 @@ Operation_code number_input_handler(const char* ch_message, T& T_input_variable,
 		}
 
 		bool allow_fraction = std::is_same<T, double>::value;      // Checks whether it's double
+		                                                           // Checking when compiling. No overload, no manual flags, no runtime checking.
 
 		Operation_code check_change_trigger = change_menu(ch_input, i_allow_back);
 		if (check_change_trigger) return check_change_trigger;

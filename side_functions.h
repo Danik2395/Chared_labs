@@ -17,19 +17,8 @@ enum Operation_code {
 	Back,
 	Not_val_size,
 	Not_val_num,
+	Read_error
 };
-
-#define USER_CONTINUE_USAGE()\
-puts("\n\n\nWant to begin again? [Y/N]");\
-if (YN()) {\
-	system("cls");\
-	continue;\
-}\
-else {\
-	system("cls");\
-	break;\
-}\
-
 
 // Returns Quit if input "q" or "Q"
 // Returns Back if input "b" or "B"

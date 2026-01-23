@@ -62,9 +62,9 @@ static char* dir_path();
 // LastN  - last name
 static const char* get_name(Name_type name_type, size_t i_name_position);
 
-static void show_students_filtered(FILE* Students_database, long l_target = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1);
+static Operation_code show_students_filtered(FILE* Students_database, long l_target = -1, Command filter = Sh_all, Command filter_mode = No_command, double d_median_input = -1);
 
-static void del_student(FILE* Students_database, long l_student_position, C_Database_Info& info);
+static Operation_code del_student(FILE* Students_database, long l_student_position, C_Database_Info& info);
 
 static Operation_code input_subject_marks(int* p_i_marks_array, int i_marks_cnt, const char* ch_subject_name);
 
@@ -76,6 +76,6 @@ static Operation_code file_manager(FILE** p_p_Database, char** ch_f_name_dest, c
 
 static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_path, char* ch_temp_path_dest);
 
-static void commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path);
+static int commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path, int i_only_save = 0);
 
 void lab_8();

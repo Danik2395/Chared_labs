@@ -19,8 +19,18 @@
 #include <limits>
 #include <string.h>
 #include <iostream>
-#include <stdarg.h>
 using namespace std;
+
+#define USER_CONTINUE_USAGE()\
+puts("\n\n\nWant to begin again? [Y/N]");\
+if (YN()) {\
+	system("cls");\
+	continue;\
+}\
+else {\
+	system("cls");\
+	break;\
+}\
 
 
 // Laboratory work 1, variant 3
@@ -531,7 +541,7 @@ static void lab_3() {
 					d_fabs = fabs(d_y - d_sum);
 				}
 				double d_res[3]{ d_sum, d_y, d_fabs };
-				if (ch_view_answer > '1') Out_Rez_lab_3(d_x, d_res[ch_view_answer - '2']);
+				if (ch_view_answer > '1') Out_Rez_lab_3(d_x, d_res[ch_view_answer - '2']); // For 2 to became 0 needs to be subtracted by 2
 				else                      Out_Rez_lab_3(d_x, d_y, d_sum, d_fabs);
 			}
 		}
@@ -1373,7 +1383,7 @@ static void lab_7() {
 
 				int i_word_start = i_position;          // Calculating, where word starts and wether it in start of text 
 				for (i_word_start; i_word_start >= 0 && !IS_CHAR_SPLITTER(p_ch_user_text[i_word_start]) && !is_char_punctuation(p_ch_user_text[i_word_start]); --i_word_start);
-				++i_word_start;
+				++i_word_start;                         // Stopped not on letter, so moving one step forward
 
 				system("cls");
 				printf("\nSearching for word...");
@@ -1399,12 +1409,31 @@ static void lab_7() {
 	}
 
 }
+
+#undef IS_CHAR_BINARY
+#undef IS_CHAR_SPLITTER
 // END
 
 
 
 // Main -- menu
+
+typedef void (*Lab_func)(); // Brackets for prioritization
 int main() {
+	Lab_func lab_functions[] = {
+		0,
+		lab_1,
+		lab_2,
+		lab_3,
+		0,
+		lab_5,
+		lab_6,
+		lab_7, 
+		lab_8
+	};
+
+	const int i_lab_count = sizeof(lab_functions) / sizeof(Lab_func) - 1;
+
 	while (1) {
 		printf(
 			"      __       _                     _                   \n"
@@ -1440,56 +1469,19 @@ int main() {
 		);
 
 		while (2) {
-			switch (_getch()) {
-			case '1':
+			int i_input_key = _getch();
+			if (i_input_key == 27) exit(0);
+			int i_index = i_input_key - '0';
+			if (i_index >= 1 && i_index <= i_lab_count && lab_functions[i_index] != 0) {
 				system("cls");
-				lab_1();
+				lab_functions[i_index]();
 				break;
-
-			case '2':
-				system("cls");
-				lab_2();
-				break;
-
-			case '3':
-				system("cls");
-				lab_3();
-				break;
-
-			case '5':
-				system("cls");
-				lab_5();
-				break;
-
-			case '6':
-				system("cls");
-				lab_6();
-				break;
-
-			case '7':
-				system("cls");
-				lab_7();
-				break;
-
-			case '8':
-				system("cls");
-				lab_8();
-				break;
-
-			case 27: exit(0);
-				/*printf("     Press [Esc] again to exit.");
-
-				if (_getch() == 27) exit(0);
-
-				else {
-					system("cls");
-					break;
-				}*/
-
-			default: continue;
 			}
-			break;
 		}
 	}
 }
 // END
+
+
+
+#undef USER_CONTINUE_USAGE

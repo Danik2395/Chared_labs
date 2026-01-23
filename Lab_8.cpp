@@ -28,7 +28,7 @@ while (1) {\
 system("cls");\
 printf("\nError reading from file. Check file or recreate database\n\n");\
 Sleep(2000);\
-return;\
+return Read_error;\
 
 
 static char* dir_path() {
@@ -93,7 +93,7 @@ static const char* get_name(Name_type name_type, size_t i_name_position) {
 
 
 
-static void show_students_filtered(FILE* Students_database, long l_target, Command filter, Command filter_mode, double d_median_input) {
+static Operation_code show_students_filtered(FILE* Students_database, long l_target, Command filter, Command filter_mode, double d_median_input) {
 	C_Database_Info database_info;
 	C_Student student_form;
 
@@ -200,7 +200,7 @@ static void show_students_filtered(FILE* Students_database, long l_target, Comma
 
 
 
-static void del_student(FILE* Students_database, long l_student_position, C_Database_Info& db_info) {
+static Operation_code del_student(FILE* Students_database, long l_student_position, C_Database_Info& db_info) {
 	long l_write_position = l_student_position;                                   // Position of the student to rewrite
 
 	C_Student student_form_buffer;
@@ -1016,37 +1016,40 @@ static Operation_code temp_session(FILE** p_p_Database, const char* ch_original_
 
 
 
-static void commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path) {
+static int commit_temp_session(FILE** p_p_Database, const char* ch_original_path, const char* ch_temp_path, int i_only_save) {
 	system("cls");
-
-	fclose(*p_p_Database);
-	*p_p_Database = NULL;
 
 	printf("\nSave changes to the file? [Y/N]\n");
 	if (!YN()) {
-		DeleteFileA(ch_temp_path);
-		fopen_s(p_p_Database, ch_original_path, "r+b");
-		return;
+		if (!i_only_save) {
+			DeleteFileA(ch_temp_path);
+			fopen_s(p_p_Database, ch_original_path, "r+b");
+		}
+		return 1;
 	}
+
+	fclose(*p_p_Database);
+	*p_p_Database = NULL;
 
 	if (!DeleteFileA(ch_original_path)) {             // Delete original file
 		system("cls");
 		printf("\nError updating database. Original file is locked.\n"
 			"Changes are saved in: %s\n", ch_temp_path);
 		Sleep(2500);
-		return;
+		return 1;
 	}
 
 	if (!MoveFileA(ch_temp_path, ch_original_path)) { // Rename temp to original
 		system("cls");
 		printf("\nError renaming temporary file. Data saved in: %s\n", ch_temp_path);
 		Sleep(2500);
-		return;
+		return 1;
 	}
 
 	xor_file_hidden_attr(ch_original_path);
 
 	fopen_s(p_p_Database, ch_original_path, "r+b");   // Reopen original file
+	return 0;
 }
 
 
@@ -1173,10 +1176,10 @@ void lab_8() {
 					"[3] - show all students\n"
 					"[4] - show students in group\n"
 					"[5] - change student information\n"
-					"\n[b] - close file and back\n"
-					"[s] - save\n"
-					"[q] - quit\n", ch_selected_file_name
+					"\n[b] - close file and back\n", ch_selected_file_name
 				);
+				if (b_in_temp) printf("[s] - save\n");
+				printf("[q] - quit\n");
 
 			}
 
@@ -1215,9 +1218,11 @@ void lab_8() {
 
 				case 's':
 				case 'S':
-					commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
-					b_in_temp = false;
+				if (b_in_temp) {
+					if (!commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file, 1)) b_in_temp = false;
 					break;
+				}
+				continue;
 
 				default: continue;
 				}
@@ -1236,12 +1241,20 @@ void lab_8() {
 
 			bool b_no_database = false;
 			do {
-				if (cmd_general == Regen_database_random || cmd_general == Regen_database_manual || cmd_general == Change_student) {
+				/*
+				if (!b_in_temp && (cmd_general == Regen_database_random || cmd_general == Regen_database_manual || cmd_general == Change_student)) {
 					if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
 						b_no_database = true;
 						break;
 					}
 					b_in_temp = true;
+				}
+				*/
+				if (!b_in_temp) {
+					if (freopen_s(&Students_database, ch_path_to_file, "r+b", Students_database)) {
+						b_no_database = true;
+						break;
+					}
 				}
 
 				int i_amount_of_groups{};
@@ -1250,6 +1263,14 @@ void lab_8() {
 					//	b_no_database = true;
 					//	break;
 					//}
+					if (!b_in_temp) {
+						if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
+							b_no_database = true;
+							break;
+						}
+						b_in_temp = true;
+					}
+
 					if (_chsize_s(_fileno(Students_database), 0)) { // Simpler way to "reopen" the file. C functions cannot open files with HIDDEN attribute
 						b_no_database = true;
 						break;
@@ -1272,7 +1293,7 @@ void lab_8() {
 						else {          // Regen_database_manual
 							op = create_database_manual(Students_database, database_info);
 							if (op == Quit) {
-								commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
+								//commit_temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file);
 								fclose(Students_database);
 								system("cls");
 								return;
@@ -1324,10 +1345,6 @@ void lab_8() {
 						}
 					} while (0);
 
-					if (freopen_s(&Students_database, ch_path_to_file, "r+b", Students_database)) {
-						b_no_database = true;
-						break;
-					}
 					b_file_is_empty = false;
 
 					if (op != Back) {
@@ -1343,7 +1360,7 @@ void lab_8() {
 					break;
 				}
 
-				/*if (fopen_s(&Students_database, "students_data.dat", "r+b")) {
+				/*if (fopen_s(&Students_database, ch_path_to_file, "r+b")) {
 					b_no_database = true;
 					break;
 				}*/
@@ -1357,7 +1374,11 @@ void lab_8() {
 					int i_student_id_to_change{};
 					while (4) {
 						system("cls");
-						show_students_filtered(Students_database);
+						if (show_students_filtered(Students_database) == Read_error) {
+							system("cls");
+							b_back_the_screen = true;
+							break;
+						}
 						fseek(Students_database, database_info.get_size(), SEEK_SET);
 
 						Operation_code cod_screen_backwards = number_input_handler("\nChoose student by id to change from listed (or quit [q], back [b]) :\n", i_student_id_to_change, 1);
@@ -1368,11 +1389,20 @@ void lab_8() {
 							return;
 						}
 						else if (cod_screen_backwards == Back) {
-							fclose(Students_database);
+							//fclose(Students_database);
 							system("cls");
 							b_back_the_screen = true;
 							break;
 						}
+
+						if (!b_in_temp) {
+							if (temp_session(&Students_database, ch_path_to_file, ch_path_to_temp_file) != Good) {
+								b_no_database = true;
+								break;
+							}
+							b_in_temp = true;
+						}
+						fseek(Students_database, database_info.get_size(), SEEK_SET);
 
 						bool b_student_exists = false;
 						long l_student_position{};
@@ -1535,10 +1565,22 @@ void lab_8() {
 					}
 					if (b_back_the_screen) break;
 
-					if (cmd_filter == Sh_all) show_students_filtered(Students_database, i_group_number);
+					if (cmd_filter == Sh_all) { 
+						if (show_students_filtered(Students_database, i_group_number) == Read_error) {
+							system("cls");
+							b_back_the_screen = true;
+							break;
+						}
+					}
 
 					else if (cmd_filter == Sh_best) {
-						if (cmd_filter_mode == Sh_best_marks) show_students_filtered(Students_database, i_group_number, cmd_filter, cmd_filter_mode);
+						if (cmd_filter_mode == Sh_best_marks) {
+							if (show_students_filtered(Students_database, i_group_number, cmd_filter, cmd_filter_mode) == Read_error) {
+								system("cls");
+								b_back_the_screen = true;
+								break;
+							}
+						}
 
 						else if (cmd_filter_mode == Sh_best_median) {
 							double d_median{};
@@ -1569,9 +1611,17 @@ void lab_8() {
 							if (b_back_to_menu) continue;
 
 							system("cls");
-							show_students_filtered(Students_database, i_group_number, cmd_filter, cmd_filter_mode, d_median);
+							if (show_students_filtered(Students_database, i_group_number, cmd_filter, cmd_filter_mode, d_median) == Read_error) {
+								system("cls");
+								b_back_the_screen = true;
+								break;
+							}
 						}
 					}
+				}
+				if (b_back_the_screen) {
+					b_back_the_screen = false;
+					break;
 				}
 			} while (0);
 			if (b_no_database) {
