@@ -1470,7 +1470,7 @@ int main() {
 
 		while (2) {
 			int i_input_key = _getch();
-			if (i_input_key == 27) exit(0);
+			if (i_input_key == 27) return 0; // exit(0) is not far kind of fatal errors and does not execute all standart destructors
 			int i_index = i_input_key - '0';
 			if (i_index >= 1 && i_index <= i_lab_count && lab_functions[i_index] != 0) {
 				system("cls");
